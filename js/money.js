@@ -1,4 +1,4 @@
-// Money rules: a daily top-up to $1,000,000, borrowing (debt), and what a reset wipes.
+// Money rules: a daily top-up to $1,000,000, borrowing (debt — any amount up to $250,000 a loan), and what a reset wipes.
 // Your score (leaderboard, status) = cash + money riding on open bets − debt.
 
 const LOAN=250000, MAX_DEBT=5000000;
@@ -30,8 +30,13 @@ function wipeForReset(){
 }
 
 Object.assign(ACT,{
-  borrow:()=>{ if((S.debt||0)+LOAN>MAX_DEBT){toast('You can owe at most '+k$(MAX_DEBT),'loss');return;}
-    S.debt=(S.debt||0)+LOAN; S.bank+=LOAN; save(); closeSheet(); render(); toast('Borrowed $250,000 — winnings pay it back','gold'); },
+  // Borrow any amount you like, up to $250,000 at a time.
+  borrow:()=>{ const inp=$('#borrowAmt'), amt=Math.round(+((inp&&inp.value)||'').replace(/\D/g,''));
+    if(!(amt>0)){toast('Enter how much to borrow','loss');return;}
+    if(amt>LOAN){toast('You can borrow up to '+fmt$(LOAN)+' at a time','loss');return;}
+    if((S.debt||0)+amt>MAX_DEBT){toast('You can owe at most '+k$(MAX_DEBT),'loss');return;}
+    S.debt=(S.debt||0)+amt; S.bank+=amt; save(); closeSheet(); render(); toast('Borrowed '+fmt$(amt)+' — winnings pay it back','gold'); },
+  borrowPick:el=>{ const i=$('#borrowAmt'); if(i) i.value=(+el.dataset.v).toLocaleString('en-US'); },
 });
 const _reset=ACT.reset;
 ACT.reset=el=>{ if(!confirm('Reset to $1,000,000? This wipes your bets, your debt and ALL your lodge gear (clothes, accessories and room decor). Your level stays. It also counts as a reset on the leaderboard.')) return; wipeForReset(); _reset(el); };
@@ -41,6 +46,9 @@ ACT.bankSheet=el=>{ _bankSheet2(el);
   const d=S.debt||0;
   $('#sheet').insertAdjacentHTML('beforeend',`<div class="divider" style="margin:16px 0"></div>
   <div class="between"><span class="small muted">${d?`You owe <b style="color:var(--loss-hi)">${fmt$(d)}</b>. Winnings pay it back first.`:'Low on money but don’t want to reset? Borrow instead — your gear stays.'}</span></div>
-  <button class="btn wide" data-a="borrow">Borrow $250,000</button>
+  <div class="small muted" style="margin:10px 0 6px">Borrow any amount, up to $250,000 at a time</div>
+  <div style="display:flex;gap:8px;margin-bottom:8px">${[10000,50000,100000,250000].map(v=>`<button class="btn" style="flex:1;padding:8px 0" data-a="borrowPick" data-v="${v}">${k$(v)}</button>`).join('')}</div>
+  <input class="input" id="borrowAmt" inputmode="numeric" value="250,000" aria-label="Amount to borrow" style="margin-bottom:8px">
+  <button class="btn wide" data-a="borrow">Borrow</button>
   <p class="small muted" style="text-align:center">What you owe counts against your leaderboard score. Each new day, cash below $1,000,000 is topped back up.</p>`);
 };

@@ -65,8 +65,8 @@ const ACT={
   legX:el=>{S.slip.splice(+el.dataset.i,1);save();if(!S.slip.length){closeSheet();render();}else renderSlip();},
   slipMode:el=>{S.slipMode=el.dataset.v;save();renderSlip();},
   stake:el=>{S.stake=+el.dataset.v;save();renderSlip();},
-  placeSlip:()=>{const c=slipCalc();if(!c.legs.length||c.risk<=0||c.risk>S.bank)return;setBank(-c.risk);
-    const mk=ls=>{const dec=ls.reduce((p,l)=>p*decOf(l.odds),1);return{id:Date.now()+rng(),legs:ls.map(l=>({...l})),stake:c.stake,dec,pay:Math.round(c.stake*dec),st:'open'};};
+  placeSlip:()=>{const c=slipCalc(),x=betX(),wx=winX();if(!c.legs.length||c.risk<=0||c.risk>S.bank)return;if(c.risk*x>S.bank){noFunds();return;}c.risk*=x;setBank(-c.risk);
+    const mk=ls=>{const dec=ls.reduce((p,l)=>p*decOf(l.odds),1),st=c.stake*x;return{id:Date.now()+rng(),legs:ls.map(l=>({...l})),stake:st,dec,pay:boostRet(Math.round(st*dec),st,wx),wx,st:'open'};};
     if(c.par)S.bets.push(mk(c.legs));else c.legs.forEach(l=>S.bets.push(mk([l])));
     S.slip=[];save();closeSheet();toast((c.par?'Parlay placed · ':c.legs.length>1?c.legs.length+' bets placed · ':'Bet placed · ')+fmt$(c.risk),'gold');render();},
   blg:el=>{S.blg=el.dataset.v;save();render();},
@@ -99,7 +99,7 @@ const ACT={
   vpdeal:()=>vpDeal(),
   vpdraw:()=>vpDraw(),
   vphold:el=>{if(VP.phase!=='draw')return;const i=+el.dataset.i;VP.held[i]=!VP.held[i];el.classList.toggle('h',VP.held[i]);el.parentNode.querySelector('.held').textContent=VP.held[i]?'HELD':'';},
-  crbet:el=>{if(CR.rolling)return;const k=el.dataset.k;if((k==='pass'||k==='dp')&&CR.point!=null){toast('Line bets go down on the come-out roll','loss');return;}const tot=Object.values(CR.bets).reduce((a,b)=>a+b,0);if(S.chip>S.bank){toast('Not enough in the bankroll','loss');return;}setBank(-S.chip);CR.bets[k]=(CR.bets[k]||0)+S.chip;CR.flash={};render();},
+  crbet:el=>{if(CR.rolling)return;const k=el.dataset.k;if((k==='pass'||k==='dp')&&CR.point!=null){toast('Line bets go down on the come-out roll','loss');return;}const tot=Object.values(CR.bets).reduce((a,b)=>a+b,0);const amt=S.chip*betX();if(amt>S.bank){noFunds();return;}setBank(-amt);CR.bets[k]=(CR.bets[k]||0)+amt;CR.flash={};render();},
   crclear:()=>{let back=0;for(const k of Object.keys(CR.bets)){if((k==='pass')&&CR.point!=null)continue;back+=CR.bets[k];delete CR.bets[k];}if(back)setBank(back);render();},
   crroll:()=>crRoll(),
 };

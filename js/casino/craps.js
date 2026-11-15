@@ -29,8 +29,8 @@ function crRoll(){
 }
 function crResolve(){
   const [a,b]=[1+rint(6),1+rint(6)]; CR.dice=[a,b]; const s=a+b; CR.rolling=false;
-  let ret=0, lost=0, notes=[]; const B=CR.bets;
-  const win=(k,mult)=>{ret+=B[k]*mult;CR.flash[k]=1;};
+  let ret=0, back=0, lost=0, notes=[]; const B=CR.bets;
+  const win=(k,mult)=>{ret+=B[k]*mult;back+=B[k];CR.flash[k]=1;};
   if(B.field){ if(s===2)win('field',3); else if(s===12)win('field',4); else if([3,4,9,10,11].includes(s))win('field',2); else lost+=B.field; delete B.field; }
   if(CR.point!=null){
     if(B.p6&&s===6){ret+=Math.floor(B.p6*7/6);CR.flash.p6=1;notes.push('Place 6 hits');}
@@ -38,13 +38,14 @@ function crResolve(){
   }
   if(CR.point==null){
     if([7,11].includes(s)){ if(B.pass){win('pass',2);delete B.pass;} if(B.dp){lost+=B.dp;delete B.dp;} notes.push(s+' — natural! Pass wins'); }
-    else if([2,3,12].includes(s)){ if(B.pass){lost+=B.pass;delete B.pass;} if(B.dp){ if(s===12){ret+=B.dp;notes.push('12 — Don’t Pass pushes');} else {win('dp',2);} delete B.dp;} notes.push(s+' — craps'); }
+    else if([2,3,12].includes(s)){ if(B.pass){lost+=B.pass;delete B.pass;} if(B.dp){ if(s===12){ret+=B.dp;back+=B.dp;notes.push('12 — Don’t Pass pushes');} else {win('dp',2);} delete B.dp;} notes.push(s+' — craps'); }
     else { CR.point=s; notes.push('Point is '+s); }
   } else {
     if(s===CR.point){ if(B.pass){win('pass',2);delete B.pass;} if(B.dp){lost+=B.dp;delete B.dp;} notes.push('Hit the point! '+s); CR.point=null; }
     else if(s===7){ ['pass','p6','p8'].forEach(k=>{if(B[k]){lost+=B[k];delete B[k];}}); if(B.dp){win('dp',2);delete B.dp;} notes.push('Seven out'); CR.point=null; }
     else notes.push('Rolled '+s);
   }
+  ret=boostRet(ret,back);   // drink power on the winnings
   if(ret){setBank(ret);toast('+'+fmt$(ret),'win');}
   CR.msg=notes.join(' · ')+(ret?` · paid ${fmt$(ret)}`:lost?` · lost ${fmt$(lost)}`:''); CR.mcls=ret?'win':lost?'loss':'gold';
   render();

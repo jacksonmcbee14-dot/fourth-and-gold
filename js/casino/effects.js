@@ -1,19 +1,33 @@
 // Visual effects: coins, confetti, snow, fireworks, sleigh, count-up
 /* ---------- Effects (particles on a full-screen canvas) ---------- */
-const fx=(()=>{let c,x,P=[],run=false,W=0,H=0;
+const fx=(()=>{let c,x,P=[],run=false,W=0,H=0,last=0,D=1;
+  const MAXP=900;   // a hard cap so stacked celebrations (jackpot + fireworks + snow) can't swamp a phone
   function init(){if(c)return;c=document.createElement('canvas');c.id='fx';document.body.appendChild(c);x=c.getContext('2d');rs();addEventListener('resize',rs);}
-  function rs(){const d=Math.min(2,devicePixelRatio||1);W=innerWidth;H=innerHeight;c.width=W*d;c.height=H*d;x.setTransform(d,0,0,d,0,0);}
-  function add(p){P.push(p);if(!run){run=true;requestAnimationFrame(loop);}}
-  function loop(){x.clearRect(0,0,W,H);
-    for(let i=P.length-1;i>=0;i--){const p=P[i];if(p.delay>0){p.delay-=16;continue;}p.vy+=p.g;p.vx*=p.drag;p.vy*=p.drag;p.x+=p.vx;p.y+=p.vy;p.rot+=p.vr;p.life--;
-      if(p.y>H+40||p.life<=0||p.x<-60||p.x>W+60){P.splice(i,1);continue;}draw(p);}
-    if(P.length)requestAnimationFrame(loop);else{run=false;x.clearRect(0,0,W,H);}}
-  function draw(p){x.save();x.translate(p.x,p.y);x.globalAlpha=Math.min(1,p.life/30);
-    if(p.t==='coin'){x.rotate(p.tilt);x.scale(Math.max(.12,Math.abs(Math.cos(p.rot))),1);const r=p.r,g=x.createLinearGradient(-r,-r,r,r);g.addColorStop(0,'#f6ebcb');g.addColorStop(.5,'#c8a45c');g.addColorStop(1,'#6b5228');x.fillStyle=g;x.beginPath();x.arc(0,0,r,0,6.3);x.fill();x.strokeStyle='#5e4520';x.lineWidth=1.4;x.stroke();x.beginPath();x.arc(0,0,r*.68,0,6.3);x.strokeStyle='rgba(122,78,14,.45)';x.stroke();}
-    else if(p.t==='conf'){x.rotate(p.rot);x.scale(1,Math.cos(p.rot*2));x.fillStyle=p.c;x.fillRect(-p.r,-p.r/2.4,p.r*2,p.r/1.2);}
-    else if(p.t==='snow'){x.fillStyle='rgba(243,234,216,.9)';x.beginPath();x.arc(0,0,p.r,0,6.3);x.fill();}
-    else{x.rotate(p.rot);x.strokeStyle=p.c;x.lineWidth=2;x.shadowColor=p.c;x.shadowBlur=8;x.beginPath();x.moveTo(-p.r,0);x.lineTo(p.r,0);x.moveTo(0,-p.r);x.lineTo(0,p.r);x.stroke();}
-    x.restore();}
+  function rs(){D=Math.min(2,devicePixelRatio||1);W=innerWidth;H=innerHeight;c.width=W*D;c.height=H*D;}
+  function add(p){if(P.length>=MAXP)return;P.push(p);if(!run){run=true;last=0;requestAnimationFrame(loop);}}
+  // Each particle is pre-drawn once onto a small canvas, then just stamped with drawImage each frame
+  // (no per-frame gradients or glow blurs). The look is the same as drawing them live.
+  const SPR={};
+  function sprite(key,size,draw){if(SPR[key])return SPR[key];const s=document.createElement('canvas');s.width=s.height=size;const g=s.getContext('2d');g.translate(size/2,size/2);draw(g);return SPR[key]=s;}
+  const coinSpr=()=>sprite('coin',56,g=>{const r=26,gr=g.createLinearGradient(-r,-r,r,r);gr.addColorStop(0,'#f6ebcb');gr.addColorStop(.5,'#c8a45c');gr.addColorStop(1,'#6b5228');g.fillStyle=gr;g.beginPath();g.arc(0,0,r,0,6.3);g.fill();g.strokeStyle='#5e4520';g.lineWidth=2.8;g.stroke();g.beginPath();g.arc(0,0,r*.68,0,6.3);g.strokeStyle='rgba(122,78,14,.45)';g.lineWidth=2;g.stroke();});
+  const sparkSpr=col=>sprite('spark'+col,48,g=>{const r=10;g.strokeStyle=col;g.lineWidth=4;g.shadowColor=col;g.shadowBlur=16;g.beginPath();g.moveTo(-r,0);g.lineTo(r,0);g.moveTo(0,-r);g.lineTo(0,r);g.stroke();});
+  const snowSpr=()=>sprite('snow',16,g=>{g.fillStyle='rgba(243,234,216,.9)';g.beginPath();g.arc(0,0,7,0,6.3);g.fill();});
+  // Motion is time-based: a dropped frame moves particles further instead of slowing the whole effect down.
+  function loop(now){const f=last?Math.min(3,(now-last)/16.667):1;last=now;
+    x.setTransform(D,0,0,D,0,0);x.clearRect(0,0,W,H);
+    for(let i=P.length-1;i>=0;i--){const p=P[i];if(p.delay>0){p.delay-=16.667*f;continue;}
+      const dr=p.drag===1?1:Math.pow(p.drag,f);p.vy+=p.g*f;p.vx*=dr;p.vy*=dr;p.x+=p.vx*f;p.y+=p.vy*f;p.rot+=p.vr*f;p.life-=f;
+      if(p.y>H+40||p.life<=0||p.x<-60||p.x>W+60){P[i]=P[P.length-1];P.pop();continue;}draw(p);}
+    x.globalAlpha=1;
+    if(P.length)requestAnimationFrame(loop);else{run=false;x.setTransform(1,0,0,1,0,0);x.clearRect(0,0,c.width,c.height);}}
+  function draw(p){x.globalAlpha=Math.min(1,p.life/30);
+    if(p.t==='coin'){const ct=Math.cos(p.tilt),st=Math.sin(p.tilt),sx=Math.max(.12,Math.abs(Math.cos(p.rot)))*p.r/26;
+      x.setTransform(D*ct*sx,D*st*sx,-D*st*p.r/26,D*ct*p.r/26,D*p.x,D*p.y);x.drawImage(coinSpr(),-28,-28);}
+    else if(p.t==='conf'){const cr=Math.cos(p.rot),sr=Math.sin(p.rot),k=Math.cos(p.rot*2);
+      x.setTransform(D*cr,D*sr,-D*sr*k,D*cr*k,D*p.x,D*p.y);x.fillStyle=p.c;x.fillRect(-p.r,-p.r/2.4,p.r*2,p.r/1.2);}
+    else if(p.t==='snow'){const k=p.r/7;x.setTransform(D*k,0,0,D*k,D*p.x,D*p.y);x.drawImage(snowSpr(),-8,-8);}
+    else{const k=p.r/10,cr=Math.cos(p.rot)*k,sr=Math.sin(p.rot)*k;x.setTransform(D*cr,D*sr,-D*sr,D*cr,D*p.x,D*p.y);x.drawImage(sparkSpr(p.c),-24,-24);}
+  }
   const R=(a,b)=>a+Math.random()*(b-a);
   return{
     coins(n,dur=2000){init();for(let i=0;i<n;i++)add({t:'coin',x:R(0,W),y:R(-80,-10),vx:R(-1,1),vy:R(2,5),g:.2,drag:.996,rot:R(0,6),vr:R(.08,.22),tilt:R(-.4,.4),r:R(7,13),life:420,delay:R(0,dur)});},

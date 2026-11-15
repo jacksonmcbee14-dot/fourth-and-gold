@@ -128,7 +128,7 @@ function settleBets(){
     if(b.st!=='open')continue;
     const rs=b.legs.map(l=>legRes(l,gs)); b.legs.forEach((l,i)=>{if(rs[i])l.r=rs[i];});
     if(rs.includes('lost')) b.st='lost';
-    else if(rs.every(r=>r)){ if(rs.every(r=>r==='push')){b.st='push';b.pay=b.stake;} else {b.st='won';b.pay=Math.round(b.stake*b.legs.reduce((p,l,i)=>p*(rs[i]==='won'?decOf(l.odds):1),1));} }
+    else if(rs.every(r=>r)){ if(rs.every(r=>r==='push')){b.st='push';b.pay=b.stake;} else {b.st='won';b.pay=boostRet(Math.round(b.stake*b.legs.reduce((p,l,i)=>p*(rs[i]==='won'?decOf(l.odds):1),1)),b.stake,b.wx||1);} }
     else continue;
     changed=true;
     if(b.st==='won'){S.bank+=b.pay;net+=b.pay-b.stake;S.picks.w++;}
