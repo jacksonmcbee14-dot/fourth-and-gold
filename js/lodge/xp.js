@@ -36,7 +36,7 @@ function levelUp(a,b){
   const el=document.createElement('div'); el.className='lvlup';
   el.innerHTML=`<div class="lvl-box"><div class="lvl-k">LEVEL UP!</div><div class="lvl-n">${b}</div>
     <div class="lvl-t">${newTitle?'NEW TITLE<br>':''}${t1.toUpperCase()}</div>
-    <div class="lvl-s">${newTitle?'The whole lodge knows your name now.':'Keep climbing — the merchant saves the best for regulars.'}</div><div class="lvl-tap">TAP TO CONTINUE</div></div>`;
+    <div class="lvl-s">${(()=>{const u=typeof unlocksBetween==='function'?unlocksBetween(a,b):[];return u.length?'New at the merchant: '+u.map(esc).join(', '):newTitle?'The whole lodge knows your name now.':'Keep climbing — the merchant saves the best for regulars.';})()}</div><div class="lvl-tap">TAP TO CONTINUE</div></div>`;
   document.body.appendChild(el);
   [523,659,784,1047,1319].forEach((f,i)=>tone(f,.16,'square',.05,i*.09)); tone(1568,.5,'square',.05,.5);
   try{ fx.confetti(newTitle?200:120); fx.burst(innerWidth/2,innerHeight*.4,60,'#ecd9a8'); if(newTitle) fireworks(4); }catch(e){}

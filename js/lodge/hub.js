@@ -8,7 +8,7 @@ const SPOTS=[ // [id, x, y, w, h, label, where it goes, where you stand]   (TV i
   ['hazard', 137,106, 26, 78,'The Hazard Room · Craps',  {mode:'casino',ctab:'craps'},[146,198]],
   ['slots',  164,118, 28, 66,'Jingle Jackpot · Slots',   {mode:'casino',ctab:'slots'},[150,200]],
   ['stairs', 156,192, 36, 76,'Staircase · My Room',      {soon:'My Room opens in pass e — decorate it with what you buy.'},[154,268]],
-  ['merchant',22,218, 58, 46,'The Merchant · Shop',      {soon:'The merchant sets up shop in pass d.'},[46,272]],
+  ['merchant',22,218, 58, 46,'The Merchant · Shop',      {shop:true},[46,272]],
   ['bar',      0,262, 88, 58,'The Bar · Drinks',         {bar:true},[40,288]],
   ['book',   104,270, 88, 50,'Sportsbook · Bets',        {mode:'football',ftab:'bets'},[140,288]],
 ];
@@ -130,7 +130,7 @@ function makeHub(host,onSpot){
     if(moving){ const st=Math.min(d,me.speed*dt); me.x+=dx/d*st; me.y+=dy/d*st; if(Math.abs(dx)>0.5) me.face=dx<0?-1:1; me.walkT+=dt; }
     else if(me.arrive){ const a=me.arrive; me.arrive=null; clearTimeout(me.backup); setTimeout(a,60); }
     const bob=!moving&&Math.sin(t*2)>.6?1:0, fr=moving?'walk'+((me.walkT*10|0)%4):(Math.sin(t*.8)>.97?'idle1':'idle0');
-    drawPerson(ctx,'player',fr,look,me.x,me.y+bob,me.face);
+    drawPerson(ctx,'player',fr,lodgeLook(),me.x,me.y+bob,me.face);
     drawHeld(ctx,me.x,me.y+bob,me.face,t);
     // tap flash
     if(flash){ const k=(performance.now()-flash.at)/350; if(k>=1) flash=null; else { ctx.globalAlpha=.45*(1-k); rect(ctx,flash.x,flash.y,flash.w,flash.h,LP.brass2); ctx.globalAlpha=1; } }

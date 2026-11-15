@@ -5,7 +5,7 @@
 S.lodge=Object.assign({choice:'lodge',lastFull:'',owned:[],outfit:{},room:[],xp:0},S.lodge||{});
 const LODGE={el:null,stage:null,scene:null,hub:null,welcome:null,active:false,labelsT:0,hudT:0};
 const lodgeActive=()=>LODGE.active;
-function lodgeLook(){ return S.lodge.look||null; }
+function lodgeLook(){ return typeof outfitLook==='function'?outfitLook():null; }   // your outfit (js/lodge/shop.js)
 
 function lodgeDom(){
   if(LODGE.el) return;
@@ -28,7 +28,7 @@ function lodgeHide(){
   if(LODGE.hub) LODGE.hub.loop.stop(); if(LODGE.welcome) LODGE.welcome.stop();
   lodgeHeaderBtn();
 }
-function clearScene(){ if(typeof closeBar==='function') closeBar(); if(LODGE.hub){LODGE.hub.loop.stop();LODGE.hub=null;} if(LODGE.welcome){LODGE.welcome.stop();LODGE.welcome=null;} LODGE.stage.innerHTML=''; LODGE.el.querySelector('.lg-labels').innerHTML=''; LODGE.el.querySelector('.lg-choice').innerHTML=''; }
+function clearScene(){ if(typeof closeBar==='function') closeBar(); if(typeof closeShop==='function') closeShop(); if(LODGE.hub){LODGE.hub.loop.stop();LODGE.hub=null;} if(LODGE.welcome){LODGE.welcome.stop();LODGE.welcome=null;} LODGE.stage.innerHTML=''; LODGE.el.querySelector('.lg-labels').innerHTML=''; LODGE.el.querySelector('.lg-choice').innerHTML=''; }
 
 /* ---------- Welcome and the two-button choice ---------- */
 function lodgeWelcome(){
@@ -61,6 +61,7 @@ function goSpot(s){
   const dest=s[6];
   if(dest.soon){ toast(dest.soon,'gold'); return; }
   if(dest.bar){ openBar(); return; }
+  if(dest.shop){ openShop(); return; }
   S.mode=dest.mode; if(dest.ftab) S.ftab=dest.ftab; if(dest.ctab) S.ctab=dest.ctab;
   if(dest.ctab&&S.howto) S.howto[dest.ctab]=false;
   LODGE.from=true; save(); lodgeHide(); scrollTo(0,0); render();

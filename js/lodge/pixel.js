@@ -54,6 +54,7 @@ function personSprite(who,frame,colors){
   const rows=BODY_TOP.map((r,i)=>frame==='idle1'&&i===6?r.replace(/k/g,'s'):r).concat(TORSO[t],LEGS[l]);
   const c=document.createElement('canvas'); c.width=12; c.height=rows.length; const x=c.getContext('2d');
   rows.forEach((r,y)=>[...r].forEach((ch,xx)=>{ if(ch!=='.'&&pal[ch]){ x.fillStyle=pal[ch]; x.fillRect(xx,y,1,1); } }));
+  if(colors&&colors._gear&&typeof drawGear==='function') drawGear(x,colors._gear,frame);   // hats, glasses, watch, carried item (js/lodge/shop.js)
   return SPR_CACHE[key]=c;
 }
 const PERSON_H=BODY_TOP.length+8+4;   // 21 pixels tall; feet at the bottom row
