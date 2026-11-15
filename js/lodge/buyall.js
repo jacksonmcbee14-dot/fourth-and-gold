@@ -2,7 +2,7 @@
 // and don't own yet, in the tab and filter you're looking at. Cheapest first, until the money runs out.
 // Nothing is put on; find the clothes in your Closet and the decor in My Room.
 
-const shopUnowned=()=>{ const lv=myLevel(); return shopList().filter(i=>!owns(i.id)&&i.lvl<=lv).sort((a,b)=>shopPrice(a)-shopPrice(b)); };
+const shopUnowned=()=>{ const lv=myLevel(); return shopList().filter(i=>!owns(i.id)&&i.lvl<=lv&&(!i.diamond||(typeof diamondOk==='function'&&diamondOk()))).sort((a,b)=>shopPrice(a)-shopPrice(b)); };
 const _renderShopBA=renderShop;
 renderShop=function(){
   _renderShopBA();

@@ -13,7 +13,7 @@ const socLeagueCode=()=>{ const l=socLeague(); return l?l.code:''; };
 async function srpc(fn,args){ const r=await rpc(fn,Object.assign({p_token:PROF.me.token},args||{})); if(r&&r.error==='signed_out'){ setMe(null); SOC.me=null; } return r; }
 
 /* ---------- Money that isn't winnings ---------- */
-function addGift(n){ if(!(n>0)) return; S.gifts=(S.gifts||0)+n; S.bank=Math.round(S.bank+n); if(S.bank>S.peak) S.peak=S.bank; save(); const el=$('#bankVal'); if(el) el.textContent=fmt$(S.bank); if(typeof hudBank==='function') hudBank(); }
+function addGift(n){ if(!(n>0)) return; S.gifts=(S.gifts||0)+n; S.bank=Math.round(S.bank+n); if(S.bank>S.peak) S.peak=S.bank; save(); const el=$('#bankVal'); if(el) el.textContent=bank$(S.bank); if(typeof hudBank==='function') hudBank(); }
 const _buyItem=buyItem;
 buyItem=function(id){ const before=S.bank; _buyItem(id); const spent=before-S.bank; if(spent>0){ S.spent=(S.spent||0)+spent; save(); } };
 const leagueScoreRaw=()=>scoreNow()-(S.topups||0)-(S.gifts||0)+(S.spent||0);

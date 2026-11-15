@@ -18,7 +18,7 @@ const _renderL=render;
 render=function(){
   if(S.mode!=='league'){ _renderL(); $('#mode').classList.remove('league'); socBadge(); return; }
   document.body.classList.add('calm');
-  $('#bankVal').textContent=fmt$(S.bank);
+  $('#bankVal').textContent=bank$(S.bank);
   const m=$('#mode'); m.classList.remove('casino'); m.classList.add('league');
   m.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v==='league'));
   $('#tabbar').style.gridTemplateColumns=`repeat(${LTABS.length},1fr)`;
@@ -88,7 +88,7 @@ function viewLeague(){
   if(!V) return html+`<div class="empty">Loading standings…</div>`;
   const champ=V.champs&&V.champs[0];
   html+=`<div class="sechead"><h2>This week</h2><span class="aside">Winnings since Monday</span></div><div class="panel lgx-table">${V.members.map((p,i)=>`
-    <div class="lgx-row ${p.me?'me':''}"><span class="no">${i+1}</span>${avatar(lookFor(p.outfit))}<div class="nm"><b>${esc(p.name)}</b>${champ&&champ.name===p.name?' <span title="Last week’s champion">👑</span>':''}<small class="muted">Lv ${levelOf(p.xp).L}${p.titles?` · ${p.titles}× champ`:''}</small></div>
+    <div class="lgx-row ${p.me?'me':''}"><span class="no">${i+1}</span>${avatar(lookFor(p.outfit))}<div class="nm"><b>${esc(p.name)}</b>${p.vip==='diamond'?' <span title="Diamond table">💎</span>':''}${champ&&champ.name===p.name?' <span title="Last week’s champion">👑</span>':''}<small class="muted">Lv ${levelOf(p.xp).L}${p.titles?` · ${p.titles}× champ`:''}</small></div>
     <span class="pf ${p.profit>=0?'up':'down'} mono">${signedK(p.profit)}</span>${p.me?'':`<button class="btn sm" data-a="chNew" data-to="${esc(p.name)}">⚔️</button>`}</div>`).join('')}</div>`;
   html+=`<div class="sechead"><h2>League feed</h2><span class="aside">Tap to talk trash</span></div><div class="lgx-taunts">${TAUNTS.map((t,i)=>`<button data-a="lgTaunt" data-n="${i}">${esc(t)}</button>`).join('')}</div>
     <div class="lgx-feed">${(V.feed||[]).map(feedItem).join('')||'<div class="empty">Nothing yet. Win something.</div>'}</div>`;

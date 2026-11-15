@@ -21,7 +21,7 @@ function repay(amount){ if(!(amount>0)||!(S.debt>0)) return 0; const r=Math.min(
 const _setBank=setBank;
 setBank=function(delta){ if(delta>0) delta-=repay(delta); _setBank(delta); };
 const _settleBets=settleBets;
-settleBets=function(){ const before=S.bank; _settleBets(); const gain=S.bank-before; if(gain>0&&S.debt>0){ S.bank-=repay(gain); save(); const el=$('#bankVal'); if(el) el.textContent=fmt$(S.bank); } };
+settleBets=function(){ const before=S.bank; _settleBets(); const gain=S.bank-before; if(gain>0&&S.debt>0){ S.bank-=repay(gain); save(); const el=$('#bankVal'); if(el) el.textContent=bank$(S.bank); } };
 
 // A reset starts completely fresh: bets, debt and all lodge gear are wiped. (Levels and XP stay.)
 function wipeForReset(){

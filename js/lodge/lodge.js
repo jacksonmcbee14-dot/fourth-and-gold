@@ -50,7 +50,7 @@ function lodgeHub(){
   LODGE.hub=makeHub(LODGE.stage,goSpot); LODGE.hub.loop.start();
   setHud('hub'); hudBank(); showLabels(3500); if(typeof xpHud==='function') xpHud();
 }
-function hudBank(){ const b=document.getElementById('lgBank'); if(b) b.textContent=fmt$(S.bank)+((S.debt||0)>0?' · owes '+k$(S.debt):''); }
+function hudBank(){ const b=document.getElementById('lgBank'); if(b) b.textContent=bank$(S.bank)+((S.debt||0)>0?' · owes '+k$(S.debt):''); }
 setInterval(()=>{ if(LODGE.active) hudBank(); },1000);
 function showLabels(ms){
   const box=LODGE.el.querySelector('.lg-labels');

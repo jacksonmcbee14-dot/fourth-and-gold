@@ -166,11 +166,29 @@ html[data-season=fall] .lodge[data-mode=welcome],html[data-season=fall] .lodge[d
 .gx-pick button.on{background:var(--gold);color:var(--ink);border-color:var(--gold)}
 .gx-pick.col{grid-template-columns:1fr}
 .gx-pick.col button{text-align:left;padding:12px 14px}.gx-pick.col small{display:block;font-weight:400;font-size:12px;opacity:.8}
-/* table minimum (js/economy.js): a small chip-style pill under the game title */
-.tblmin{display:inline-flex;align-items:center;gap:7px;margin:-8px 0 12px;padding:5px 12px 5px 6px;border-radius:999px;background:rgba(0,0,0,.28);border:1px solid rgba(200,164,92,.45);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+/* VIP table pill under each game title (js/economy.js): tap it to choose your table */
+.tblmin{display:inline-flex;align-items:center;gap:7px;margin:-8px 0 12px;padding:5px 12px 5px 6px;border-radius:999px;background:rgba(0,0,0,.28);border:1px solid rgba(200,164,92,.45);font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
 .tblmin b{font-size:13px;letter-spacing:0;color:var(--gold2)}
-.tblmin i{width:16px;height:16px;border-radius:50%;background:radial-gradient(circle,#7d1f2a 0 38%,transparent 40%),repeating-conic-gradient(#f3ead8 0 30deg,#7d1f2a 30deg 60deg);box-shadow:0 0 0 1.5px #c8a45c}
+.tblmin i{font-style:normal;font-size:15px;line-height:1}
+.tblmin-c{margin-left:4px;padding-left:8px;border-left:1px solid var(--line2);color:var(--gold);font-size:11px}
+.tblmin.t-silver{border-color:#cfd9e0}.tblmin.t-gold{border-color:#ffd84a;box-shadow:0 0 14px rgba(255,216,74,.2)}.tblmin.t-diamond{border-color:#bff6ff;box-shadow:0 0 16px rgba(191,246,255,.3)}
 .chip span{white-space:nowrap}
+/* choosing a table */
+.vipx{display:flex;flex-direction:column;gap:8px}
+.vipx-t{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;text-align:left;background:var(--panel);border:1px solid var(--line2)}
+.vipx-t>div{flex:1;display:flex;flex-direction:column;gap:2px}.vipx-t span{font-family:var(--mono);color:var(--gold2)}.vipx-t small{color:var(--muted);line-height:1.35}
+.vipx-ic{font-size:28px}
+.vipx-t i{font-style:normal;font-size:12px;font-weight:700;color:var(--gold)}
+.vipx-t.on{border-color:var(--gold);background:rgba(200,164,92,.14)}
+.vipx-t:disabled{opacity:.45}
+.vipx-t.t-gold{border-color:rgba(255,216,74,.5)}.vipx-t.t-diamond{border-color:rgba(191,246,255,.55)}
+/* the tables themselves at Silver, Gold and Diamond */
+body.vip-silver .felt,body.vip-silver .cab{box-shadow:0 0 0 2px #cfd9e0,0 10px 30px rgba(0,0,0,.4)}
+body.vip-gold .felt,body.vip-gold .cab{box-shadow:0 0 0 2px #ffd84a,0 0 30px rgba(255,216,74,.25)}
+body.vip-gold .chip{box-shadow:0 3px 0 rgba(0,0,0,.4),inset 0 0 0 3px #ffd84a,inset 0 0 0 4px rgba(0,0,0,.35)}
+body.vip-diamond .felt,body.vip-diamond .cab{box-shadow:0 0 0 2px #bff6ff,0 0 34px rgba(191,246,255,.35);animation:vipglow 3s ease-in-out infinite}
+body.vip-diamond .chip{box-shadow:0 3px 0 rgba(0,0,0,.4),inset 0 0 0 3px #bff6ff,inset 0 0 0 4px rgba(0,0,0,.35)}
+@keyframes vipglow{50%{box-shadow:0 0 0 2px #e6fbff,0 0 46px rgba(191,246,255,.5)}}
 /* slot bet: the middle of − BET + is a tappable box (type any amount) */
 .betc button.betcust{width:auto;min-width:64px;height:auto;padding:3px 8px;border-radius:10px;background:rgba(0,0,0,.25);border:1px dashed rgba(200,164,92,.45);font-size:inherit;line-height:1.3;display:flex;flex-direction:column;align-items:center}
 .betc button.betcust i{font-style:normal;opacity:.8}

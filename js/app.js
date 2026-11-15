@@ -19,7 +19,7 @@ const CTABS=[['slots','Slots','slot'],['roulette','Roulette','roul'],['blackjack
 let lastViewKey='';
 function render(){
   document.body.classList.toggle('calm',S.mode==='football'||S.ctab==='ranks');   // calmer look for the football screens (css/09-calm.css)
-  $('#bankVal').textContent=fmt$(S.bank);
+  $('#bankVal').textContent=bank$(S.bank);
   const m=$('#mode'); m.classList.toggle('casino',S.mode==='casino');
   m.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v===S.mode));
   const tabs=S.mode==='football'?FTABS:CTABS, cur=S.mode==='football'?S.ftab:S.ctab;
