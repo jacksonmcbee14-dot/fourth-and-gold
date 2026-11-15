@@ -29,7 +29,7 @@ function duelDraw(){
     ${done?`<div class="duel-end"><div class="cel-t">${DUEL.chips.toLocaleString()} chips</div><p class="small muted" id="duelNote">${DUEL.o.onFinish?'Sending your score…':'Practice round'}</p>
       <div class="fgm-row"><button class="btn gold" data-a="duelShare">Share</button><button class="btn" data-a="duelClose">Done</button></div></div>`
     :`${P.picks?P.picks(DUEL.st,betting):''}
-      ${betting?`<div class="duel-amts">${amts.map((v,i)=>`<button class="${DUEL.amt===v?'on':''}" data-a="duelAmt" data-v="${v}" ${v>DUEL.chips||v<=0?'disabled':''}>${i===3?'All in':v}</button>`).join('')}</div>`:''}
+      ${betting?`<div class="duel-amts">${amts.map((v,i)=>`<button class="${DUEL.amt===v?'on':''}" data-a="duelAmt" data-v="${v}" ${v>DUEL.chips||v<=0?'disabled':''}>${i===3?'All in':v}</button>`).join('')}<button class="${amts.includes(DUEL.amt)?'':'on'}" data-a="duelCustom">${amts.includes(DUEL.amt)?'Custom':DUEL.amt}</button></div>`:''}
       <div class="duel-acts">${P.actions(DUEL.st,betting)}</div>`}
   </div>`,'duelbox stay');
   if(done&&!DUEL.sent){ DUEL.sent=true; duelFinish(); }

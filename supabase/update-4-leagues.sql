@@ -78,7 +78,7 @@ create table if not exists public.fg_challenges (
   to_id      uuid not null references public.fg_players(id) on delete cascade,
   game       text not null,
   seed       integer not null default 0,
-  stake      bigint not null default 0 check (stake between 0 and 5000000),
+  stake      bigint not null default 0 check (stake between 0 and 1000000000000),
   data       jsonb not null default '{}'::jsonb,
   from_score integer,
   to_score   integer,
@@ -388,7 +388,7 @@ begin
   select id into them from fg_players where name_key = lower(btrim(p_to));
   if them is null or them = me then return json_build_object('error','no_player'); end if;
   if p_game not in ('golf','pick','roulette','blackjack','poker','slots','craps') then return json_build_object('error','bad_game'); end if;
-  if p_stake < 0 or p_stake > 5000000 then return json_build_object('error','bad_stake'); end if;
+  if p_stake < 0 or p_stake > 1000000000000 then return json_build_object('error','bad_stake'); end if;
   if p_game <> 'pick' and p_score is null then return json_build_object('error','no_score'); end if;
   if p_game = 'pick' and (p_data->>'gid') is null then return json_build_object('error','no_game'); end if;
   if (select count(*) from fg_challenges where from_id = me and status = 'open') >= 20 then return json_build_object('error','too_many'); end if;

@@ -3,7 +3,7 @@
 const SLOT_BETS=[2000,5000,10000,25000,50000,100000,250000];
 const MAXBET=SLOT_BETS[SLOT_BETS.length-1];
 const SL={stops:STRIPS.map(s=>rint(s.length)),spinning:false,quick:false,fs:0,fsTotal:0,auto:0,lineTimer:null,anims:[],lastWin:0};
-const jpVal=t=>t.m*S.slotBet+(t.k==='grand'&&S.slotBet===MAXBET?S.jp:0);
+const jpVal=t=>t.m*S.slotBet+(t.k==='grand'&&S.slotBet>=MAXBET?S.jp:0);
 const cellHTML=(s,cls='')=>`<div class="cell ${cls}"><svg viewBox="0 0 100 100"><use href="#s-${s}"/></svg></div>`;
 function reelHTML(r){const L=STRIPS[r].length,i=SL.stops[r];return `<div class="strip">${[0,1,2].map(k=>cellHTML(STRIPS[r][(i+k)%L])).join('')}</div>`;}
 function ladderHTML(){
@@ -22,20 +22,20 @@ function viewSlots(){
     <div class="meters"><div><span>Credit</span><b class="mono" id="slBal">${cmp$(S.bank)}</b></div><div class="wm"><span>Win</span><b class="mono" id="slWin">${SL.lastWin?fmt$(SL.lastWin):'—'}</b></div><div><span>Bet</span><b class="mono" id="slBet">${cmp$(S.slotBet)}</b></div></div>
     <div class="slmsg" id="slMsg">${SL.fs>0?SL.fs+' free games waiting — tap Spin':'Any spin can light the Golden Star'}</div>
     <div class="ctrl">
-      <div class="betc"><button data-a="slBet" data-v="-1" aria-label="Lower bet">−</button><div><span>Bet</span><b class="mono" id="slBet2">${cmp$(S.slotBet)}</b></div><button data-a="slBet" data-v="1" aria-label="Raise bet">+</button></div>
+      <div class="betc"><button data-a="slBet" data-v="-1" aria-label="Lower bet">−</button><button data-a="slCustom" class="betcust" aria-label="Type a custom bet"><span>Bet · tap to type</span><b class="mono" id="slBet2">${cmp$(S.slotBet)}</b></button><button data-a="slBet" data-v="1" aria-label="Raise bet">+</button></div>
       <button class="spin" id="spinBtn" data-a="slSpin"><span>SPIN</span></button>
       <div class="side"><button class="pillb" id="autoBtn" data-a="slAuto">AUTO</button><button class="pillb ${S.turbo?'on':''}" id="turboBtn" data-a="slTurbo">TURBO</button><button class="pillb ${S.sound?'on':''}" id="sndBtn" data-a="slSound">${S.sound?'SOUND':'MUTED'}</button></div>
     </div>
   </div>`;
 }
 function slUI(){
-  setText('#slBal',cmp$(S.bank));setText('#slBet',cmp$(S.slotBet));setText('#slBet2',cmp$(S.slotBet)+(S.slotBet===MAXBET?' MAX':''));
+  setText('#slBal',cmp$(S.bank));setText('#slBet',cmp$(S.slotBet));setText('#slBet2',cmp$(S.slotBet)+(S.slotBet>=MAXBET?' MAX':''));
   JPT.forEach(t=>setText(`[data-j=${t.k}]`,cmp$(jpVal(t))));
   const b=$('#spinBtn');if(b){b.classList.toggle('free',SL.fs>0&&!SL.spinning);b.classList.toggle('going',SL.spinning);b.firstChild.textContent=SL.spinning?'STOP':SL.fs>0?'FREE':'SPIN';}
   const a=$('#autoBtn');if(a){a.classList.toggle('on',SL.auto>0);a.textContent=SL.auto>0?'STOP '+SL.auto:'AUTO';}
   const on=SL.fs>0||SL.fsTotal>0, f=$('#fsb');if(f){f.classList.toggle('on',on);f.textContent=`Free games · ${SL.fs} left · wins ×${FS_MULT} · ${cmp$(SL.fsTotal)}`;}
   const c=$('#cab');if(c)c.classList.toggle('fsmode',on);
-  document.querySelectorAll('[data-a=slBet]').forEach(x=>x.disabled=SL.spinning||SL.fs>0);
+  document.querySelectorAll('[data-a=slBet],[data-a=slCustom]').forEach(x=>x.disabled=SL.spinning||SL.fs>0);
 }
 const cellsOf=r=>{const reel=document.querySelectorAll('#reels .reel')[r];return reel?[...reel.querySelectorAll('.cell')]:[];};
 function clearLines(){clearInterval(SL.lineTimer);SL.lineTimer=null;document.querySelectorAll('#reels .cell').forEach(c=>c.classList.remove('hit','dim'));}
@@ -190,6 +190,7 @@ async function slotSpin(){
   let win=wins.reduce((s,w)=>s+w.amt,0);
   if(res.scat)win+=res.scat[0]*bet*mult;
   if(wx!==1&&win>0){ win=Math.round(win*wx); wins.forEach(w=>w.amt=Math.round(w.amt*wx)); }   // drink power on the winnings
+  if(win>0&&typeof capWin==='function'){ const c=capWin(win,bet); if(c<win){ const k=c/win; wins.forEach(w=>w.amt=Math.round(w.amt*k)); win=c; } }   // high-roller limit (js/economy.js)
   SL.spinning=false;
   if(free)SL.fsTotal+=win;
   if(win>0)setBank(win);
@@ -206,8 +207,8 @@ async function slotSpin(){
     SL.auto=0;slUI();
     await starTrigger();
     const W=await pickBonus();
-    const amt=Math.round(jpVal(W)*wx);
-    if(W.k==='grand'&&S.slotBet===MAXBET)S.jp=2500000;
+    const amt=typeof capWin==='function'?capWin(Math.round(jpVal(W)*wx),bet):Math.round(jpVal(W)*wx);
+    if(W.k==='grand'&&S.slotBet>=MAXBET)S.jp=2500000;
     setBank(amt);SL.lastWin+=amt;
     const lp=document.querySelector(`.jpl.${W.k}`);if(lp){lp.classList.add('hitjp');setTimeout(()=>lp.classList.remove('hitjp'),6000);}
     await bigWin(amt,W.k==='grand'?'jackpot':W.k==='major'?'epic':W.k==='maxi'?'mega':'big',W.n+' Jackpot');

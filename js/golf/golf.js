@@ -24,7 +24,48 @@ const GOLF_HOLES=[
   {par:4,len:395,fair:[[0,30,-8,212,20],[-8,212,42,352,18]],green:[48,380,13,11],sand:[[30,372,6,5],[64,386,5,5],[-22,216,8,5]],water:[[74,250,18,42]],
    trees:[[-44,300,10],[-30,350,9],[20,120,9],[-36,110,8],[8,270,8]],deco:[[-16,2,'gift'],[14,2,'man']]},
 ];
-const GOLF_PAR=GOLF_HOLES.reduce((s,h)=>s+h.par,0);
+// Three more holes for the home course, so it can be played as 3, 6 or 9.
+GOLF_HOLES.push(
+  {par:4,len:370,fair:[[0,30,-20,200,20],[-20,200,10,345,18]],green:[12,360,13,11],sand:[[-2,370,6,4],[30,352,6,5]],water:[[-62,282,22,30]],
+   trees:[[32,150,9],[-50,120,9],[42,262,9],[-42,362,8]],deco:[[16,2,'man']]},
+  {par:3,len:135,fair:[[0,16,0,30,10]],green:[-6,130,13,11],sand:[[10,122,5,4],[-21,138,5,4],[-6,146,7,3]],water:[],
+   trees:[[-36,70,8],[30,92,8]],deco:[[-14,0,'gift']]},
+  {par:5,len:505,fair:[[0,30,-24,240,22],[-24,240,20,470,20]],green:[24,492,15,12],sand:[[2,252,8,5],[6,487,5,4],[44,500,6,5]],water:[[46,330,24,20],[-140,412,-34,412,6]],
+   trees:[[-52,100,10],[32,130,9],[-62,320,10],[64,420,9],[-32,474,9]],deco:[[16,2,'man'],[-16,2,'gift']]});
+// Ridgeback Pines: narrow, tree-lined fairways and sharp doglegs.
+const RIDGE_HOLES=[
+  {par:4,len:350,fair:[[0,30,0,330,16]],green:[0,340,12,10],sand:[[17,332,5,4]],water:[],trees:[[-27,80,8],[27,110,8],[-27,160,8],[27,200,8],[-27,250,8],[27,290,8]],deco:[[14,2,'man']]},
+  {par:3,len:165,fair:[[0,16,0,30,9]],green:[10,160,12,10],sand:[[-6,156,6,4],[25,168,5,4]],water:[],trees:[[-22,90,9],[32,100,9],[-16,176,7]],deco:[[-14,0,'gift']]},
+  {par:4,len:380,fair:[[0,30,0,220,16],[0,220,60,350,15]],green:[66,368,12,10],sand:[[50,374,5,4]],water:[],trees:[[30,170,12],[34,216,12],[-30,140,9],[-20,282,9],[92,330,9]],deco:[[14,2,'man']]},
+  {par:5,len:480,fair:[[0,30,-30,250,17],[-30,250,10,450,16]],green:[12,470,13,11],sand:[[-6,462,5,4],[-52,240,7,5]],water:[[32,330,14,16]],trees:[[-60,150,9],[12,160,9],[-10,332,9],[-58,330,9],[42,420,9]],deco:[[-14,2,'gift']]},
+  {par:4,len:330,fair:[[0,30,-10,300,15]],green:[-12,320,11,9],sand:[[-29,316,5,4],[5,310,5,4],[-12,300,6,3]],water:[],trees:[[22,100,9],[-34,180,9],[20,240,9],[-38,262,9]],deco:[[14,2,'man']]},
+  {par:3,len:190,fair:[[0,16,0,30,9]],green:[0,186,12,10],sand:[[15,192,5,4]],water:[[0,120,30,10]],trees:[[-32,60,8],[32,70,8],[-28,160,8]],deco:[[-14,0,'gift']]},
+  {par:4,len:400,fair:[[0,30,10,220,16],[10,220,-50,370,15]],green:[-56,388,12,10],sand:[[-40,395,5,4],[-72,376,4,4],[32,215,7,5]],water:[],trees:[[-26,170,12],[-30,216,12],[52,300,9],[-92,300,8]],deco:[[16,2,'man']]},
+  {par:4,len:310,fair:[[0,30,0,280,15]],green:[0,298,11,9],sand:[[0,283,10,3]],water:[],trees:[[-25,60,8],[25,90,8],[-25,150,8],[25,180,8],[-25,240,8],[25,252,8]],deco:[[-14,2,'gift']]},
+  {par:5,len:520,fair:[[0,30,20,260,18],[20,260,-10,490,17]],green:[-10,508,13,11],sand:[[13,500,5,4],[-31,514,5,4]],water:[[-150,380,-22,380,6]],trees:[[-22,120,9],[52,150,9],[-22,262,10],[56,330,9],[22,420,9],[-52,450,9]],deco:[[16,2,'man']]},
+];
+// Twin Lakes: water everywhere — carries, an island green and a lake across the fairway.
+const LAKES_HOLES=[
+  {par:4,len:340,fair:[[0,30,0,300,20]],green:[0,330,13,11],sand:[[19,318,5,4]],water:[[-52,200,26,60],[52,150,22,40]],trees:[[-62,60,8],[62,300,8]],deco:[[14,2,'man']]},
+  {par:3,len:140,fair:[[0,16,0,26,9]],green:[0,132,12,10],sand:[],water:[[0,128,34,30]],trees:[[-40,40,8],[40,60,8]],deco:[[-14,0,'gift']]},
+  {par:4,len:370,fair:[[0,30,0,140,18],[0,200,10,350,18]],green:[12,362,13,11],sand:[[-4,371,5,4],[31,350,5,4]],water:[[-150,170,150,170,12]],trees:[[-52,100,9],[52,262,9]],deco:[[14,2,'man']]},
+  {par:5,len:490,fair:[[0,30,-20,240,20],[-20,240,10,460,18]],green:[12,478,13,11],sand:[[-4,470,5,4]],water:[[32,200,26,50],[-52,380,20,40]],trees:[[-62,140,9],[62,330,9],[42,470,8]],deco:[[-14,2,'gift']]},
+  {par:3,len:170,fair:[[0,16,0,30,9]],green:[14,166,13,10],sand:[[31,174,5,4],[0,177,5,3]],water:[[-20,120,40,30]],trees:[[50,80,9]],deco:[[14,0,'man']]},
+  {par:4,len:360,fair:[[0,30,-30,200,18],[-30,200,10,330,18]],green:[14,350,13,11],sand:[[0,359,5,4]],water:[[32,180,30,60]],trees:[[-72,150,9],[-42,300,9]],deco:[[-14,2,'gift']]},
+  {par:4,len:320,fair:[[0,30,0,290,18]],green:[0,310,12,10],sand:[[17,318,5,4]],water:[[0,160,40,14]],trees:[[-52,100,9],[52,140,9]],deco:[[14,2,'man']]},
+  {par:3,len:185,fair:[[0,16,0,30,9]],green:[-6,180,13,10],sand:[[-25,170,5,4]],water:[[32,150,30,40]],trees:[[-42,90,9]],deco:[[-14,0,'gift']]},
+  {par:5,len:510,fair:[[0,30,0,250,20],[0,250,-20,480,18]],green:[-22,498,14,11],sand:[[-41,490,5,4],[-6,511,5,3]],water:[[-150,330,150,330,10],[32,460,18,28]],trees:[[-62,150,9],[62,200,9],[-72,420,9]],deco:[[14,2,'man']]},
+];
+const GOLF_COURSES={
+  links:{name:()=>SEASON.course,blurb:'The home course. Wide, friendly, a pond or two.',holes:GOLF_HOLES},
+  ridge:{name:()=>'Ridgeback Pines',blurb:'Narrow fairways lined with pines. Doglegs everywhere.',holes:RIDGE_HOLES},
+  lakes:{name:()=>'Twin Lakes',blurb:'Water on every hole, and an island green.',holes:LAKES_HOLES},
+};
+const courseName=id=>(GOLF_COURSES[id]||GOLF_COURSES.links).name();
+const coursePar=(id,n)=>(GOLF_COURSES[id]||GOLF_COURSES.links).holes.slice(0,n||9).reduce((s,h)=>s+h.par,0);
+const GOLF_PAR=coursePar('links',6);
+const GH=()=>GOLF.list;
+const roundPar=()=>GH().reduce((s,h)=>s+h.par,0);
 const GPAL={
   holiday:{rough:['#dfe8ee','#cfdbe3'],fair:['#5a9a58','#4f8c4e'],green:['#72c86c','#66bc62'],sand:['#e9d6a2','#dcc68c'],water:['#a8d8ee','#c4e6f5'],oob:['#9fb0bf','#93a5b5'],leaf:['#1a4232','#24533e'],tip:'#f3ead8',flag:'#c0505a',pole:'cane',waterName:'Thin ice!'},
   winter: {rough:['#d6e0e6','#c7d3db'],fair:['#5a9058','#4f844e'],green:['#6ab866','#60ac5c'],sand:['#e1d0a2','#d4c08c'],water:['#a0cfe6','#bfe0f0'],oob:['#9fb0bf','#93a5b5'],leaf:['#163a2c','#1f4a38'],tip:'#f3ead8',flag:'#4a7fd0',pole:'#f3ead8',waterName:'Thin ice!'},
@@ -104,7 +145,7 @@ function paintCourse(){
 /* ---------- Setting up a round and a hole ---------- */
 function golfWind(seed,h){ const r=prng((seed||1)*97+h*13); const mph=Math.round(r()*14), a=r()*Math.PI*2; return {mph,a,x:Math.cos(a)*mph,y:Math.sin(a)*mph}; }
 function golfHole(i){
-  const H=Object.assign({},GOLF_HOLES[i]); const s=(PH-30)/(H.len+34); H.hw=(PW/s)/2-3; H.cup=[H.green[0]+(i%2?2:-2),H.green[1]+(i%3-1)*2];
+  const H=Object.assign({},GH()[i]); const s=(PH-30)/(H.len+34); H.hw=(PW/s)/2-3; H.cup=[H.green[0]+(i%2?2:-2),H.green[1]+(i%3-1)*2];
   GOLF.h=i; GOLF.H=H; GOLF.strokes=0; GOLF.ball=[0,0]; GOLF.prev=[0,0]; GOLF.wind=golfWind(GOLF.o.seed,i);
   golfNewShot(); golfMsg(`HOLE ${i+1} · PAR ${H.par}`,`${H.len} YARDS${GOLF.wind.mph?` · WIND ${GOLF.wind.mph} MPH`:' · NO WIND'}`,1800);
 }
@@ -195,22 +236,23 @@ function golfHoled(){
 }
 function golfHoleDone(){
   GOLF.cards[GOLF.h]=GOLF.strokes; if(typeof gainXP==='function') gainXP(6,'Golf hole');
-  if(GOLF.h+1<GOLF_HOLES.length) golfHole(GOLF.h+1); else golfFinish();
+  if(GOLF.h+1<GH().length) golfHole(GOLF.h+1); else golfFinish();
 }
 const vsPar=n=>n===0?'E':n>0?'+'+n:String(n);
 const golfTotal=()=>GOLF.cards.reduce((s,n)=>s+(n||0),0);
 async function golfFinish(){
-  GOLF.phase='card'; const tot=golfTotal(), rel=tot-GOLF_PAR;
-  S.golf=S.golf||{}; const best=S.golf.best; if(best==null||tot<best) S.golf.best=tot; S.golf.rounds=(S.golf.rounds||0)+1; save();
+  GOLF.phase='card'; const tot=golfTotal(), par=roundPar(), rel=tot-par, key=GOLF.o.course+'-'+GH().length;
+  S.golf=S.golf||{}; if(typeof S.golf.best!=='object'||!S.golf.best) S.golf.best=S.golf.best!=null?{'links-6':S.golf.best}:{};
+  const best=S.golf.best[key]; if(best==null||tot<best) S.golf.best[key]=tot; S.golf.rounds=(S.golf.rounds||0)+1; save();
   let note='';
   if(GOLF.o.onFinish){ try{ note=await GOLF.o.onFinish(tot)||''; }catch(e){ note='Couldn’t send your score. Check your connection.'; } }
-  else if(typeof socPost==='function') socPost('golf',SEASON.id,tot,rel);
+  else if(typeof socPost==='function') socPost('golf',GOLF.o.course,tot,rel);
   const box=GOLF.el.querySelector('.gf-card');
-  box.innerHTML=`<div class="gf-card-in"><div class="gf-k">${esc(SEASON.course.toUpperCase())}</div><div class="gf-big">${tot} <small>(${vsPar(rel)})</small></div>
-    ${best!=null&&tot<best?'<div class="gf-k gold">NEW PERSONAL BEST</div>':S.golf.best!=null?`<div class="gf-k">BEST ${S.golf.best}</div>`:''}
-    <table class="gf-tbl"><tr><th>HOLE</th>${GOLF_HOLES.map((h,i)=>`<th>${i+1}</th>`).join('')}<th>TOT</th></tr>
-    <tr><td>PAR</td>${GOLF_HOLES.map(h=>`<td>${h.par}</td>`).join('')}<td>${GOLF_PAR}</td></tr>
-    <tr><td>YOU</td>${GOLF.cards.map((n,i)=>`<td class="${n<GOLF_HOLES[i].par?'u':n>GOLF_HOLES[i].par?'o':''}">${n}</td>`).join('')}<td>${tot}</td></tr></table>
+  box.innerHTML=`<div class="gf-card-in"><div class="gf-k">${esc(courseName(GOLF.o.course).toUpperCase())} · ${GH().length} HOLES</div><div class="gf-big">${tot} <small>(${vsPar(rel)})</small></div>
+    ${best!=null&&tot<best?'<div class="gf-k gold">NEW PERSONAL BEST</div>':best!=null?`<div class="gf-k">BEST ${best}</div>`:''}
+    <table class="gf-tbl"><tr><th>HOLE</th>${GH().map((h,i)=>`<th>${i+1}</th>`).join('')}<th>TOT</th></tr>
+    <tr><td>PAR</td>${GH().map(h=>`<td>${h.par}</td>`).join('')}<td>${par}</td></tr>
+    <tr><td>YOU</td>${GOLF.cards.map((n,i)=>`<td class="${n<GH()[i].par?'u':n>GH()[i].par?'o':''}">${n}</td>`).join('')}<td>${tot}</td></tr></table>
     ${GOLF.cash?`<div class="gf-k gold">+${k$(GOLF.cash)} in birdie money</div>`:''}
     ${note?`<div class="gf-note">${esc(note)}</div>`:''}
     <div class="gf-row"><button class="lg-btn lg-gold" data-gf="share">SHARE</button>${GOLF.o.onFinish?'':`<button class="lg-btn lg-gold" data-gf="challenge">CHALLENGE A FRIEND</button>`}</div>
@@ -223,8 +265,8 @@ async function golfFinish(){
 function golfMsg(a,b,ms){ GOLF.msg={a,b,until:performance.now()+(ms||1200)}; }
 function golfHud(){
   const el=GOLF.el; if(!el) return; const H=GOLF.H, C=gclub(), b=GOLF.ball, lie=golfLie();
-  const tot=GOLF.cards.reduce((s,n,i)=>s+(n||0)-GOLF_HOLES[i].par,0);
-  el.querySelector('.gf-hole').textContent=`HOLE ${GOLF.h+1}/${GOLF_HOLES.length} · PAR ${H.par}`;
+  const tot=GOLF.cards.reduce((s,n,i)=>s+(n||0)-GH()[i].par,0);
+  el.querySelector('.gf-hole').textContent=`HOLE ${GOLF.h+1}/${GH().length} · PAR ${H.par}`;
   el.querySelector('.gf-tot').textContent=vsPar(tot);
   const toPin=Math.round(Math.hypot(H.cup[0]-b[0],H.cup[1]-b[1]));
   el.querySelector('.gf-info').innerHTML=`<span>STROKE ${GOLF.strokes+1}</span><span>${{tee:'TEE',fair:'FAIRWAY',rough:'ROUGH',sand:'BUNKER',green:'GREEN'}[lie]||''}</span><span>PIN ${toPin}Y</span>`;
@@ -307,11 +349,13 @@ const GF_ACT={
   },
   quit:()=>{ if(GOLF.phase!=='card'&&GOLF.cards.length+GOLF.strokes>0&&!confirm(GOLF.o.onFinish?'Leave the course? This challenge round will count as unfinished.':'Leave the course? This round won’t be saved.')) return; closeGolf(); },
   again:()=>{ const o=Object.assign({},GOLF.o); delete o.onFinish; delete o.vs; o.seed=Date.now()%100000; openGolf(o); },
-  share:()=>{ const tot=golfTotal(); if(typeof shareCard==='function') shareCard({kind:'golf',game:'Golf',title:vsPar(tot-GOLF_PAR)+' at '+SEASON.course,amount:null,big:String(tot),sub:GOLF.cards.join(' · ')+' · par '+GOLF_PAR}); },
+  share:()=>{ const tot=golfTotal(); if(typeof shareCard==='function') shareCard({kind:'golf',game:'golf',title:vsPar(tot-roundPar())+' at '+courseName(GOLF.o.course),amount:null,big:String(tot),sub:GH().length+' holes · '+GOLF.cards.join(' · ')+' · par '+roundPar()}); },
   challenge:()=>{ const tot=golfTotal(); closeGolf(); if(typeof challengeStart==='function') challengeStart({game:'golf'}); },
 };
 function openGolf(opts){
-  golfDom(); GOLF.o=Object.assign({seed:Date.now()%100000},opts||{}); GOLF.cards=[]; GOLF.cash=0; GOLF.tips=0;
+  golfDom(); GOLF.o=Object.assign({seed:Date.now()%100000,course:S.golfCourse||'links',holes:S.golfHoles||6},opts||{});
+  if(!GOLF_COURSES[GOLF.o.course]) GOLF.o.course='links'; if(![3,6,9].includes(+GOLF.o.holes)) GOLF.o.holes=6;
+  GOLF.list=GOLF_COURSES[GOLF.o.course].holes.slice(0,+GOLF.o.holes); GOLF.cards=[]; GOLF.cash=0; GOLF.tips=0;
   GOLF.el.classList.add('on'); document.body.classList.add('in-golf'); GOLF.el.querySelector('.gf-card').classList.remove('on');
   const vs=GOLF.el.querySelector('.gf-vs'); vs.textContent=GOLF.o.vs?GOLF.o.vs:''; vs.style.display=GOLF.o.vs?'':'none';
   GOLF.fallF=snowField(SEASON.snow?28:14,77);
