@@ -4,7 +4,7 @@
    ========================================================= */
 const $=s=>document.querySelector(s);
 const fmt$=n=>(n<0?'-$':'$')+Math.abs(Math.round(n)).toLocaleString('en-US');
-const k$=n=>n>=1e6?('$'+(n/1e6).toFixed(n%1e6?1:0)+'M'):n>=1e3?('$'+Math.round(n/1e3)+'K'):'$'+n;
+const k$=n=>n>=1e9?('$'+(n/1e9).toFixed(n%1e9?1:0)+'B'):n>=1e6?('$'+(n/1e6).toFixed(n%1e6?1:0)+'M'):n>=1e3?('$'+Math.round(n/1e3)+'K'):'$'+n;
 const pct=p=>(p>=.995?'>99':p<.005?'<1':Math.round(p*100))+'%';
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -49,5 +49,5 @@ function rng(){ if(_ri>=256){ crypto.getRandomValues(_rb); _ri=0; } return _rb[_
 const rint=n=>Math.floor(rng()*n);
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const setText=(s,t)=>{const e=document.querySelector(s);if(e)e.textContent=t;};
-const cmp$=n=>n>=1e6?'$'+(n/1e6).toFixed(2).replace(/\.00$/,'').replace(/(\.\d)0$/,'$1')+'M':n>=1e3?'$'+(n/1e3).toFixed(n%1e3?1:0).replace(/\.0$/,'')+'K':'$'+Math.round(n);
+const cmp$=n=>n>=1e9?'$'+(n/1e9).toFixed(2).replace(/\.00$/,'').replace(/(\.\d)0$/,'$1')+'B':n>=1e6?'$'+(n/1e6).toFixed(2).replace(/\.00$/,'').replace(/(\.\d)0$/,'$1')+'M':n>=1e3?'$'+(n/1e3).toFixed(n%1e3?1:0).replace(/\.0$/,'')+'K':'$'+Math.round(n);
 
