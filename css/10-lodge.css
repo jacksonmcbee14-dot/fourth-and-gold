@@ -97,3 +97,9 @@ body.in-lodge .xppop{top:auto;bottom:80px;right:50%;transform:translateX(50%)}
 .lg-trophy.off{opacity:.55}
 .lg-trophy .lg-ic{min-height:0}
 .lg-drink em{grid-column:2;font-style:normal;font-size:7px;line-height:1.4;color:#cfd9e0}
+/* Shop filters (js/lodge/catalog.js) */
+.lg-subs{display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:2px 2px 8px;scrollbar-width:none}
+.lg-subs::-webkit-scrollbar{display:none}
+.lg-sub{flex:0 0 auto;font-size:7px;padding:7px 9px;color:#a89a80;background:#1c1410;box-shadow:0 0 0 2px #3a2617;text-transform:uppercase;white-space:nowrap}
+.lg-sub.on{color:#1e140b;background:#e8963c;box-shadow:0 0 0 2px #f6ebcb}
+.lg-count{font-size:7px;color:#7d6534;margin:0 2px 10px;text-transform:uppercase}
