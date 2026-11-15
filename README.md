@@ -47,3 +47,7 @@ The first time, macOS may ask whether Python can accept incoming network connect
 ## Saving
 
 Everything is saved in the browser's local storage, separately on each device and each browser. On iPhone, the home-screen app keeps its own save, apart from Safari's.
+
+## Publishing updates
+
+Before each publish, run `python3 tools/stamp-version.py`. It gives the app's files a new version tag so phones load the new files instead of old saved copies. GitHub still lets phones keep the page itself for up to 10 minutes, so after publishing, close the home-screen app fully and reopen it.
