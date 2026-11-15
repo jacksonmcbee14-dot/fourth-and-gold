@@ -1,10 +1,8 @@
 // The economy.
 //  • VIP tables: you choose your table, and its minimum bet stays put until you change it.
-//      Lodge    $1K min · normal
-//      Silver   $100K min · 2× XP                                      (needs $2M net worth)
-//      Gold     $10M min · 3× XP, gold table look                      (needs $200M)
-//      Diamond  $1B min · 5× XP, diamond look, 💎 on the leaderboard,   (needs $20B)
-//               and Diamond-only items at Silas's shop
+//      Lodge $1K · Silver $100K (2× XP) · Gold $10M (3× XP) · Diamond $1B (5× XP, 💎 badge, Diamond-only items)
+//      · Emerald $100B · Ruby $10T · Sapphire … and on forever (each 100× the last, +2× XP each, its own badge).
+//      Each needs 20× its minimum in net worth.
 //    Payouts are the same at every table, so no table can be farmed for free money. If your net worth drops
 //    below what a table needs, you're moved down to the best table you can afford.
 //  • Silas's prices: the original price × (net worth ÷ $1M), never below the original.
@@ -16,35 +14,52 @@ const worth=()=>Math.max(0,scoreNow());
 const nice=n=>{ if(n<1000) return Math.round(n); const p=Math.pow(10,Math.floor(Math.log10(n))-1); return Math.round(n/p)*p; };
 const wealthX=()=>Math.max(1,worth()/1e6);
 
-/* ---------- VIP tables ---------- */
-const VIP=[
-  {id:'lodge',  name:'Lodge',  icon:'🪵',min:1e3,need:0,   xp:1,perks:'The regular tables'},
-  {id:'silver', name:'Silver', icon:'🥈',min:1e5,need:2e6, xp:2,perks:'2× XP'},
-  {id:'gold',   name:'Gold',   icon:'🥇',min:1e7,need:2e8, xp:3,perks:'3× XP · gold tables and chips'},
-  {id:'diamond',name:'Diamond',icon:'💎',min:1e9,need:2e10,xp:5,perks:'5× XP · diamond tables · 💎 on the leaderboard · Diamond-only shop items'},
-];
+/* ---------- VIP tables (endless) ---------- */
+// Each table's minimum is 100× the one before, and it needs 20× its minimum in net worth.
+// You see every table you can sit at plus the next 5 above it, so reaching the top always reveals 5 more.
+const VIP_NAMES=[['lodge','Lodge','🪵','#c8a45c'],['silver','Silver','🥈','#cfd9e0'],['gold','Gold','🥇','#ffd84a'],['diamond','Diamond','💎','#bff6ff'],
+  ['emerald','Emerald','🟢','#3ad08a'],['ruby','Ruby','🔴','#ff4a5a'],['sapphire','Sapphire','🔵','#6a9aff'],['amethyst','Amethyst','🟣','#b06ae0'],
+  ['obsidian','Obsidian','⚫','#a8a4b4'],['platinum','Platinum','🏆','#e5e4e2'],['royal','Royal','👑','#ffcf4a'],['cosmic','Cosmic','🌌','#8a6aff'],
+  ['galaxy','Galaxy','🌠','#ff8ad8'],['nebula','Nebula','✨','#6ad0ff'],['quasar','Quasar','☄️','#ffb86a'],['infinity','Infinity','♾️','#ffffff']];
+const ROMAN=n=>{ const r=[[1000,'M'],[900,'CM'],[500,'D'],[400,'CD'],[100,'C'],[90,'XC'],[50,'L'],[40,'XL'],[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']]; let o=''; for(const [v,l] of r) while(n>=v){ o+=l; n-=v; } return o; };
+const VIP_CACHE=[];
+function vipAt(i){
+  if(VIP_CACHE[i]) return VIP_CACHE[i];
+  const L=VIP_NAMES.length, base=VIP_NAMES[Math.min(i,L-1)], extra=i-(L-1);
+  const min=1e3*Math.pow(100,i), xp=i<3?i+1:5+2*(i-3);
+  const perks=i===0?'The regular tables':i===1?'2× XP':i===2?'3× XP · gold tables and chips':
+    `${xp}× XP · ${base[1].toLowerCase()} tables · ${base[2]} on the leaderboard · Diamond-only shop items`;
+  return VIP_CACHE[i]={i,id:extra>0?'infinity'+(extra+1):base[0],name:extra>0?'Infinity '+ROMAN(extra+1):base[1],icon:base[2],color:base[3],min,need:i?min*20:0,xp,perks};
+}
+const vipIndex=id=>{ if(!id) return 0; const k=VIP_NAMES.findIndex(v=>v[0]===id); if(k>=0) return k; const m=/^infinity(\d+)$/.exec(id); return m?VIP_NAMES.length-2+(+m[1]):0; };
+const vipAfford=()=>{ const w=worth(); let i=0; while(w>=vipAt(i+1).need) i++; return i; };
 let vipNoted='';
 function vipTier(){
-  const want=VIP.findIndex(v=>v.id===S.vip), w=worth(); let i=want<0?0:want;
-  while(i>0&&w<VIP[i].need) i--;
-  if(want>0&&i<want&&vipNoted!==S.vip){ vipNoted=S.vip; setTimeout(()=>toast(`Moved to the ${VIP[i].name} table — ${VIP[want].name} needs ${k$(VIP[want].need)}`,'gold'),600); }
-  return VIP[i];
+  const want=vipIndex(S.vip), top=vipAfford(), i=Math.min(want,top);
+  if(want>i&&vipNoted!==S.vip){ vipNoted=S.vip; setTimeout(()=>toast(`Moved to the ${vipAt(i).name} table — ${vipAt(want).name} needs ${k$(vipAt(want).need)}`,'gold'),600); }
+  return vipAt(i);
 }
+// The badge shown next to a player's name (Diamond and up), from the best table they've sat at.
+const vipBadge=id=>{ const i=vipIndex(id); return i>=3?` <span title="${esc(vipAt(i).name)} table">${vipAt(i).icon}</span>`:''; };
 const tableMin=()=>vipTier().min;
 const slotMin=()=>vipTier().min;
-function vipLook(){ const t=vipTier().id; document.body.classList.remove('vip-silver','vip-gold','vip-diamond'); if(t!=='lodge') document.body.classList.add('vip-'+t); }
+function vipLook(){ const t=vipTier(); document.body.classList.remove('vip-silver','vip-gold','vip-diamond','vip-high');
+  if(t.i===1) document.body.classList.add('vip-silver'); else if(t.i===2) document.body.classList.add('vip-gold'); else if(t.i===3) document.body.classList.add('vip-diamond');
+  else if(t.i>3){ document.body.classList.add('vip-high'); document.body.style.setProperty('--vipc',t.color); } }
 function vipOpen(){
-  const cur=vipTier().id, w=worth();
-  modal(`<div class="fgm-k">Choose your table</div><p class="small muted" style="margin:-4px 0 12px">Your minimum bet stays put until you change it. Payouts are the same everywhere — higher tables earn XP faster and bring VIP perks.</p>
-    <div class="vipx">${VIP.map(v=>{ const ok=w>=v.need, on=v.id===cur;
-      return `<button class="vipx-t t-${v.id} ${on?'on':''}" data-a="vipPick" data-v="${v.id}" ${ok?'':'disabled'}><span class="vipx-ic">${v.icon}</span>
-        <div><b>${v.name}</b><span>Min bet ${k$(v.min)}</span><small>${esc(v.perks)}</small></div>
+  const cur=vipTier().i, top=Math.max(vipAfford(),vipIndex(S.vipBest)), last=top+5, list=[];
+  for(let i=0;i<=last;i++) list.push(vipAt(i));
+  modal(`<div class="fgm-k">Choose your table</div><p class="small muted" style="margin:-4px 0 12px">Your minimum bet stays put until you change it. Payouts are the same everywhere — higher tables earn XP faster and bring VIP perks. Reach the top and 5 more appear.</p>
+    <div class="vipx">${list.slice().reverse().map(v=>{ const ok=worth()>=v.need, on=v.i===cur;
+      return `<button class="vipx-t ${on?'on':''}" style="--vc:${v.color}" data-a="vipPick" data-v="${v.i}" ${ok?'':'disabled'}><span class="vipx-ic">${v.icon}</span>
+        <div><b>${esc(v.name)}</b><span>Min bet ${k$(v.min)}</span><small>${esc(v.perks)}</small></div>
         <i>${on?'Your table':ok?'Sit here':'Needs '+k$(v.need)}</i></button>`; }).join('')}</div>`);
+  const on=document.querySelector('#fgModal .vipx-t.on'); if(on) on.scrollIntoView({block:'center'});
 }
 Object.assign(ACT,{
   vipOpen:()=>vipOpen(),
-  vipPick:el=>{ const v=VIP.find(x=>x.id===el.dataset.v); if(!v||worth()<v.need) return; S.vip=v.id; vipNoted='';
-    if(VIP.indexOf(v)>VIP.findIndex(x=>x.id===S.vipBest)) S.vipBest=v.id;
+  vipPick:el=>{ const v=vipAt(+el.dataset.v); if(!v||worth()<v.need) return; S.vip=v.id; vipNoted='';
+    if(v.i>vipIndex(S.vipBest)) S.vipBest=v.id;
     save(); closeModal(); render(); toast(`${v.icon} ${v.name} table · min bet ${k$(v.min)}`,'gold'); [523,659,784].forEach((f,i)=>tone(f,.08,'square',.04,i*.06)); },
 });
 // XP: higher tables earn more, and their daily XP limit grows to match.
@@ -73,7 +88,7 @@ DECOR_ART.decor_chandelier=(c,x,y,t)=>{ rect(c,x+11,y,2,4,LP.brass1); rect(c,x+3
 DECOR_ART.decor_diamond_slot=(c,x,y,t)=>{ rect(c,x,y+3,14,21,'#2a3a4a'); rect(c,x+1,y+4,12,19,'#3a5068'); rect(c,x,y,14,4,'#bff6ff'); rect(c,x+2,y+8,10,6,'#05070a');
   const s=Math.floor((t||0)*2)%3; for(let i=0;i<3;i++) rect(c,x+3+i*3,y+10,2,2,(i+s)%3?'#bff6ff':'#e6fbff'); rect(c,x+3,y+17,8,2,'#bff6ff'); rect(c,x+13,y+8,1,6,'#9fb0bf'); };
 for(const it of DIAMOND_ITEMS){ it.diamond=1; if(!ITEM[it.id]){ ITEMS.push(it); ITEM[it.id]=it; } }
-const diamondOk=()=>S.vipBest==='diamond';
+const diamondOk=()=>vipIndex(S.vipBest)>=3;
 const _buyItemV=buyItem;
 buyItem=function(id){ const it=ITEM[id]; if(it&&it.diamond&&!diamondOk()){ toast('Diamond-only — sit at the Diamond table first','loss'); return; } return _buyItemV(id); };
 const _renderShopV=renderShop;
@@ -109,7 +124,7 @@ const _slUIE=slUI; slUI=function(){ if(!SL.spinning&&!(SL.fs>0)&&S.slotBet<slotM
 /* ---------- Showing it ---------- */
 const _gameHeadE=gameHead;
 gameHead=function(key,title){ const t=vipTier(); vipLook();
-  return _gameHeadE(key,title)+`<button class="tblmin t-${t.id}" data-a="vipOpen" title="Choose your table"><i>${t.icon}</i>${t.name} table · min <b class="mono">${cmp$(t.min)}</b><span class="tblmin-c">Change ▾</span></button>`; };
+  return _gameHeadE(key,title)+`<button class="tblmin t-${t.id}" style="--vc:${t.color}" data-a="vipOpen" title="Choose your table"><i>${t.icon}</i>${t.name} table · min <b class="mono">${cmp$(t.min)}</b><span class="tblmin-c">Change ▾</span></button>`; };
 const _renderV=render; render=function(){ _renderV(); if(S.mode!=='casino') document.body.classList.remove('vip-silver','vip-gold','vip-diamond'); };
 const _renderSlipE=renderSlip;
 renderSlip=function(){ _renderSlipE(); const m=tableMin(); if(m>1000&&$('#sheet').classList.contains('on')){ const a=$('#sheet .amts'); if(a) a.insertAdjacentHTML('beforebegin',`<div class="small muted" style="margin:10px 0 -4px">${vipTier().name} table minimum: <b class="gold">${fmt$(m)}</b></div>`); } };

@@ -171,7 +171,7 @@ html[data-season=fall] .lodge[data-mode=welcome],html[data-season=fall] .lodge[d
 .tblmin b{font-size:13px;letter-spacing:0;color:var(--gold2)}
 .tblmin i{font-style:normal;font-size:15px;line-height:1}
 .tblmin-c{margin-left:4px;padding-left:8px;border-left:1px solid var(--line2);color:var(--gold);font-size:11px}
-.tblmin.t-silver{border-color:#cfd9e0}.tblmin.t-gold{border-color:#ffd84a;box-shadow:0 0 14px rgba(255,216,74,.2)}.tblmin.t-diamond{border-color:#bff6ff;box-shadow:0 0 16px rgba(191,246,255,.3)}
+.tblmin:not(.t-lodge){border-color:var(--vc);box-shadow:0 0 14px color-mix(in srgb,var(--vc) 30%,transparent)}
 .chip span{white-space:nowrap}
 /* choosing a table */
 .vipx{display:flex;flex-direction:column;gap:8px}
@@ -181,7 +181,8 @@ html[data-season=fall] .lodge[data-mode=welcome],html[data-season=fall] .lodge[d
 .vipx-t i{font-style:normal;font-size:12px;font-weight:700;color:var(--gold)}
 .vipx-t.on{border-color:var(--gold);background:rgba(200,164,92,.14)}
 .vipx-t:disabled{opacity:.45}
-.vipx-t.t-gold{border-color:rgba(255,216,74,.5)}.vipx-t.t-diamond{border-color:rgba(191,246,255,.55)}
+.vipx-t{border-color:color-mix(in srgb,var(--vc) 45%,transparent)}
+.vipx-t.on{border-color:var(--vc);background:color-mix(in srgb,var(--vc) 14%,transparent)}
 /* the tables themselves at Silver, Gold and Diamond */
 body.vip-silver .felt,body.vip-silver .cab{box-shadow:0 0 0 2px #cfd9e0,0 10px 30px rgba(0,0,0,.4)}
 body.vip-gold .felt,body.vip-gold .cab{box-shadow:0 0 0 2px #ffd84a,0 0 30px rgba(255,216,74,.25)}
@@ -194,3 +195,8 @@ body.vip-diamond .chip{box-shadow:0 3px 0 rgba(0,0,0,.4),inset 0 0 0 3px #bff6ff
 .betc button.betcust i{font-style:normal;opacity:.8}
 .felt .coins{flex-wrap:wrap;justify-content:center;row-gap:6px}
 .betc #slBet2{white-space:nowrap}
+/* tables above Diamond take that tier's colour */
+body.vip-high .felt,body.vip-high .cab{box-shadow:0 0 0 2px var(--vipc),0 0 38px color-mix(in srgb,var(--vipc) 45%,transparent);animation:viphigh 3s ease-in-out infinite}
+body.vip-high .chip{box-shadow:0 3px 0 rgba(0,0,0,.4),inset 0 0 0 3px var(--vipc),inset 0 0 0 4px rgba(0,0,0,.35)}
+@keyframes viphigh{50%{box-shadow:0 0 0 2px var(--vipc),0 0 56px color-mix(in srgb,var(--vipc) 60%,transparent)}}
+.fgm-box .vipx{max-height:62dvh;overflow:auto}
