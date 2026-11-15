@@ -51,7 +51,7 @@ function weekLeft(){
   const iso={Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6,Sun:7}[p.weekday]||1, left=(8-iso)*86400-(+p.hour*3600+ +p.minute*60);
   const d=Math.floor(left/86400), h=Math.floor(left%86400/3600), m=Math.floor(left%3600/60); return d?`${d}d ${h}h`:h?`${h}h ${m}m`:`${m}m`;
 }
-const gameName=g=>({golf:'golf',roulette:'a roulette duel',pick:'a pick’em',slots:'slots',blackjack:'blackjack',poker:'video poker',craps:'craps',sports:'the sportsbook'}[g]||g||'');
+const gameName=g=>({golf:'golf',roulette:'roulette',pick:'a pick’em',slots:'slots',blackjack:'blackjack',poker:'video poker',craps:'craps',sports:'the sportsbook',duel:'a casino duel'}[g]||g||'');
 const signedK=n=>(n>=0?'+':'−')+k$(Math.abs(n));
 function needProfile(what){
   if(!cloudOn()) return `<div class="lgx-hero"><div class="lgx-emoji">🏆</div><h2 class="serif">Leagues are offline</h2><p class="muted">This copy of the app isn’t connected to the profile server.</p></div>`;
@@ -151,7 +151,9 @@ Object.assign(ACT,{
 });
 
 /* ---------- Challenge tab ---------- */
-const CH_GAMES={golf:['⛳','Golf','Same course, same wind. Lowest score wins.'],roulette:['🎡','Roulette duel','5 spins, 1,000 chips each. Most chips wins.'],pick:['🏈','Pick’em','Pick a real game. They get the other side.']};
+const CH_GAMES={golf:['⛳','Golf','Same course, same wind. Lowest score wins.'],pick:['🏈','Pick’em','Pick a real game. They get the other side.'],
+  slots:['🎰','Slots duel','10 spins, 1,000 chips. Most chips wins.'],roulette:['🎡','Roulette duel','5 spins, 1,000 chips. Most chips wins.'],
+  blackjack:['🃏','Blackjack duel','5 hands vs the dealer. Most chips wins.'],poker:['🂡','Video poker duel','5 hands of Jacks or Better.'],craps:['🎲','Craps duel','5 rounds at the dice table.']};
 function viewChallenges(){
   if(!socOn()) return needProfile('· challenge friends');
   if(!SOC.me){ needMe(); return `<div class="empty">Loading…</div>`; }
@@ -166,7 +168,7 @@ function viewChallenges(){
     return `<div class="chx"><span class="chx-ic">${g[0]}</span><div class="chx-tx"><b>${g[1]} ${c.mine?'vs':'from'} ${esc(other)}</b><small class="muted">${detail}${c.stake?` · ${k$(c.stake)} each`:''}</small></div><div class="chx-b">${btns}</div></div>`; };
   const resTxt=c=>c.status==='done'?(c.result==='me'?`<span class="up">Won ${k$(c.stake*2)}</span>`:c.result==='them'?'<span class="down">Lost</span>':'Tie'):c.status==='declined'?'Declined':c.status==='cancelled'?'Cancelled':'Expired';
   return `<button class="btn gold wide" data-a="chNew" style="margin-bottom:6px">⚔️ New challenge</button>
-    <div class="lgx-how three">${Object.values(CH_GAMES).map(g=>`<div><b>${g[0]}</b><span><b>${g[1]}</b><br>${g[2]}</span></div>`).join('')}</div>
+    <div class="chx-menu">${Object.entries(CH_GAMES).map(([k,g])=>`<button data-a="chNew" data-game="${k}"><b>${g[0]}</b><span>${g[1]}</span></button>`).join('')}</div>
     ${yourTurn.length?`<div class="sechead"><h2>Your turn</h2></div><div class="panel chx-list">${yourTurn.map(c=>card(c,c.status==='open'?`<button class="btn sm gold" data-a="chAccept" data-id="${c.id}">${c.game==='pick'?'Accept':'Play'}</button><button class="btn sm ghost" data-a="chDecline" data-id="${c.id}">✕</button>`:`<button class="btn sm gold" data-a="chPlay" data-id="${c.id}">Play</button>`)).join('')}</div>`:''}
     ${live.length?`<div class="sechead"><h2>In play</h2></div><div class="panel chx-list">${live.map(c=>card(c,`<span class="small muted">${c.game==='pick'?'Waiting on the game':'They’re playing'}</span>`)).join('')}</div>`:''}
     ${waiting.length?`<div class="sechead"><h2>Waiting on them</h2></div><div class="panel chx-list">${waiting.map(c=>card(c,`<button class="btn sm ghost" data-a="chCancel" data-id="${c.id}">Cancel</button>`)).join('')}</div>`:''}
@@ -182,7 +184,7 @@ function challengeStart(pre){
   (SOC.me&&SOC.me.leagues||[]).forEach(l=>loadLeague(l.id)); chStep();
 }
 function chStep(){
-  if(!CHN.game) return modal(`<div class="fgm-k">Challenge · pick a game</div>${Object.entries(CH_GAMES).map(([k,g])=>`<button class="chx-pick" data-a="chGame" data-v="${k}"><span>${g[0]}</span><div><b>${g[1]}</b><small>${g[2]}</small></div></button>`).join('')}`);
+  if(!CHN.game) return modal(`<div class="fgm-k">Challenge · pick a game</div><div class="chx-grid">${Object.entries(CH_GAMES).map(([k,g])=>`<button class="chx-pick" data-a="chGame" data-v="${k}"><span>${g[0]}</span><div><b>${g[1]}</b><small>${g[2]}</small></div></button>`).join('')}</div>`);
   if(!CHN.to){ const F=friendsList(); LV.av=[];
     const m=modal(`<div class="fgm-k">${CH_GAMES[CHN.game][0]} ${CH_GAMES[CHN.game][1]} · who?</div>${F.length?`<div class="chx-friends">${F.map(p=>`<button data-a="chTo" data-v="${esc(p.name)}">${avatar(lookFor(p.outfit))}<span>${esc(p.name)}</span></button>`).join('')}</div>`:'<p class="small muted">Your league-mates show up here. You can also type any player’s name:</p>'}
       <div class="row" style="gap:8px;margin-top:10px"><input class="input" id="chName" maxlength="20" placeholder="Player name" autocomplete="off" style="font-size:16px;flex:1"><button class="btn" data-a="chToName">Next</button></div><div class="small" id="lgMsg" style="min-height:18px;color:var(--loss-hi)"></div>`);
@@ -201,7 +203,7 @@ function chStep(){
   const seed=1+Math.floor(Math.random()*99999), vs=`Challenge vs ${CHN.to} · set the score to beat`;
   const onFinish=score=>chSend(seed,score);
   if(CHN.game==='golf') openGolf({seed,vs,onFinish});
-  else openDuel({vs,onFinish});
+  else openDuel({game:CHN.game,vs,onFinish});
 }
 async function chSend(seed,score){
   if(CHN.stake>S.bank){ toast('Not enough in the bankroll for that stake','loss'); return 'Not enough money for the stake — challenge not sent.'; }
@@ -214,7 +216,7 @@ async function chSend(seed,score){
   return msg;
 }
 Object.assign(ACT,{
-  chNew:el=>{ challengeStart(el&&el.dataset&&el.dataset.to?{to:el.dataset.to}:{}); },
+  chNew:el=>{ const d=el&&el.dataset||{}, pre={}; if(d.to) pre.to=d.to; if(d.game) pre.game=d.game; challengeStart(pre); },
   chGame:el=>{ CHN.game=el.dataset.v; chStep(); },
   chTo:el=>{ CHN.to=el.dataset.v; chStep(); },
   chToName:()=>{ const n=($('#chName').value||'').trim(); if(n.length<2) return lgMsg('Type their profile name.'); if(PROF.me&&n.toLowerCase()===PROF.me.name.toLowerCase()) return lgMsg('That’s you!'); CHN.to=n; chStep(); },
@@ -232,14 +234,14 @@ Object.assign(ACT,{
   chDecline:async el=>{ if(!confirm('Decline this challenge?')) return; await srpc('fg_ch_answer',{p_id:+el.dataset.id,p_answer:'decline'}).catch(()=>{}); socRefresh(true).then(render); },
   chCancel:async el=>{ await srpc('fg_ch_answer',{p_id:+el.dataset.id,p_answer:'cancel'}).catch(()=>{}); socRefresh(true).then(render); },
   chShare:el=>{ const c=(SOC.me.challenges||[]).find(x=>x.id===+el.dataset.id); if(!c) return; const other=c.mine?c.to_name:c.from_name;
-    shareCard({game:c.game==='pick'?'sports':c.game==='roulette'?'duel':'golf',title:'Beat '+other+' at '+gameName(c.game),amount:c.stake*2||null,big:c.stake?null:'WINNER',sub:c.from_score!=null?c.from_score+' to '+c.to_score:(c.data.title||'')}); },
+    shareCard({game:c.game==='pick'?'sports':c.game==='golf'?'golf':'duel',title:'Beat '+other+' at '+gameName(c.game),amount:c.stake*2||null,big:c.stake?null:'WINNER',sub:c.from_score!=null?c.from_score+' to '+c.to_score:(c.data.title||'')}); },
 });
 function chPlay(c){
   const vs=`vs ${c.from_name} · beat ${c.from_score}${c.game==='golf'?' strokes':' chips'}`;
   const onFinish=async score=>{ const r=await srpc('fg_ch_score',{p_id:c.id,p_score:score}); needMe();
     if(!r||!r.ok) return 'That challenge already ended.';
     return r.result==='me'?`You beat ${c.from_name} (${r.their_score})!${c.stake?' +'+k$(c.stake*2)+' is on its way.':''}`:r.result==='tie'?`Tied with ${c.from_name}. Stakes returned.`:`${c.from_name} wins with ${r.their_score}. Rematch?`; };
-  if(c.game==='golf') openGolf({seed:c.seed,vs,onFinish,noCash:true}); else openDuel({vs,onFinish});
+  if(c.game==='golf') openGolf({seed:c.seed,vs,onFinish,noCash:true}); else openDuel({game:c.game,vs,onFinish});
 }
 // Pick'ems settle themselves once the real game is final.
 function chSettlePicks(){

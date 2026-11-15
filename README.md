@@ -36,7 +36,7 @@ The first time, macOS may ask whether Python can accept incoming network connect
 | `js/profile.js`, `js/config.js` | Profiles (name + PIN), saving to your profile, the leaderboard; Supabase address and public key. |
 | `js/lodge/` · `css/10-lodge.css` | The 8-bit lodge layer: `pixel.js` (pixel engine, palette, character sprites), `welcome.js` (the welcome scene), `hub.js` (the great room, its spots and walking), `bar.js` (the bar and drinks), `powers.js` (drink powers: cocoa 1.5× winnings, cider half-price shop, old fashioned 2× bets / 5× wins, eggnog Santa suit), `xp.js` (XP, levels, titles), `shop.js` (the merchant, outfits and decor art), `catalog.js` (the big catalog: ~120 more things to wear and carry, ~100 more room pieces, and the shop's filters), `myroom.js` (My Room, decorating, trophies), `lodge.js` (switching between lodge and app). |
 | `js/season.js` | Seasons: holiday (Nov 15–Dec 31, the Christmas look), winter, spring, summer and fall. The lodge decorations, the welcome scene and the golf course follow it. Preview one with `?season=spring` on the address. |
-| `js/league/` · `css/12-league.css` | The League mode: `social.js` (talking to the server, the rewards inbox, invite links, the daily bonus, auto-posting big wins), `view.js` (the League, Challenge, Golf and Invite tabs), `duel.js` (the 5-spin roulette duel), `prizes.js` (gear you can only win in a league). |
+| `js/league/` · `css/12-league.css` | The League mode: `social.js` (talking to the server, the rewards inbox, invite links, the daily bonus, auto-posting big wins), `view.js` (the League, Challenge, Golf and Invite tabs), `duel.js` (casino duels for challenges: roulette, blackjack, video poker, slots and craps — 1,000 chips, most chips wins), `prizes.js` (gear you can only win in a league). |
 | `js/golf/golf.js` · `css/11-golf.css` | Lodge Links: a 6-hole 8-bit golf course (clubs, timing meter, wind, water, bunkers, trees). |
 | `js/share.js` | Share cards (1080×1920 pictures for Instagram stories), the phone share sheet, and the pop-up layer. |
 | `js/money.js` | Daily top-up to $1M, borrowing (any amount up to $250K a loan), and what a reset wipes. |
@@ -60,7 +60,7 @@ These need the database update in `supabase/update-4-leagues.sql`: open Supabase
 
 - **Leagues** race on *weekly winnings* (Monday to Sunday night, Eastern time). Daily top-ups, the daily bonus, invite rewards, shop spending and resets don't count. The first time anyone opens a league in a new week, last week's #1 is crowned and sent the league's prize.
 - **Invites**: `?invite=CODE&league=CODE` links. When a new player makes a profile with your code (within 2 days), your debt is wiped and you get $1,000,000 (up to 25 friends).
-- **Challenges**: golf and roulette duels (the challenger plays first and sets the score) and pick'ems on real games. Stakes are held when you send or accept and paid out through the inbox.
+- **Challenges**: golf and casino duels — roulette, blackjack, video poker, slots, craps (the challenger plays first and sets the score) and pick'ems on real games. Stakes are held when you send or accept and paid out through the inbox.
 - Money is still play money kept by each phone, so a determined cheater could edit their own numbers. Moving the bankroll onto the server is the fix before real prizes or ads.
 
 ## Publishing updates

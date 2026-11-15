@@ -9,7 +9,8 @@
 --    week, last week's leader is crowned and sent the prize.
 --  • League score = net worth − daily top-ups − free gifts + money spent at the shop + reset adjustments,
 --    all read from the player's saved game, so buying clothes, free money and resets don't move the race.
---  • Challenges: golf or roulette (each plays the same seeded round; best score wins) or a pick'em on
+--  • Challenges: golf (same seeded course; lowest score wins), a casino duel — roulette, blackjack, video poker,
+--    slots or craps (1,000 chips each; most chips wins) — or a pick'em on
 --    a real game. Both sides put up the same stake; the winner is paid through the inbox.
 --  • The feed only stores what happened (kind, game, amount) — never free text — and the app writes the words.
 --  • Inbox: money and prizes waiting for a player. The app applies them, then acknowledges them.
@@ -75,7 +76,7 @@ create table if not exists public.fg_challenges (
   id         bigserial primary key,
   from_id    uuid not null references public.fg_players(id) on delete cascade,
   to_id      uuid not null references public.fg_players(id) on delete cascade,
-  game       text not null check (game in ('golf','roulette','pick')),
+  game       text not null,
   seed       integer not null default 0,
   stake      bigint not null default 0 check (stake between 0 and 5000000),
   data       jsonb not null default '{}'::jsonb,
@@ -86,6 +87,9 @@ create table if not exists public.fg_challenges (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+-- Which games can be challenged (kept as a named rule so later updates can add games).
+alter table public.fg_challenges drop constraint if exists fg_challenges_game_check;
+alter table public.fg_challenges add constraint fg_challenges_game_check check (game in ('golf','pick','roulette','blackjack','poker','slots','craps'));
 create index if not exists fg_ch_from on public.fg_challenges(from_id, id desc);
 create index if not exists fg_ch_to on public.fg_challenges(to_id, id desc);
 
@@ -383,7 +387,7 @@ begin
   if me is null then return json_build_object('error','signed_out'); end if;
   select id into them from fg_players where name_key = lower(btrim(p_to));
   if them is null or them = me then return json_build_object('error','no_player'); end if;
-  if p_game not in ('golf','roulette','pick') then return json_build_object('error','bad_game'); end if;
+  if p_game not in ('golf','pick','roulette','blackjack','poker','slots','craps') then return json_build_object('error','bad_game'); end if;
   if p_stake < 0 or p_stake > 5000000 then return json_build_object('error','bad_stake'); end if;
   if p_game <> 'pick' and p_score is null then return json_build_object('error','no_score'); end if;
   if p_game = 'pick' and (p_data->>'gid') is null then return json_build_object('error','no_game'); end if;
@@ -413,7 +417,7 @@ begin
   return json_build_object('ok', true);
 end $$;
 
--- The person challenged sends their golf strokes or roulette chips. Lower strokes / more chips wins.
+-- The person challenged sends their golf strokes or duel chips. Lower strokes / more chips wins.
 create or replace function public.fg_ch_score(p_token uuid, p_id bigint, p_score integer) returns json
 language plpgsql security definer set search_path = public as $$
 declare me uuid; c fg_challenges; w uuid;
