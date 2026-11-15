@@ -77,7 +77,7 @@ const ACT={
   closeSheet:()=>closeSheet(),
   teamSheet:()=>openTeamSheet(),
   bankSheet:()=>{$('#sheet').innerHTML=`<div class="grab"></div><div class="eyebrow">Bankroll</div><div class="mono" style="font-size:34px;font-weight:700;color:var(--gold2);margin:6px 0">${fmt$(S.bank)}</div><div class="small muted">Play money only. Peak: <span class="mono">${fmt$(S.peak)}</span> · Status: <span class="gold">${STATUS[statusFor(S.bank)][1]}</span></div><div class="divider" style="margin:16px 0"></div><button class="btn" style="width:100%" data-a="reset">Reset to $1,000,000</button><p class="small muted" style="text-align:center">Clears your bets and starts fresh.</p>`;$('#scrim').classList.add('on');$('#sheet').classList.add('on');},
-  reset:()=>{S.bank=START_BANK;S.bets=[];S.picks={w:0,l:0};S.peak=START_BANK;save();closeSheet();render();toast('Fresh $1,000,000','gold');},
+  reset:()=>{S.resets=(S.resets||0)+1;S.bank=START_BANK;S.bets=[];S.picks={w:0,l:0};S.peak=START_BANK;save();closeSheet();render();toast('Fresh $1,000,000','gold');},
   chip:el=>{S.chip=+el.dataset.v;save();if(RL.spinning&&S.ctab==='roulette'){document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',+c.dataset.v===S.chip));return;}render();},
   rbet:el=>{if(RL.spinning)return;const k=el.dataset.k;if(rTotal()+S.chip>S.bank){toast('Not enough in the bankroll','loss');return;}if(RL.res!=null&&!Object.keys(RL.bets).length){RL.res=null;}RL.bets[k]=(RL.bets[k]||0)+S.chip;RL.msg='Spin when ready.';RL.mcls='';render();},
   rclear:()=>{RL.bets={};render();},

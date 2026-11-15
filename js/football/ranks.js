@@ -19,6 +19,7 @@ function viewRanks(){
   }
   return `<div class="between" style="margin-bottom:14px">${leagueSeg()}<span class="eyebrow">Club ratings</span></div>
   ${statusCard}
+  ${typeof boardSection==='function'?boardSection(10):''}
   <div class="sechead"><h2>${S.lg==='nfl'?'Power ratings':'CFP Top 25'}</h2><span class="aside">${S.lg==='nfl'?'Rating out of 99':'Playoff chance'}</span></div>
   <div class="panel" style="padding:4px 8px">${list}</div>
   <p class="foot">${S.lg==='nfl'?'Crown 94+ · Contender 80+ · Bubble 62+ · Long shot below. Rating blends record with the betting market.':'Arrows show where the model expects each team to finish versus today. Crown = 85%+ playoff chance.'}<br>Status climbs as your bankroll grows — Hall of Fame starts at $10M.</p>`;

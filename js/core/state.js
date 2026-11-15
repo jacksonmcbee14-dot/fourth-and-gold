@@ -16,5 +16,6 @@ let LIVE = {games:{}, extra:[], futures:{}, records:{}, updated:null, connected:
 function save(){
   S.upd=Date.now();
   try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){}
+  if(typeof cloudSave==='function') cloudSave();   // also save to your profile, if you have one (js/profile.js)
 }
 
