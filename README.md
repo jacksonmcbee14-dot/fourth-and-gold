@@ -43,6 +43,7 @@ The first time, macOS may ask whether Python can accept incoming network connect
 | `js/lodge/buyall.js` | Buy all unlocked items in the shop's current tab and filter. |
 | `js/share.js` | Share cards (1080×1920 pictures for Instagram stories), the phone share sheet, and the pop-up layer. |
 | `js/economy.js` | The economy scales with net worth: table minimum = net worth² ÷ $20B, capped at 10% of net worth; shop prices × (net worth ÷ $1M); drinks a share of net worth. Wins are never capped. |
+| `js/update.js` | Auto-update: when the app opens or comes back on screen it checks for a newer published version and reloads into it. |
 | `js/money.js` | Daily top-up to $1M, borrowing (any amount up to $250K a loan), and what a reset wipes. |
 | `supabase/` | Database setup script, plus numbered update scripts to run in order. |
 | `js/football/sportsbook.js` | Prices, bet slip and settling bets. |
@@ -69,4 +70,4 @@ These need the database updates `supabase/update-4-leagues.sql` and `supabase/up
 
 ## Publishing updates
 
-Before each publish, run `python3 tools/stamp-version.py`. It gives the app's files a new version tag so phones load the new files instead of old saved copies. GitHub still lets phones keep the page itself for up to 10 minutes, so after publishing, close the home-screen app fully and reopen it.
+Before each publish, run `python3 tools/stamp-version.py`. It gives the app's files a new version tag so phones load the new files instead of old saved copies. Phones that saved an older copy update themselves: `js/update.js` notices the new version tag the next time the app is opened or brought back on screen, and reloads.
