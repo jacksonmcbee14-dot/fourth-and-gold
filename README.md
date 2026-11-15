@@ -34,7 +34,7 @@ The first time, macOS may ask whether Python can accept incoming network connect
 | `js/football/myteam.js` | Your chosen NFL and college teams and their schedules. |
 | `js/ui.js` | More sections, tappable terms, "Why it matters", shorter score lists, Simple/Full betting. |
 | `js/profile.js`, `js/config.js` | Profiles (name + PIN), saving to your profile, the leaderboard; Supabase address and public key. |
-| `js/lodge/` · `css/10-lodge.css` | The 8-bit lodge layer: `pixel.js` (pixel engine, palette, character sprites), `welcome.js` (the welcome scene), `hub.js` (the great room, its spots and walking), `bar.js` (the bar and drinks), `xp.js` (XP, levels, titles), `shop.js` (the merchant, item catalog, outfits and decor art), `lodge.js` (switching between lodge and app). |
+| `js/lodge/` · `css/10-lodge.css` | The 8-bit lodge layer: `pixel.js` (pixel engine, palette, character sprites), `welcome.js` (the welcome scene), `hub.js` (the great room, its spots and walking), `bar.js` (the bar and drinks), `xp.js` (XP, levels, titles), `shop.js` (the merchant, item catalog, outfits and decor art), `myroom.js` (My Room, decorating, trophies), `lodge.js` (switching between lodge and app). |
 | `js/money.js` | Daily top-up to $1M, borrowing (debt), and what a reset wipes. |
 | `supabase/` | Database setup script, plus numbered update scripts to run in order. |
 | `js/football/sportsbook.js` | Prices, bet slip and settling bets. |

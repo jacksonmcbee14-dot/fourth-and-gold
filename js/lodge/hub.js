@@ -7,7 +7,7 @@ const SPOTS=[ // [id, x, y, w, h, label, where it goes, where you stand]   (TV i
   ['wheel',   29,106, 26, 78,'The Wheel Room · Roulette',{mode:'casino',ctab:'roulette'},[42,198]],
   ['hazard', 137,106, 26, 78,'The Hazard Room · Craps',  {mode:'casino',ctab:'craps'},[146,198]],
   ['slots',  164,118, 28, 66,'Jingle Jackpot · Slots',   {mode:'casino',ctab:'slots'},[150,200]],
-  ['stairs', 156,192, 36, 76,'Staircase · My Room',      {soon:'My Room opens in pass e — decorate it with what you buy.'},[154,268]],
+  ['stairs', 156,192, 36, 76,'Staircase · My Room',      {room:true},[154,268]],
   ['merchant',22,218, 58, 46,'The Merchant · Shop',      {shop:true},[46,272]],
   ['bar',      0,262, 88, 58,'The Bar · Drinks',         {bar:true},[40,288]],
   ['book',   104,270, 88, 50,'Sportsbook · Bets',        {mode:'football',ftab:'bets'},[140,288]],

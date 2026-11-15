@@ -3,7 +3,7 @@
 .lodge.on{display:flex}
 .lg-col{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;height:100%}
 .lg-stage{position:relative;height:min(100dvh,calc(100vw*320/192));aspect-ratio:192/320;max-width:100vw}
-.lodge[data-mode=hub] .lg-stage{height:min(calc(100dvh - 116px),calc(100vw*320/192))}
+.lodge[data-mode=hub] .lg-stage,.lodge[data-mode=room] .lg-stage{height:min(calc(100dvh - 116px),calc(100vw*320/192))}
 .lg-scene,.lg-scene canvas.px{position:absolute;inset:0;width:100%;height:100%}
 canvas.px{image-rendering:pixelated;image-rendering:crisp-edges;display:block}
 .lodge,.lodge button{font-family:"Press Start 2P",ui-monospace,monospace}
@@ -14,7 +14,7 @@ canvas.px{image-rendering:pixelated;image-rendering:crisp-edges;display:block}
 .lg-round{width:34px;padding:10px 0;text-align:center}
 .lg-hud{display:none;justify-content:space-between;align-items:center;gap:10px;width:min(100vw,calc((100dvh - 116px)*192/320));height:58px;padding:0 10px;pointer-events:none}
 .lg-hud>*{pointer-events:auto}
-.lodge[data-mode=hub] .lg-hud{display:flex}
+.lodge[data-mode=hub] .lg-hud,.lodge[data-mode=room] .lg-hud{display:flex}
 .lg-bank{font-size:9px;color:#ecd9a8;background:rgba(5,9,15,.75);padding:8px 10px;box-shadow:0 0 0 2px #7d6534}
 .lg-labels{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .4s}
 .lg-labels.on{opacity:1}
@@ -33,7 +33,7 @@ body.in-lodge{overflow:hidden}
 body.calm #lodgeBtn,#lodgeBtn{font-size:8px!important}
 /* Fill the space above and below the scene on tall phones */
 .lodge[data-mode=welcome],.lodge[data-mode=choice]{background:linear-gradient(#05090f 50%,#cfd9e0 50%)}
-.lodge[data-mode=hub]{background:linear-gradient(#120a06 50%,#3a2617 50%)}
+.lodge[data-mode=hub],.lodge[data-mode=room]{background:linear-gradient(#120a06 50%,#3a2617 50%)}
 .lg-choice{top:0;bottom:0;justify-content:flex-end;padding-bottom:9%}
 .lg-title{position:absolute;top:7%;left:0;right:0;margin:0}
 /* Bar dialogue: an 8-bit RPG text box over the bottom of the room */
@@ -86,3 +86,13 @@ body.in-lodge .xppop{top:auto;bottom:80px;right:50%;transform:translateX(50%)}
 .lg-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
 .lg-owned{font-size:8px;color:#e8963c;align-self:center;line-height:1.6}
 .lg-closet-me{display:grid;place-items:center;padding:6px;background:radial-gradient(circle,#3a2617,#120a06 70%)}
+/* My Room: decorating tray and trophy list */
+.lg-tray{position:absolute;left:3%;right:3%;bottom:2%;z-index:3;display:flex;flex-direction:column;gap:8px;padding:10px;background:#120a06;box-shadow:0 0 0 3px #e8963c,0 0 0 6px #120a06}
+.lg-tray-h{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:7px;line-height:1.5;color:#f6ebcb}
+.lg-tray-list{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.lg-tray-list .lg-item{flex:0 0 76px}
+.lg-trophies{display:flex;flex-direction:column;gap:10px}
+.lg-trophy{display:grid;grid-template-columns:44px 1fr;gap:10px;align-items:center;text-align:left;padding:8px;background:#2a1d15;box-shadow:0 0 0 2px #3a2617}
+.lg-trophy .lg-prev-name{font-size:9px}
+.lg-trophy.off{opacity:.55}
+.lg-trophy .lg-ic{min-height:0}

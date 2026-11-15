@@ -13,7 +13,7 @@ function lodgeDom(){
   el.innerHTML=`<div class="lg-col">
     <div class="lg-hud lg-top"><button class="lg-btn" data-lg="classic">Classic view</button><span class="lg-bank" id="lgBank"></span></div>
     <div class="lg-stage"><div class="lg-scene"></div><div class="lg-labels"></div><div class="lg-choice"></div></div>
-    <div class="lg-hud lg-bottom"><button class="lg-btn" data-lg="myroom">My Room</button><span class="lg-lvl" id="lgLvl"></span><button class="lg-btn lg-round" data-lg="labels" aria-label="Show what everything is">?</button></div></div>`;
+    <div class="lg-hud lg-bottom"><button class="lg-btn" id="lgLeft" data-lg="myroom">My Room</button><span class="lg-lvl" id="lgLvl"></span><button class="lg-btn lg-round" id="lgRight" data-lg="labels" aria-label="Show what everything is">?</button></div></div>`;
   document.body.appendChild(el);
   LODGE.el=el; LODGE.stage=el.querySelector('.lg-scene');
   el.addEventListener('click',e=>{ const b=e.target.closest('[data-lg]'); if(!b) return; e.stopPropagation(); LG_ACT[b.dataset.lg]&&LG_ACT[b.dataset.lg](b); });
@@ -25,10 +25,10 @@ function lodgeShow(mode){
 }
 function lodgeHide(){
   if(!LODGE.el) return; LODGE.active=false; LODGE.el.classList.remove('on'); document.body.classList.remove('in-lodge');
-  if(LODGE.hub) LODGE.hub.loop.stop(); if(LODGE.welcome) LODGE.welcome.stop();
+  if(LODGE.hub) LODGE.hub.loop.stop(); if(LODGE.welcome) LODGE.welcome.stop(); if(LODGE.room) LODGE.room.loop.stop();
   lodgeHeaderBtn();
 }
-function clearScene(){ if(typeof closeBar==='function') closeBar(); if(typeof closeShop==='function') closeShop(); if(LODGE.hub){LODGE.hub.loop.stop();LODGE.hub=null;} if(LODGE.welcome){LODGE.welcome.stop();LODGE.welcome=null;} LODGE.stage.innerHTML=''; LODGE.el.querySelector('.lg-labels').innerHTML=''; LODGE.el.querySelector('.lg-choice').innerHTML=''; }
+function clearScene(){ if(LODGE.room){LODGE.room.setEdit(false);LODGE.room.loop.stop();LODGE.room=null;} if(typeof closeBar==='function') closeBar(); if(typeof closeShop==='function') closeShop(); if(LODGE.hub){LODGE.hub.loop.stop();LODGE.hub=null;} if(LODGE.welcome){LODGE.welcome.stop();LODGE.welcome=null;} LODGE.stage.innerHTML=''; LODGE.el.querySelector('.lg-labels').innerHTML=''; LODGE.el.querySelector('.lg-choice').innerHTML=''; }
 
 /* ---------- Welcome and the two-button choice ---------- */
 function lodgeWelcome(){
@@ -48,7 +48,7 @@ function showChoice(){
 function lodgeHub(){
   lodgeShow('hub'); clearScene();
   LODGE.hub=makeHub(LODGE.stage,goSpot); LODGE.hub.loop.start();
-  hudBank(); showLabels(3500); if(typeof xpHud==='function') xpHud();
+  setHud('hub'); hudBank(); showLabels(3500); if(typeof xpHud==='function') xpHud();
 }
 function hudBank(){ const b=document.getElementById('lgBank'); if(b) b.textContent=fmt$(S.bank)+((S.debt||0)>0?' · owes '+k$(S.debt):''); }
 setInterval(()=>{ if(LODGE.active) hudBank(); },1000);
@@ -62,6 +62,7 @@ function goSpot(s){
   if(dest.soon){ toast(dest.soon,'gold'); return; }
   if(dest.bar){ openBar(); return; }
   if(dest.shop){ openShop(); return; }
+  if(dest.room){ openRoom(); return; }
   S.mode=dest.mode; if(dest.ftab) S.ftab=dest.ftab; if(dest.ctab) S.ctab=dest.ctab;
   if(dest.ctab&&S.howto) S.howto[dest.ctab]=false;
   LODGE.from=true; save(); lodgeHide(); scrollTo(0,0); render();
@@ -78,11 +79,25 @@ const LG_ACT={
   enter:()=>{ S.lodge.choice='lodge'; save(); lodgeHub(); profileAfterLodge(); },
   app:()=>{ S.lodge.choice='app'; LODGE.from=false; save(); lodgeHide(); render(); profileAfterLodge(); },
   classic:()=>{ S.lodge.choice='app'; LODGE.from=false; save(); lodgeHide(); render(); },
-  myroom:()=>toast('My Room opens in pass e — decorate it with what you buy.','gold'),
+  myroom:()=>openRoom(),
+  hub:()=>lodgeHub(),
   labels:()=>showLabels(4000),
 };
 Object.assign(ACT,{ toLodge:()=>{ closeSheet(); S.lodge.choice='lodge'; save(); lodgeHub(); } });
 function profileAfterLodge(){ if(typeof profileWelcome==='function') setTimeout(profileWelcome,400); }
+
+/* ---------- My Room ---------- */
+function openRoom(){
+  lodgeShow('room'); clearScene();
+  LODGE.room=makeRoom(LODGE.stage); LODGE.room.loop.start();
+  setHud('room'); hudBank(); if(typeof xpHud==='function') xpHud();
+}
+// The bottom buttons change with the room you're in.
+function setHud(mode){
+  const L=document.getElementById('lgLeft'), R=document.getElementById('lgRight'); if(!L||!R) return;
+  if(mode==='room'){ L.textContent='Great room'; L.dataset.lg='hub'; R.textContent=LODGE.room&&LODGE.room.ED.on?'Done':'Decorate'; R.dataset.lg='decorate'; R.classList.remove('lg-round'); }
+  else { L.textContent='My Room'; L.dataset.lg='myroom'; R.textContent='?'; R.dataset.lg='labels'; R.classList.add('lg-round'); }
+}
 
 // Every time the app opens: the welcome, then the choice.
 function lodgeStart(){ lodgeHeaderBtn(); lodgeWelcome(); }
