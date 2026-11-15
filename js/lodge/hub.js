@@ -1,16 +1,16 @@
 // The great room: every part of the app is a spot in the room.
 
-const SPOTS=[ // [id, x, y, w, h, label, where it goes]   (TV is checked before the fireplace it hangs on)
-  ['tv',      74, 58, 44, 36,'The TV · Scores & Today', {mode:'football',ftab:'today'}],
-  ['fireside',54, 50, 86,158,'The Fireside · Blackjack', {mode:'casino',ctab:'blackjack'}],
-  ['library',  2,106, 26, 78,'The Library · Video Poker',{mode:'casino',ctab:'poker'}],
-  ['wheel',   29,106, 26, 78,'The Wheel Room · Roulette',{mode:'casino',ctab:'roulette'}],
-  ['hazard', 137,106, 26, 78,'The Hazard Room · Craps',  {mode:'casino',ctab:'craps'}],
-  ['slots',  164,118, 28, 66,'Jingle Jackpot · Slots',   {mode:'casino',ctab:'slots'}],
-  ['stairs', 156,192, 36, 76,'Staircase · My Room',      {soon:'My Room opens in pass e — decorate it with what you buy.'}],
-  ['merchant',22,218, 58, 46,'The Merchant · Shop',      {soon:'The merchant sets up shop in pass d.'}],
-  ['bar',      0,262, 88, 58,'The Bar · Drinks',         {soon:'The bartender starts pouring in pass b.'}],
-  ['book',   104,270, 88, 50,'Sportsbook · Bets',        {mode:'football',ftab:'bets'}],
+const SPOTS=[ // [id, x, y, w, h, label, where it goes, where you stand]   (TV is checked before the fireplace it hangs on)
+  ['tv',      74, 58, 44, 36,'The TV · Scores & Today', {mode:'football',ftab:'today'},[92,212]],
+  ['fireside',54, 50, 86,158,'The Fireside · Blackjack', {mode:'casino',ctab:'blackjack'},[92,212]],
+  ['library',  2,106, 26, 78,'The Library · Video Poker',{mode:'casino',ctab:'poker'},[30,198]],
+  ['wheel',   29,106, 26, 78,'The Wheel Room · Roulette',{mode:'casino',ctab:'roulette'},[42,198]],
+  ['hazard', 137,106, 26, 78,'The Hazard Room · Craps',  {mode:'casino',ctab:'craps'},[146,198]],
+  ['slots',  164,118, 28, 66,'Jingle Jackpot · Slots',   {mode:'casino',ctab:'slots'},[150,200]],
+  ['stairs', 156,192, 36, 76,'Staircase · My Room',      {soon:'My Room opens in pass e — decorate it with what you buy.'},[154,268]],
+  ['merchant',22,218, 58, 46,'The Merchant · Shop',      {soon:'The merchant sets up shop in pass d.'},[46,272]],
+  ['bar',      0,262, 88, 58,'The Bar · Drinks',         {bar:true},[40,288]],
+  ['book',   104,270, 88, 50,'Sportsbook · Bets',        {mode:'football',ftab:'bets'},[140,288]],
 ];
 
 let HUB_BG=null;
@@ -81,6 +81,12 @@ function makeHub(host,onSpot){
   const winSnow=[snowField(18,31,{x:30,y:30,w:24,h:70}),snowField(18,32,{x:138,y:30,w:24,h:70})];
   const tree=prng(5), lights=Array.from({length:14},()=>({x:4+tree()*22,y:192+tree()*42,c:[LP.cran3,LP.brass2,LP.emb2,LP.snow2][tree()*4|0],p:tree()*6}));
   let tv=tvInfo(), tvAt=0, flash=null;
+  // You: walk to wherever the room is tapped. Feet position in room pixels.
+  const me={x:96,y:246,tx:90,ty:246,face:1,speed:40,arrive:null,walkT:0};
+  const walkTo=(x,y,arrive)=>{ const p=walkable(x,y); me.tx=p[0]; me.ty=p[1]; me.arrive=arrive||null; const d=Math.hypot(me.tx-me.x,me.ty-me.y); me.speed=Math.max(40,d/0.85); clearTimeout(me.backup);
+    if(d<1&&arrive){ me.arrive=null; arrive(); return; }
+    // Backup: if the phone slows animation down (e.g. Low Power Mode), still arrive and open the spot.
+    if(arrive) me.backup=setTimeout(()=>{ if(me.arrive===arrive){ me.arrive=null; me.x=me.tx; me.y=me.ty; arrive(); } },d/me.speed*1000+450); };
   const look=lodgeLook();
   const loop=makeLoop((t,dt)=>{
     ctx.drawImage(drawHubStatic(),0,0);
@@ -117,19 +123,38 @@ function makeHub(host,onSpot){
     // people: merchant behind the table, bartender behind the bar, you on the rug
     ctx.drawImage(personSprite('merchant',Math.sin(t*.9)>.95?'idle1':'idle0'),44,250-PERSON_H); rect(ctx,24,246,52,4,LP.wal5); rect(ctx,24,250,52,12,LP.cran1); rect(ctx,24,250,52,1,LP.brass1);
     rect(ctx,30,240,8,6,LP.ink); rect(ctx,28,245,12,1,LP.ink); rect(ctx,62,241,6,5,LP.brass1); rect(ctx,48,244,10,2,LP.pine4);
-    const pour=(t%9)>7.6; ctx.drawImage(personSprite('bartender',pour?'pour0':(Math.sin(t*1.3)>.96?'idle1':'idle0')),36,296-PERSON_H);
+    const pour=(t%9)>7.6||(LODGE.pour&&performance.now()-LODGE.pour<1600); ctx.drawImage(personSprite('bartender',pour?'pour0':(Math.sin(t*1.3)>.96?'idle1':'idle0')),36,296-PERSON_H);
     rect(ctx,0,292,88,28,LP.wal3); rect(ctx,0,290,88,4,LP.wal5); rect(ctx,0,290,88,1,LP.wal6); rect(ctx,0,297,88,1,LP.brass1); for(let xx=4;xx<84;xx+=14){ rect(ctx,xx,300,10,16,LP.wal4); rect(ctx,xx,300,10,1,LP.wal5); }
     rect(ctx,10,284,5,6,LP.snow2); rect(ctx,11,285,3,4,'#6b3a1f'); rect(ctx,66,284,5,6,LP.snow2); rect(ctx,67,285,3,4,LP.emb0);
-    const bob=Math.sin(t*2)>.6?1:0;
-    ctx.drawImage(personSprite('player',Math.sin(t*.8)>.97?'idle1':'idle0',look),90,246-PERSON_H+bob);
+    const dx=me.tx-me.x, dy=me.ty-me.y, d=Math.hypot(dx,dy), moving=d>0.5;
+    if(moving){ const st=Math.min(d,me.speed*dt); me.x+=dx/d*st; me.y+=dy/d*st; if(Math.abs(dx)>0.5) me.face=dx<0?-1:1; me.walkT+=dt; }
+    else if(me.arrive){ const a=me.arrive; me.arrive=null; clearTimeout(me.backup); setTimeout(a,60); }
+    const bob=!moving&&Math.sin(t*2)>.6?1:0, fr=moving?'walk'+((me.walkT*10|0)%4):(Math.sin(t*.8)>.97?'idle1':'idle0');
+    drawPerson(ctx,'player',fr,look,me.x,me.y+bob,me.face);
+    drawHeld(ctx,me.x,me.y+bob,me.face,t);
     // tap flash
     if(flash){ const k=(performance.now()-flash.at)/350; if(k>=1) flash=null; else { ctx.globalAlpha=.45*(1-k); rect(ctx,flash.x,flash.y,flash.w,flash.h,LP.brass2); ctx.globalAlpha=1; } }
   });
   c.addEventListener('click',e=>{
     const b=c.getBoundingClientRect(), px=(e.clientX-b.left)/b.width*PW, py=(e.clientY-b.top)/b.height*PH;
-    const s=SPOTS.find(([,x,y,w,h])=>px>=x&&px<x+w&&py>=y&&py<y+h); if(!s) return;
+    const s=SPOTS.find(([,x,y,w,h])=>px>=x&&px<x+w&&py>=y&&py<y+h);
+    if(!s){ if(py>=186){ walkTo(px,py); tone(520,.04,'square',.02); } return; }
     flash={x:s[1],y:s[2],w:s[3],h:s[4],at:performance.now()}; tone(660,.06,'square',.03); tone(990,.08,'square',.02,.05);
-    setTimeout(()=>onSpot(s),180);
+    walkTo(s[7][0],s[7][1],()=>onSpot(s));
   });
-  return {loop,canvas:c};
+  return {loop,canvas:c,me,walkTo};
+}
+
+// Where you can stand: the floor, but not inside the tree, the merchant's table, the stairs or the counters.
+function walkable(x,y){
+  y=clamp(y,196,288); x=clamp(x,8,182);
+  if(x<30&&y<244) x=30;                         // Christmas tree
+  if(x>18&&x<82&&y>234&&y<268) y=y<251?234:268; // merchant's table
+  if(x>152&&y<270) x=Math.min(x,152);           // staircase
+  return [x,y];
+}
+// Draw a person standing with their feet at (x, y), facing left (-1) or right (1).
+function drawPerson(ctx,who,frame,look,x,y,face){
+  const spr=personSprite(who,frame,look), X=Math.round(x-6), Y=Math.round(y-PERSON_H);
+  if(face<0){ ctx.save(); ctx.translate(X+12,Y); ctx.scale(-1,1); ctx.drawImage(spr,0,0); ctx.restore(); } else ctx.drawImage(spr,X,Y);
 }

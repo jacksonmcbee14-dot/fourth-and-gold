@@ -28,7 +28,7 @@ function lodgeHide(){
   if(LODGE.hub) LODGE.hub.loop.stop(); if(LODGE.welcome) LODGE.welcome.stop();
   lodgeHeaderBtn();
 }
-function clearScene(){ if(LODGE.hub){LODGE.hub.loop.stop();LODGE.hub=null;} if(LODGE.welcome){LODGE.welcome.stop();LODGE.welcome=null;} LODGE.stage.innerHTML=''; LODGE.el.querySelector('.lg-labels').innerHTML=''; LODGE.el.querySelector('.lg-choice').innerHTML=''; }
+function clearScene(){ if(typeof closeBar==='function') closeBar(); if(LODGE.hub){LODGE.hub.loop.stop();LODGE.hub=null;} if(LODGE.welcome){LODGE.welcome.stop();LODGE.welcome=null;} LODGE.stage.innerHTML=''; LODGE.el.querySelector('.lg-labels').innerHTML=''; LODGE.el.querySelector('.lg-choice').innerHTML=''; }
 
 /* ---------- Welcome and the two-button choice ---------- */
 function lodgeWelcome(){
@@ -60,6 +60,7 @@ function showLabels(ms){
 function goSpot(s){
   const dest=s[6];
   if(dest.soon){ toast(dest.soon,'gold'); return; }
+  if(dest.bar){ openBar(); return; }
   S.mode=dest.mode; if(dest.ftab) S.ftab=dest.ftab; if(dest.ctab) S.ctab=dest.ctab;
   if(dest.ctab&&S.howto) S.howto[dest.ctab]=false;
   LODGE.from=true; save(); lodgeHide(); scrollTo(0,0); render();

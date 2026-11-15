@@ -36,3 +36,14 @@ body.calm #lodgeBtn,#lodgeBtn{font-size:8px!important}
 .lodge[data-mode=hub]{background:linear-gradient(#120a06 50%,#3a2617 50%)}
 .lg-choice{top:0;bottom:0;justify-content:flex-end;padding-bottom:9%}
 .lg-title{position:absolute;top:7%;left:0;right:0;margin:0}
+/* Bar dialogue: an 8-bit RPG text box over the bottom of the room */
+.lg-dialog{position:absolute;left:4%;right:4%;bottom:3%;display:none;flex-direction:column;gap:10px;padding:12px;background:#120a06;
+  box-shadow:0 0 0 3px #c8a45c,0 0 0 6px #120a06,0 8px 0 6px rgba(0,0,0,.4);z-index:3}
+.lg-dialog.on{display:flex;animation:lgpop .25s steps(4) both}
+.lg-dlg-who{font-size:8px;color:#e8963c;letter-spacing:.06em}
+.lg-dlg-text{font-size:9px;line-height:1.6;color:#f6ebcb;min-height:44px}
+.lg-drinks{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lg-drink{display:grid;grid-template-columns:14px 1fr;grid-template-rows:auto auto;column-gap:8px;row-gap:4px;align-items:center;text-align:left;font-size:8px;padding:9px 8px;text-transform:none}
+.lg-drink i{grid-row:1/3;width:12px;height:16px;background:linear-gradient(var(--t) 0 3px,var(--c) 3px);box-shadow:0 0 0 2px #f3ead8}
+.lg-drink b{font-weight:400;color:#ecd9a8}
+.lg-drink:disabled{opacity:.4}
