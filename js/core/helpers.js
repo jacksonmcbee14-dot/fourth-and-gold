@@ -4,7 +4,17 @@
    ========================================================= */
 const $=s=>document.querySelector(s);
 const fmt$=n=>(n<0?'-$':'$')+Math.abs(Math.round(n)).toLocaleString('en-US');
-const k$=n=>n>=1e9?('$'+(n/1e9).toFixed(n%1e9?1:0)+'B'):n>=1e6?('$'+(n/1e6).toFixed(n%1e6?1:0)+'M'):n>=1e3?('$'+Math.round(n/1e3)+'K'):'$'+n;
+// Short money: $950 · $12K · $1.5M · $2.4B · $1T · $3.2Q. Never "$1000B": a value that rounds up to 1,000 moves to the next unit.
+const MONEY_UNITS=[[1e15,'Q'],[1e12,'T'],[1e9,'B'],[1e6,'M'],[1e3,'K']];
+function short$(n,dp){
+  const neg=n<0; let a=Math.abs(n), out='$'+Math.round(a);
+  for(let i=0;i<MONEY_UNITS.length;i++){ const [v,u]=MONEY_UNITS[i]; if(a<v&&!(i===MONEY_UNITS.length-1&&Math.round(a)>=1000)) continue;
+    let t=(a/v).toFixed(dp).replace(/(\.\d*?)0+$/,'$1').replace(/\.$/,'');
+    if(parseFloat(t)>=1000&&i>0){ const [v2,u2]=MONEY_UNITS[i-1]; t=(a/v2).toFixed(dp).replace(/(\.\d*?)0+$/,'$1').replace(/\.$/,''); out='$'+t+u2; } else out='$'+t+u;
+    break; }
+  return (neg?'-':'')+out;
+}
+const k$=n=>short$(n,1);
 const pct=p=>(p>=.995?'>99':p<.005?'<1':Math.round(p*100))+'%';
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -34,7 +44,7 @@ function animateRings(){requestAnimationFrame(()=>requestAnimationFrame(()=>docu
 function toast(msg,cls=''){const t=$('#toast');t.textContent=msg;t.className='on '+cls;clearTimeout(t._t);t._t=setTimeout(()=>t.className=cls,2400);}
 function setBank(delta){
   S.bank=Math.round(S.bank+delta); if(S.bank>S.peak)S.peak=S.bank; save();
-  const el=$('#bankVal'); el.textContent=fmt$(S.bank);
+  const el=$('#bankVal'); el.textContent=bank$(S.bank);
   if(delta>0){const b=$('#bankChip');b.classList.remove('bump');void b.offsetWidth;b.classList.add('bump');}
 }
 function rec(t){return t.w+'–'+t.l+(t.t?'–'+t.t:'')}
@@ -49,5 +59,7 @@ function rng(){ if(_ri>=256){ crypto.getRandomValues(_rb); _ri=0; } return _rb[_
 const rint=n=>Math.floor(rng()*n);
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const setText=(s,t)=>{const e=document.querySelector(s);if(e)e.textContent=t;};
-const cmp$=n=>n>=1e9?'$'+(n/1e9).toFixed(2).replace(/\.00$/,'').replace(/(\.\d)0$/,'$1')+'B':n>=1e6?'$'+(n/1e6).toFixed(2).replace(/\.00$/,'').replace(/(\.\d)0$/,'$1')+'M':n>=1e3?'$'+(n/1e3).toFixed(n%1e3?1:0).replace(/\.0$/,'')+'K':'$'+Math.round(n);
+const cmp$=n=>short$(n,2);
+// The bankroll in full, until it's too long to fit (a trillion and up), then short.
+const bank$=n=>Math.abs(n)>=1e12?cmp$(n):fmt$(n);
 

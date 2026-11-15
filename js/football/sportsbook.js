@@ -135,6 +135,6 @@ function settleBets(){
     else if(b.st==='push'){S.bank+=b.stake;}
     else {net-=b.stake;S.picks.l++;}
   }
-  if(changed){ if(S.bank>S.peak)S.peak=S.bank; save(); $('#bankVal').textContent=fmt$(S.bank); toast(net>=0?`Bets settled · +${fmt$(net)}`:`Bets settled · -${fmt$(-net)}`, net>=0?'win':'loss'); }
+  if(changed){ if(S.bank>S.peak)S.peak=S.bank; save(); $('#bankVal').textContent=bank$(S.bank); toast(net>=0?`Bets settled · +${fmt$(net)}`:`Bets settled · -${fmt$(-net)}`, net>=0?'win':'loss'); }
 }
 
