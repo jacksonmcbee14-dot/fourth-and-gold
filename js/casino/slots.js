@@ -137,6 +137,23 @@ function pickBonus(){
     });
   });
 }
+// Reel motion: the same path as before — scroll t symbols with the cubic-bezier(.18,.12,.22,1.07) ease and its
+// little bounce at the end — but drawn with 5 cells whose symbols are swapped as they pass, instead of a strip of
+// up to ~150 blurred symbols. Time-based, so a slow frame never slows the spin down. Speeds up 8× on STOP.
+const spinEase=(()=>{const x1=.18,y1=.12,x2=.22,y2=1.07,cx=3*x1,bx=3*(x2-x1)-cx,ax=1-cx-bx,cy=3*y1,by=3*(y2-y1)-cy,ay=1-cy-by;
+  const X=s=>((ax*s+bx)*s+cx)*s,Y=s=>((ay*s+by)*s+cy)*s;
+  return x=>{if(x<=0)return 0;if(x>=1)return 1;let lo=0,hi=1,s=x;for(let i=0;i<24;i++){if(X(s)<x)lo=s;else hi=s;s=(lo+hi)/2;}return Y(s);};})();
+function reelSpin(st,strip,nw,t,h,dur){
+  const L=strip.length,uses=[...st.querySelectorAll('use')];let el=0,last=performance.now(),rate=1,base=null,raf=0,resolve;
+  const o={playState:'running',finished:new Promise(r=>resolve=r),updatePlaybackRate(r){rate=r;},stop(){cancelAnimationFrame(raf);o.playState='finished';}};
+  const paint=q=>{const b=Math.floor(q);
+    if(b!==base){base=b;for(let i=0;i<5;i++)uses[i].setAttribute('href','#s-'+strip[((nw+b-1+i)%L+L)%L]);}
+    st.style.transform=`translate3d(0,${(-(q-b+1)*h).toFixed(2)}px,0)`;};
+  const tick=now=>{el+=(now-last)*rate;last=now;const k=Math.min(1,el/dur);paint(t*(1-spinEase(k)));
+    if(k<1&&o.playState==='running')raf=requestAnimationFrame(tick);else{o.playState='finished';resolve();}};
+  paint(t);raf=requestAnimationFrame(tick);
+  return o;
+}
 async function slotSpin(){
   if(SL.spinning){SL.quick=true;SL.anims.forEach(a=>{try{if(a.playState==='running')a.updatePlaybackRate(8);}catch(e){}});return;}
   if(S.mode!=='casino'||S.ctab!=='slots'||(S.howto&&S.howto.slots)||!$('#reels'))return;
@@ -154,13 +171,13 @@ async function slotSpin(){
   const proms=reels.map((el,r)=>{
     const L=STRIPS[r].length, cur=SL.stops[r], nw=stops[r];
     const t=((cur-nw)%L+L)%L+L*(1+(antic[r]?1:0));
-    const cells=[];for(let i=0;i<t+3;i++)cells.push(cellHTML(STRIPS[r][(nw+i)%L]));
-    el.innerHTML=`<div class="strip blur">${cells.join('')}</div>`;
+    // Only 5 symbol cells per reel; they're recycled as the reel scrolls (see reelSpin) so it stays smooth.
+    el.innerHTML=`<div class="strip blur">${[0,1,2,3,4].map(()=>cellHTML(STRIPS[r][nw])).join('')}</div>`;
     const st=el.firstChild, dur=(820+r*240+(antic[r]?1600:0))*T;
-    let a=null;try{a=st.animate([{transform:`translateY(${-t*h}px)`},{transform:'translateY(0px)'}],{duration:dur,easing:'cubic-bezier(.18,.12,.22,1.07)',fill:'forwards'});SL.anims.push(a);}catch(e){}
+    const a=reelSpin(st,STRIPS[r],nw,t,h,dur);SL.anims.push(a);
     setTimeout(()=>st.classList.remove('blur'),dur*.8);
     if(antic[r])setTimeout(()=>{if(!SL.quick&&el.isConnected){el.classList.add('antic');SND.antic();}},(820+(r-1)*240)*T);
-    return Promise.race([a?a.finished.catch(()=>{}):sleep(dur),sleep(dur+500)]).then(()=>{
+    return Promise.race([a.finished,sleep(dur+500)]).then(()=>{a.stop();
       el.classList.remove('antic');
       el.innerHTML=`<div class="strip">${[0,1,2].map(k=>cellHTML(grid[r][k],grid[r][k]==='BONUS'?'land':'')).join('')}</div>`;
       SND.stop();if(scR[r])SND.scatter();
