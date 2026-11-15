@@ -200,3 +200,29 @@ body.vip-high .felt,body.vip-high .cab{box-shadow:0 0 0 2px var(--vipc),0 0 38px
 body.vip-high .chip{box-shadow:0 3px 0 rgba(0,0,0,.4),inset 0 0 0 3px var(--vipc),inset 0 0 0 4px rgba(0,0,0,.35)}
 @keyframes viphigh{50%{box-shadow:0 0 0 2px var(--vipc),0 0 56px color-mix(in srgb,var(--vipc) 60%,transparent)}}
 .fgm-box .vipx{max-height:62dvh;overflow:auto}
+/* characters on the leaderboard */
+.lbav{position:relative;display:grid;place-items:center;width:30px}
+.lbav img{width:22px;height:38px;image-rendering:pixelated;image-rendering:crisp-edges}
+.lbav i{position:absolute;top:-9px;font-style:normal;font-size:12px}
+/* visiting a friend's lodge */
+.hv{display:flex;flex-direction:column;gap:10px}
+.hv-room{width:100%;max-width:300px;aspect-ratio:192/320;align-self:center;border-radius:10px;box-shadow:0 0 0 2px var(--line2)}
+.hv-stats{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;color:var(--muted)}
+.hv-stats b{color:var(--gold2)}
+.hv-def{display:flex;flex-wrap:wrap;gap:6px}
+.hv-def span{padding:4px 10px;border-radius:999px;font-size:12px;border:1px solid var(--line2);background:rgba(0,0,0,.2)}
+.hv-def span.none{color:var(--muted);border-style:dashed}
+.hv-recent{display:flex;flex-direction:column;gap:4px;font-size:13px;border-top:1px solid var(--line);padding-top:8px}
+/* the safe-cracking game */
+.hg{display:flex;flex-direction:column;gap:10px;align-items:stretch}
+.hg-pips{display:flex;justify-content:center;gap:8px}
+.hg-pips i{width:14px;height:14px;border-radius:50%;border:2px solid var(--gold);background:transparent}
+.hg-pips i.ok{background:var(--win);border-color:var(--win)}
+.hg-dial{width:min(240px,64vw);align-self:center}
+.hg-dial .rim{fill:#1c1c22;stroke:#8a929e;stroke-width:4}
+.hg-dial .zone{fill:rgba(236,190,80,.55)}
+.hg-dial .needle{stroke:#ff4a5a;stroke-width:4;stroke-linecap:round}
+.hg-dial .hub{fill:#cfd9e0}
+.hg-time{height:6px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden}
+.hg-time b{display:block;height:100%;background:var(--gold);width:100%}
+.hg-go{padding:18px;font-size:18px}

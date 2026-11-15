@@ -62,6 +62,7 @@ async function socInbox(items){
     if(it.kind==='invite'){ const d=S.debt||0; if(it.clear_debt) S.debt=0; addGift(it.amount); celebrate('Your friend joined!',`${it.label} signed up with your invite.`,(d?'Debt of '+fmt$(d)+' wiped + ':'')+fmt$(it.amount)); }
     else if(it.kind==='champion'){ grantPrize(it.item); celebrate('League champion!',`You finished #1 in ${it.label} last week.`,'You won: '+((ITEM[it.item]||{}).name||'a prize'),it.item); }
     else if(it.kind==='challenge_win'){ setBank(it.amount); toast('Challenge won! +'+fmt$(it.amount),'win'); }
+    else if((it.kind==='robbed'||it.kind==='heist_fine')&&typeof heistInbox==='function'){ heistInbox(it); }
     else if(it.kind==='challenge_refund'){ S.bank=Math.round(S.bank+it.amount); save(); toast('Challenge stake returned · '+fmt$(it.amount),'gold'); }
   }
   S.inboxDone=S.inboxDone.slice(-200); save(); render();

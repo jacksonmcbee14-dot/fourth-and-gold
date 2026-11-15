@@ -89,7 +89,7 @@ function viewLeague(){
   const champ=V.champs&&V.champs[0];
   html+=`<div class="sechead"><h2>This week</h2><span class="aside">Winnings since Monday</span></div><div class="panel lgx-table">${V.members.map((p,i)=>`
     <div class="lgx-row ${p.me?'me':''}"><span class="no">${i+1}</span>${avatar(lookFor(p.outfit))}<div class="nm"><b>${esc(p.name)}</b>${typeof vipBadge==='function'?vipBadge(p.vip):''}${champ&&champ.name===p.name?' <span title="Last week’s champion">👑</span>':''}<small class="muted">Lv ${levelOf(p.xp).L}${p.titles?` · ${p.titles}× champ`:''}</small></div>
-    <span class="pf ${p.profit>=0?'up':'down'} mono">${signedK(p.profit)}</span>${p.me?'':`<button class="btn sm" data-a="chNew" data-to="${esc(p.name)}">⚔️</button>`}</div>`).join('')}</div>`;
+    <span class="pf ${p.profit>=0?'up':'down'} mono">${signedK(p.profit)}</span><button class="btn sm" data-a="visitLodge" data-v="${esc(p.name)}" aria-label="Visit ${esc(p.name)}’s lodge">🏠</button>${p.me?'':`<button class="btn sm" data-a="chNew" data-to="${esc(p.name)}">⚔️</button>`}</div>`).join('')}</div>`;
   html+=`<div class="sechead"><h2>League feed</h2><span class="aside">Tap to talk trash</span></div><div class="lgx-taunts">${TAUNTS.map((t,i)=>`<button data-a="lgTaunt" data-n="${i}">${esc(t)}</button>`).join('')}</div>
     <div class="lgx-feed">${(V.feed||[]).map(feedItem).join('')||'<div class="empty">Nothing yet. Win something.</div>'}</div>`;
   if(V.champs&&V.champs.length) html+=`<div class="sechead"><h2>Past champions</h2></div><div class="panel" style="padding:6px 12px">${V.champs.map(c=>`<div class="between lgx-champ"><span>👑 <b>${esc(c.name)}</b> <small class="muted">${esc(c.week.replace('-W',' · week '))}</small></span><span class="mono up">${signedK(c.profit)}</span></div>`).join('')}</div>`;
@@ -103,7 +103,8 @@ function feedItem(f){
   const txt={win:`🎰 ${n} won ${amt} on ${gameName(f.game)}`,share:`📣 ${n} hit ${amt} on ${gameName(f.game)}`,
     golf:`⛳ ${n} shot <b>${f.amount}</b> (${f.n===0?'even':f.n>0?'+'+f.n:f.n}) at ${esc(course)}`,
     taunt:`💬 ${n}: “${esc(TAUNTS[f.n]||'…')}”`,level:`⭐ ${n} reached level <b>${f.n}</b>`,join:`👋 ${n} joined the league`,
-    champion:`👑 ${n} won ${esc((f.other||'').replace(/^.*-W/,'week '))} with ${amt}`,challenge:`⚔️ ${n} beat <b>${esc(f.other||'')}</b> at ${gameName(f.game)} and took ${amt}`}[f.kind]||`${n}`;
+    champion:`👑 ${n} won ${esc((f.other||'').replace(/^.*-W/,'week '))} with ${amt}`,challenge:`⚔️ ${n} beat <b>${esc(f.other||'')}</b> at ${gameName(f.game)} and took ${amt}`,
+    heist:f.n===1?`💰 ${n} robbed <b>${esc(f.other||'')}</b> for ${amt}`:f.n===0?`🚨 ${n} got caught robbing <b>${esc(f.other||'')}</b> and paid ${k$(f.amount||0)}`:`🚨 ${n} set off <b>${esc(f.other||'')}</b>’s alarm and paid ${k$(f.amount||0)}`}[f.kind]||`${n}`;
   const R=f.reacts||{}, mine=f.mine||[];
   return `<div class="lgx-post"><div class="tx">${txt}<small class="muted"> · ${ago(f.created_at)}</small></div><div class="rx">${REACTS.map(e=>`<button class="${mine.includes(e)?'on':''}" data-a="lgReact" data-id="${f.id}" data-e="${e}">${e}${R[e]?`<i>${R[e]}</i>`:''}</button>`).join('')}</div></div>`;
 }
