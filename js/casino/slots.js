@@ -190,6 +190,7 @@ async function slotSpin(){
   let win=wins.reduce((s,w)=>s+w.amt,0);
   if(res.scat)win+=res.scat[0]*bet*mult;
   if(wx!==1&&win>0){ win=Math.round(win*wx); wins.forEach(w=>w.amt=Math.round(w.amt*wx)); }   // drink power on the winnings
+  if(win>0&&typeof capWin==='function'){ const c=capWin(win,bet); if(c<win){ const k=c/win; wins.forEach(w=>w.amt=Math.round(w.amt*k)); win=c; } }   // high-roller limit (js/economy.js)
   SL.spinning=false;
   if(free)SL.fsTotal+=win;
   if(win>0)setBank(win);
@@ -206,7 +207,7 @@ async function slotSpin(){
     SL.auto=0;slUI();
     await starTrigger();
     const W=await pickBonus();
-    const amt=Math.round(jpVal(W)*wx);
+    const amt=typeof capWin==='function'?capWin(Math.round(jpVal(W)*wx),bet):Math.round(jpVal(W)*wx);
     if(W.k==='grand'&&S.slotBet>=MAXBET)S.jp=2500000;
     setBank(amt);SL.lastWin+=amt;
     const lp=document.querySelector(`.jpl.${W.k}`);if(lp){lp.classList.add('hitjp');setTimeout(()=>lp.classList.remove('hitjp'),6000);}
