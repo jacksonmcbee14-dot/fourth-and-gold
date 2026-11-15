@@ -111,3 +111,9 @@ body.in-lodge .xppop{top:auto;bottom:80px;right:50%;transform:translateX(50%)}
 .lg-tray-h>span{flex:1}
 .lg-tray-h .lg-btn{font-size:7px;padding:7px 8px;flex:none}
 .lg-tray-h .lg-round{width:28px;padding:7px 0}
+/* Arrange my room: the vibe chooser */
+.lg-vibe-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lg-vibe{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 6px;font-size:8px;line-height:1.4}
+.lg-vibe .ic{font-size:22px;line-height:1}
+.lg-vibe small{font-size:6px;color:#c8a45c;text-transform:none}
+.lg-vibe.off{opacity:.45}

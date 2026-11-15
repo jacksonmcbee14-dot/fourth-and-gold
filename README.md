@@ -39,6 +39,7 @@ The first time, macOS may ask whether Python can accept incoming network connect
 | `js/league/` · `css/12-league.css` | The League mode: `social.js` (talking to the server, the rewards inbox, invite links, the daily bonus, auto-posting big wins), `view.js` (the League, Challenge, Golf and Invite tabs), `duel.js` (casino duels for challenges: roulette, blackjack, video poker, slots and craps — 1,000 chips, most chips wins), `prizes.js` (gear you can only win in a league). |
 | `js/golf/golf.js` · `css/11-golf.css` | 8-bit golf: three 9-hole courses (the seasonal home course, Ridgeback Pines, Twin Lakes), played as 3, 6 or 9 holes — clubs, timing meter, wind, water, bunkers, trees. |
 | `js/custom-bets.js` | The Custom amount pop-up: casino chips, video poker coins, slot bet, duel chips and challenge stakes. |
+| `js/lodge/vibes.js` | Arrange for me: pick a vibe (golf, casino night, sports den, cozy cabin, game room, high roller, holiday) and My Room is laid out from designed spots with matching pairs; plus 8 golf decor pieces. |
 | `js/lodge/buyall.js` | Buy all unlocked items in the shop's current tab and filter. |
 | `js/share.js` | Share cards (1080×1920 pictures for Instagram stories), the phone share sheet, and the pop-up layer. |
 | `js/economy.js` | The economy scales with net worth: table minimum (net worth ÷ $100K)², capped at 25% of net worth; shop prices × (net worth ÷ $1M); drinks a share of net worth. Wins are never capped. |
