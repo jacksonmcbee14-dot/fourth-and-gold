@@ -13,7 +13,7 @@ function lodgeDom(){
   el.innerHTML=`<div class="lg-col">
     <div class="lg-hud lg-top"><button class="lg-btn" data-lg="classic">Classic view</button><span class="lg-bank" id="lgBank"></span></div>
     <div class="lg-stage"><div class="lg-scene"></div><div class="lg-labels"></div><div class="lg-choice"></div></div>
-    <div class="lg-hud lg-bottom"><button class="lg-btn" data-lg="myroom">My Room</button><button class="lg-btn lg-round" data-lg="labels" aria-label="Show what everything is">?</button></div></div>`;
+    <div class="lg-hud lg-bottom"><button class="lg-btn" data-lg="myroom">My Room</button><span class="lg-lvl" id="lgLvl"></span><button class="lg-btn lg-round" data-lg="labels" aria-label="Show what everything is">?</button></div></div>`;
   document.body.appendChild(el);
   LODGE.el=el; LODGE.stage=el.querySelector('.lg-scene');
   el.addEventListener('click',e=>{ const b=e.target.closest('[data-lg]'); if(!b) return; e.stopPropagation(); LG_ACT[b.dataset.lg]&&LG_ACT[b.dataset.lg](b); });
@@ -48,7 +48,7 @@ function showChoice(){
 function lodgeHub(){
   lodgeShow('hub'); clearScene();
   LODGE.hub=makeHub(LODGE.stage,goSpot); LODGE.hub.loop.start();
-  hudBank(); showLabels(3500);
+  hudBank(); showLabels(3500); if(typeof xpHud==='function') xpHud();
 }
 function hudBank(){ const b=document.getElementById('lgBank'); if(b) b.textContent=fmt$(S.bank)+((S.debt||0)>0?' · owes '+k$(S.debt):''); }
 setInterval(()=>{ if(LODGE.active) hudBank(); },1000);

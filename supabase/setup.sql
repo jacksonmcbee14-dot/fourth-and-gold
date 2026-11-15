@@ -88,11 +88,12 @@ end $$;
 -- (Same as the latest supabase/update-*.sql.)
 drop function if exists public.fg_leaderboard();
 create function public.fg_leaderboard()
-returns table(name text, bank bigint, resets integer, nfl_team text, cfb_team text, updated_at timestamptz, football bigint, casino bigint, debt bigint)
+returns table(name text, bank bigint, resets integer, nfl_team text, cfb_team text, updated_at timestamptz, football bigint, casino bigint, debt bigint, xp bigint)
 language sql security definer set search_path = public as $$
   select p.name, p.bank, p.resets, p.nfl_team, p.cfb_team, p.updated_at, f.fb,
          p.bank - 1000000 - f.fb - coalesce((p.state->>'topups')::numeric, 0)::bigint,
-         coalesce((p.state->>'debt')::numeric, 0)::bigint
+         coalesce((p.state->>'debt')::numeric, 0)::bigint,
+         coalesce((p.state->'lodge'->>'xp')::numeric, 0)::bigint
   from fg_players p
   cross join lateral (
     select coalesce(sum(case b->>'st'
