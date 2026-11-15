@@ -5,9 +5,10 @@
 const $=s=>document.querySelector(s);
 const fmt$=n=>(n<0?'-$':'$')+Math.abs(Math.round(n)).toLocaleString('en-US');
 // Short money: $950 · $12K · $1.5M · $2.4B · $1T · $3.2Q. Never "$1000B": a value that rounds up to 1,000 moves to the next unit.
-const MONEY_UNITS=[[1e15,'Q'],[1e12,'T'],[1e9,'B'],[1e6,'M'],[1e3,'K']];
+const MONEY_UNITS=[[1e33,'Dc'],[1e30,'No'],[1e27,'Oc'],[1e24,'Sp'],[1e21,'Sx'],[1e18,'Qi'],[1e15,'Qa'],[1e12,'T'],[1e9,'B'],[1e6,'M'],[1e3,'K']];
 function short$(n,dp){
   const neg=n<0; let a=Math.abs(n), out='$'+Math.round(a);
+  if(a>=1e36) return (neg?'-':'')+'$'+a.toExponential(1).replace('+','');   // beyond decillions
   for(let i=0;i<MONEY_UNITS.length;i++){ const [v,u]=MONEY_UNITS[i]; if(a<v&&!(i===MONEY_UNITS.length-1&&Math.round(a)>=1000)) continue;
     let t=(a/v).toFixed(dp).replace(/(\.\d*?)0+$/,'$1').replace(/\.$/,'');
     if(parseFloat(t)>=1000&&i>0){ const [v2,u2]=MONEY_UNITS[i-1]; t=(a/v2).toFixed(dp).replace(/(\.\d*?)0+$/,'$1').replace(/\.$/,''); out='$'+t+u2; } else out='$'+t+u;

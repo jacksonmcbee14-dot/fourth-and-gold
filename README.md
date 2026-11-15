@@ -42,7 +42,7 @@ The first time, macOS may ask whether Python can accept incoming network connect
 | `js/lodge/vibes.js` | Arrange for me: pick a vibe (golf, casino night, sports den, cozy cabin, game room, high roller, holiday) and My Room is laid out from designed spots with matching pairs; plus 8 golf decor pieces. |
 | `js/lodge/buyall.js` | Buy all unlocked items in the shop's current tab and filter. |
 | `js/share.js` | Share cards (1080×1920 pictures for Instagram stories), the phone share sheet, and the pop-up layer. |
-| `js/economy.js` | The economy: VIP tables you choose (Lodge $1K, Silver $100K, Gold $10M, Diamond $1B minimum; higher tables give more XP and perks, never bigger payouts; each needs 20× its minimum in net worth), Diamond-only shop items, shop prices × (net worth ÷ $1M), drinks a share of net worth. |
+| `js/economy.js` | The economy: endless VIP tables you choose (Lodge $1K, Silver $100K, Gold $10M, Diamond $1B, Emerald $100B, Ruby $10T … each 100× the last, needing 20× its minimum in net worth; you always see the next 5); higher tables give more XP, perks and a badge, never bigger payouts; Diamond-only shop items; shop prices × (net worth ÷ $1M); drinks a share of net worth. |
 | `js/update.js` | Auto-update: when the app opens or comes back on screen it checks for a newer published version and reloads into it. |
 | `js/money.js` | Daily top-up to $1M, borrowing (any amount up to $250K a loan), and what a reset wipes. |
 | `supabase/` | Database setup script, plus numbered update scripts to run in order. |
