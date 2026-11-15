@@ -12,10 +12,10 @@ function viewRanks(){
   if(S.lg==='nfl'){
     const elos=KEYS.map(k=>NFL[k].elo), lo=Math.min(...elos), hi=Math.max(...elos);
     const arr=KEYS.map(k=>({k,t:NFL[k],sc:Math.round(40+59*(NFL[k].elo-lo)/(hi-lo)),p:nflP(k)})).sort((a,b)=>b.sc-a.sc||b.p-a.p);
-    list=arr.map((o,i)=>{const ti=o.sc>=94?0:o.sc>=80?1:o.sc>=62?2:3;return `<div class="rank ${o.k==='SF'?'me':''}"><span class="no">${i+1}</span>${dotHTML({ab:o.k,col:o.t.col})}<div><div style="font-weight:600">${o.t.c} ${o.t.n}</div><div class="small muted"><span class="tier ${TIERS[ti][1]}">${TIERS[ti][0]}</span> &nbsp;${rec(o.t)} · ${pct(o.p)} playoffs</div></div><span class="score">${o.sc}</span></div>`}).join('');
+    list=arr.map((o,i)=>{const ti=o.sc>=94?0:o.sc>=80?1:o.sc>=62?2:3;return `<div class="rank ${o.k===myN()?'me':''}"><span class="no">${i+1}</span>${dotHTML({ab:o.k,col:o.t.col})}<div><div style="font-weight:600">${o.t.c} ${o.t.n}</div><div class="small muted"><span class="tier ${TIERS[ti][1]}">${TIERS[ti][0]}</span> &nbsp;${rec(o.t)} · ${pct(o.p)} playoffs</div></div><span class="score">${o.sc}</span></div>`}).join('');
   } else {
     list=CFB.map(t=>{const a=CFBM.t[t.n];const pr=a.rank/CFBM.n;const mv=Math.round(t.r-pr);const p=a.po/CFBM.n;const ti=p>=.85?0:p>=.45?1:p>=.12?2:3;
-      return `<div class="rank ${t.me?'me':''}"><span class="no">${t.r}</span>${dotHTML({ab:t.ab,col:t.col})}<div><div style="font-weight:600">${t.n} <span class="mv ${mv>0?'up':mv<0?'dn':''}">${mv>0?'▲'+mv:mv<0?'▼'+(-mv):''}</span></div><div class="small muted"><span class="tier ${TIERS[ti][1]}">${TIERS[ti][0]}</span> &nbsp;${rec(t)} · ${t.cf}</div></div><span class="score">${pct(p)}</span></div>`}).join('');
+      return `<div class="rank ${t.me?'me':''}"><span class="no">${t.unr?'NR':t.r}</span>${dotHTML({ab:t.ab,col:t.col})}<div><div style="font-weight:600">${t.n} <span class="mv ${mv>0?'up':mv<0?'dn':''}">${mv>0?'▲'+mv:mv<0?'▼'+(-mv):''}</span></div><div class="small muted"><span class="tier ${TIERS[ti][1]}">${TIERS[ti][0]}</span> &nbsp;${rec(t)} · ${t.cf}</div></div><span class="score">${pct(p)}</span></div>`}).join('');
   }
   return `<div class="between" style="margin-bottom:14px">${leagueSeg()}<span class="eyebrow">Club ratings</span></div>
   ${statusCard}

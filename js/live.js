@@ -57,6 +57,7 @@ function feedEvent(lg,e){
     const rk=x.curatedRank&&x.curatedRank.current, rec=(x.records||[]).find(z=>z.type==='total'||z.name==='overall')||(x.records||[])[0];
     return {ab, name:lg==='nfl'&&NFL[ab]?NFL[ab].n:(tm.location||tm.shortDisplayName||ab), col:tm.color?'#'+tm.color:null, rank:rk&&rk<=25?rk:undefined, score:x.score!=null&&x.score!==''?+x.score:null, rec:rec&&rec.summary};};
   const a=side('away'), h=side('home'); if(!a||!h) return null;
+  if(lg==='cfb') c.competitors.forEach(x=>{const tm=x.team||{},ab=appAb('cfb',tm.abbreviation||'');if(ab&&!CFB_DIR[ab])CFB_DIR[ab]={id:tm.id,n:tm.location||ab,col:tm.color?'#'+tm.color:null};});
   const st=e.status&&e.status.type||{}, state=st.state;
   const tba=c.timeValid===false?1:0;                                // TBA kickoffs: ESPN puts midnight Eastern; use 5pm Eastern so the day reads right everywhere
   const g={espn:e.id, lg, t:tba?new Date(Date.parse(e.date)+17*3600e3).toISOString():e.date, a, h, tba, tv:((c.broadcasts||[])[0]||{names:[]}).names[0]||'',
@@ -96,20 +97,19 @@ function feedBuild(){
     if(mine){ if(seen.has(mine.id)) continue; seen.add(mine.id);
       if(mine.a.ab!==g.a.ab&&live.s){const z=live.as;live.as=live.hs;live.hs=z;}
       games[mine.id]=live; continue; }
-    // A new game: NFL always; college only when a ranked team (or BYU) plays.
-    if(W.lg==='cfb'&&!g.a.rank&&!g.h.rank&&g.a.ab!=='BYU'&&g.h.ab!=='BYU') continue;
+    // A new game: NFL always; college only when a ranked team (or your team) plays.
+    if(W.lg==='cfb'&&!g.a.rank&&!g.h.rank&&g.a.ab!==myC()&&g.h.ab!==myC()) continue;
     const id=`x-${W.lg}-${W.type}-${W.week}-${g.espn}`;
     const T2=t=>T(t.ab,t.name,t.col||(NFL[t.ab]&&NFL[t.ab].col)||'#3a2b1f',t.rank);
     const x={id,lg:W.lg,wk:W.type===2?'Week '+W.week:'Postseason',a:T2(g.a),h:T2(g.h),t:g.t,tv:g.tv};
     if(g.tba)x.tba=1; if(g.neutral)x.neutral=g.neutral; if(g.total)x.total=g.total;
     const p=feedP(id,g); if(p!=null)x.p=p;
-    if((W.lg==='nfl'&&(g.a.ab==='SF'||g.h.ab==='SF'))||(W.lg==='cfb'&&(g.a.ab==='BYU'||g.h.ab==='BYU')))x.mine=1;
     extra.push(x); games[id]=live;
   }
-  // Games the 49ers / BYU have finished no longer get simulated.
+  // Games your teams have finished no longer get simulated.
   const fin=(lg,me,o,t)=>weeks.some(W=>W.lg===lg&&W.events.some(e=>{const g=feedEvent(lg,e);return g&&g.s==='final'&&near(g.t,t)&&[g.a.ab,g.h.ab].includes(me)&&[g.a.ab,g.h.ab].includes(o);}));
-  SF_SCHED.forEach(g=>{if(fin('nfl','SF',g.o,g.t))g.done=1;});
-  BYU_SCHED.forEach(g=>{if(fin('cfb','BYU',g.ab,g.t))g.done=1;});
+  MY_NSCHED.forEach(g=>{if(fin('nfl',myN(),g.o,g.t))g.done=1;});
+  MY_CSCHED.forEach(g=>{if(fin('cfb',myC(),g.ab,g.t))g.done=1;});
   const wk=lg=>FEED.cur[lg]&&FEED.cur[lg].type===2?FEED.cur[lg].week:null;
   return {games,extra,records,cfbRecords,futures:LIVE.futures,nflWeek:wk('nfl')?'Week '+wk('nfl'):null,cfbWeek:wk('cfb')};
 }
@@ -149,6 +149,7 @@ function feedSchedule(){
   FEED.timer=setTimeout(()=>refreshLive(Date.now()-FEED.lastFull>=SLOW_MS),wait);
 }
 async function connect(){
+  loadMySchedules().then(()=>{applyMyTeams();baseModels();NFLM_S=null;CFBM_S=null;render();});
   document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible'&&LIVE.updated&&Date.now()-new Date(LIVE.updated)>FAST_MS) refreshLive(Date.now()-FEED.lastFull>=SLOW_MS); });
   await refreshLive(true);
 }

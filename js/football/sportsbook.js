@@ -37,8 +37,11 @@ function bookCard(g){
   </div></div>`;
 }
 function futuresList(lg){
-  return lg==='nfl'?FUTURES_NFL.concat([{id:'f_sf_po',label:'49ers make the playoffs',odds:american(Math.min(.97,nflP('SF')+.02)),mine:1},{id:'f_sf_1',label:'49ers clinch the #1 seed',odds:american(NFLM.t.SF.s1/NFLM.n+.03),mine:1}]):
-    [{id:'f_byu_cfp',label:'BYU makes the College Football Playoff',odds:american(cfbP('BYU')+.03),mine:1},{id:'f_byu_b12',label:'BYU wins the Big 12',odds:american(CFBM.t.BYU.b12w/CFBM.n+.03),mine:1},{id:'f_utah_cfp',label:'Utah makes the College Football Playoff',odds:american(Math.min(.97,cfbP('Utah')+.02))},{id:'f_uga_1',label:'Georgia earns a top-4 seed',odds:american(Math.min(.97,CFBM.t.Georgia.bye/CFBM.n+.03))}];
+  const K=myN(), kk=K.toLowerCase(), N=NFL[K].n, me=meC(), cc=me.ab.toLowerCase().replace(/[^a-z]/g,'');
+  // The 49ers and BYU keep their original bet ids; other teams get their own.
+  const nid=x=>K==='SF'?'f_sf_'+x:'f_'+kk+'_'+x, cid=x=>me.ab==='BYU'?'f_byu_'+x:'f_'+cc+'_'+x;
+  return lg==='nfl'?FUTURES_NFL.map(f=>({...f,mine:f.id==='f_sb_'+kk?1:undefined})).concat([{id:nid('po'),label:N+' make the playoffs',odds:american(Math.min(.97,nflP(K)+.02)),mine:1},{id:nid('1'),label:N+' clinch the #1 seed',odds:american(NFLM.t[K].s1/NFLM.n+.03),mine:1}]):
+    [{id:cid('cfp'),label:me.n+' makes the College Football Playoff',odds:american(cfbP(me.n)+.03),mine:1}].concat(hasTitleGame()?[{id:cid(me.cf==='Big 12'?'b12':'conf'),label:me.n+' wins the '+me.cf,odds:american(CFBM.t[me.n].b12w/CFBM.n+.03),mine:1}]:[]).concat(me.n==='Utah'?[]:[{id:'f_utah_cfp',label:'Utah makes the College Football Playoff',odds:american(Math.min(.97,cfbP('Utah')+.02))}],me.n==='Georgia'?[]:[{id:'f_uga_1',label:'Georgia earns a top-4 seed',odds:american(Math.min(.97,CFBM.t.Georgia.bye/CFBM.n+.03))}]);
 }
 function viewBets(){
   const open=S.bets.filter(b=>b.st==='open'), sub=S.btab, blg=S.blg||'all';

@@ -1,4 +1,4 @@
-// Football Home tab (49ers / BYU, scores, playoff picture)
+// Football Home tab (your teams, scores, playoff picture)
 /* =========================================================
    VIEWS — FOOTBALL
    ========================================================= */
@@ -14,22 +14,22 @@ function viewHome(){
   return S.lg==='nfl'?homeNFL():homeCFB();
 }
 function homeNFL(){
-  const sf=NFL.SF, a=NFLM.t.SF, p=a.po/NFLM.n;
+  const K=myN(), sf=NFL[K], a=NFLM.t[K], p=a.po/NFLM.n, seedNow=SEEDS[sf.conf].indexOf(K)+1;
   const seedMode=a.seed.indexOf(Math.max(...a.seed));
   const projW=(a.wins/NFLM.n);
-  const next=SF_SCHED.find(g=>new Date(g.t)>Date.now()-3.5*3600e3)||SF_SCHED[0];
-  const opp=NFL[next.o];
-  const nextTxt=`${next.loc==='away'?'@':'vs'} ${opp.n} · ${when(next.t,next.tba)}${next.tv?' · '+next.tv:''}`;
+  const next=MY_NSCHED.find(g=>!g.done&&new Date(g.t)>Date.now()-3.5*3600e3)||(K==='SF'?SF_SCHED[0]:null);
+  const opp=next&&NFL[next.o];
+  const nextTxt=next?`${next.loc==='away'?'@':'vs'} ${opp.n} · ${when(next.t,next.tba)}${next.tv?' · '+next.tv:''}`:'Regular season complete';
   const games=allGames('nfl').filter(g=>g.wk===(LIVE.nflWeek||'Week 10'));
   const conf=S.conf;
   const seedRows=SEEDS[conf].map((k,i)=>seedRow(i+1,k)).join('')+`<div class="hunt">In the hunt</div>`+SEEDS[conf+'_hunt'].map(k=>seedRow('',k)).join('');
   return `
   <div class="between" style="margin-bottom:14px">${leagueSeg()}<span class="small muted">${syncChip()}</span></div>
-  <section class="hero" style="--hbg:radial-gradient(120% 90% at 100% 0%,#d03030 0%,#8c0b0b 38%,#3a0606 75%,#1a0404 100%)">
-    <div class="top2"><span class="eyebrow" style="color:rgba(255,255,255,.75)">Your team · NFC West</span><span class="tag gold">#${SEEDS.NFC.indexOf('SF')+1} seed today</span></div>
-    <div class="mainrow"><div><h1>49ers</h1><div class="rec">${rec(sf)}</div><div class="sub">1st in NFC West · ${oddsTxt(sf.sb)} to win it all</div></div>${ring(p,'Playoffs')}</div>
-    <div class="plain">${plain(p,'the 49ers',`Most likely finish: <b>${Math.round(projW)}–${17-Math.round(projW)}</b> and the <b>#${seedMode} seed</b>.`)}</div>
-    <div class="next"><span><span class="muted">Next</span> &nbsp;${esc(nextTxt)}</span><button class="btn sm ghost" data-a="goBet" data-g="n12">Bet it</button></div>
+  <section class="hero" style="--hbg:${heroBg('nfl')}">
+    <div class="top2"><button class="eyebrow" style="color:rgba(255,255,255,.75)" data-a="teamSheet">Your team · ${sf.conf} ${sf.div} ›</button><span class="tag gold">${seedNow?'#'+seedNow+' seed today':'Not seeded today'}</span></div>
+    <div class="mainrow"><div><h1>${esc(sf.n)}</h1><div class="rec">${rec(sf)}</div><div class="sub">${ord(divRank(K))} in ${sf.conf} ${sf.div} · ${oddsTxt(sf.sb)} to win it all</div></div>${ring(p,'Playoffs')}</div>
+    <div class="plain">${plain(p,'the '+sf.n,`Most likely finish: <b>${Math.round(projW)}–${17-Math.round(projW)}</b> and the <b>#${seedMode} seed</b>.`)}</div>
+    <div class="next"><span><span class="muted">Next</span> &nbsp;${esc(nextTxt)}</span>${next?'<button class="btn sm ghost" data-a="goBet">Bet it</button>':''}</div>
   </section>
   <div class="stats">
     <div class="stat"><span class="eyebrow">Win division</span><b>${pct(a.div/NFLM.n)}</b></div>
@@ -45,7 +45,7 @@ function homeNFL(){
 }
 function seedRow(n,k){
   const t=NFL[k],p=nflP(k);
-  return `<div class="seedrow ${k==='SF'?'me':''}"><span class="n">${n}</span>${dotHTML({ab:k,col:t.col})}<span>${t.n} <span class="mono muted small">${rec(t)}</span></span><span class="pct">${pct(p)}</span><div class="bar"><i style="width:${p*100}%"></i></div></div>`;
+  return `<div class="seedrow ${k===myN()?'me':''}"><span class="n">${n}</span>${dotHTML({ab:k,col:t.col})}<span>${t.n} <span class="mono muted small">${rec(t)}</span></span><span class="pct">${pct(p)}</span><div class="bar"><i style="width:${p*100}%"></i></div></div>`;
 }
 function cfpBracket(list,meName){
   // 5 highest-ranked conference champs (current leaders) + 7 at-large, seeded by rank
@@ -63,7 +63,7 @@ function cfpBracket(list,meName){
   <div class="small muted" style="margin:10px 2px 0">First teams out: ${out.map(t=>esc(t.n)).join(', ')}</div>`;
 }
 function homeCFB(){
-  const byu=CFB.find(t=>t.me), a=CFBM.t.BYU, p=a.po/CFBM.n, projR=a.rank/CFBM.n;
+  const byu=meC(), a=CFBM.t[byu.n], p=a.po/CFBM.n, projR=a.rank/CFBM.n, isByu=byu.ab==='BYU', tg=hasTitleGame();
   const games=allGames('cfb');
   const cw=LIVE.cfbWeek||11, today=games.filter(g=>g.wk==='Week '+cw), nextwk=games.filter(g=>g.wk==='Week '+(cw+1));
   // With live data, label each week by its busiest day; without it, keep the Nov 14 snapshot labels.
@@ -72,28 +72,29 @@ function homeCFB(){
   const tHead=!tDay?'Tonight':tDay.toDateString()===new Date().toDateString()?'Tonight':'This week';
   const tAside=tDay?tDay.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}):'Sat, Nov 14';
   const nAside=nDay?nDay.toLocaleDateString('en-US',{month:'short',day:'numeric'}):'Nov 21';
-  const isB=g=>g.a.ab==='BYU'||g.h.ab==='BYU', opp=g=>g.a.ab==='BYU'?g.h:g.a;
+  const isB=g=>g.a.ab===byu.ab||g.h.ab===byu.ab, opp=g=>g.a.ab===byu.ab?g.h:g.a;
   const last=games.filter(g=>isB(g)&&g.s==='final').pop();
-  const sub=!last||last.id==='c1'?'Beat Baylor 28–7 tonight · win over #5 Notre Dame':(()=>{const me=last.a.ab==='BYU'?last.as:last.hs, them=last.a.ab==='BYU'?last.hs:last.as;return `${me>them?'Beat':me<them?'Lost to':'Tied'} ${opp(last).name} ${Math.max(me,them)}–${Math.min(me,them)}`;})();
+  const sub=isByu&&(!last||last.id==='c1')?'Beat Baylor 28–7 tonight · win over #5 Notre Dame':!last?byu.cf:(()=>{const me=last.a.ab===byu.ab?last.as:last.hs, them=last.a.ab===byu.ab?last.hs:last.as;return `${me>them?'Beat':me<them?'Lost to':'Tied'} ${opp(last).name} ${Math.max(me,them)}–${Math.min(me,them)}`;})();
   const nx=games.find(g=>isB(g)&&g.s!=='final');
-  const nextTxt=nx?`${nx.h.ab==='BYU'?'vs':'@'} ${opp(nx).name} · ${new Date(nx.t).toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})}`:'Regular season complete';
+  const nextTxt=nx?`${nx.h.ab===byu.ab?'vs':'@'} ${opp(nx).name} · ${new Date(nx.t).toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})}`:'Regular season complete';
   return `
   <div class="between" style="margin-bottom:14px">${leagueSeg()}<span class="small muted">${syncChip()}</span></div>
-  <section class="hero" style="--hbg:radial-gradient(120% 90% at 100% 0%,#2e6bb5 0%,#0b3b78 35%,#06213f 75%,#030f1e 100%)">
-    <div class="top2"><span class="eyebrow" style="color:rgba(255,255,255,.75)">Your team · Big 12</span><span class="tag gold">#${byu.r} CFP</span></div>
-    <div class="mainrow"><div><h1>BYU</h1><div class="rec">${rec(byu)}</div><div class="sub">${esc(sub)}</div></div>${ring(p,'Playoff')}</div>
-    <div class="plain">${plain(p,'the Cougars',`Projected next ranking: <b>#${Math.max(1,Math.round(projR-.4))}–${Math.round(projR+.6)}</b>. Winning the Big 12 title is a guaranteed ticket in.`)}</div>
+  <section class="hero" style="--hbg:${heroBg('cfb')}">
+    <div class="top2"><button class="eyebrow" style="color:rgba(255,255,255,.75)" data-a="teamSheet">Your team · ${esc(byu.cf)} ›</button><span class="tag gold">${byu.unr?'Unranked':'#'+byu.r+' CFP'}</span></div>
+    <div class="mainrow"><div><h1>${esc(byu.n)}</h1><div class="rec">${rec(byu)}</div><div class="sub">${esc(sub)}</div></div>${ring(p,'Playoff')}</div>
+    <div class="plain">${plain(p,isByu?'the Cougars':byu.n,`Projected next ranking: <b>#${Math.max(1,Math.round(projR-.4))}–${Math.round(projR+.6)}</b>.${tg?` Winning the ${esc(byu.cf)} title is a guaranteed ticket in.`:''}`)}</div>
     <div class="next"><span><span class="muted">Next</span> &nbsp;${esc(nextTxt)}</span>${nx?`<button class="btn sm ghost" data-a="goBet" data-g="${nx.id}">Bet it</button>`:''}</div>
   </section>
   <div class="stats">
-    <div class="stat"><span class="eyebrow">Big 12 title game</span><b>${pct(a.b12g/CFBM.n)}</b></div>
-    <div class="stat"><span class="eyebrow">Win Big 12</span><b>${pct(a.b12w/CFBM.n)}</b></div>
+    ${tg?`<div class="stat"><span class="eyebrow">${esc(byu.cf)} title game</span><b>${pct(a.b12g/CFBM.n)}</b></div>
+    <div class="stat"><span class="eyebrow">Win ${esc(byu.cf)}</span><b>${pct(a.b12w/CFBM.n)}</b></div>`:`<div class="stat"><span class="eyebrow">Proj. final rank</span><b>#${Math.round(projR)}</b></div>
+    <div class="stat"><span class="eyebrow">Make the CFP</span><b>${pct(p)}</b></div>`}
     <div class="stat"><span class="eyebrow">First-round bye</span><b>${pct(a.bye/CFBM.n)}</b></div>
   </div>
   <div class="sechead"><h2>${tHead}</h2><span class="aside">${tAside}</span></div>
   <div class="games">${today.map(gameRow).join('')}</div>
   <div class="sechead"><h2>If it ended today</h2><span class="aside">12-team CFP</span></div>
-  ${cfpBracket(CFB,'BYU')}
+  ${cfpBracket(CFB,byu.n)}
   <div class="sechead"><h2>Next Saturday</h2><span class="aside">${nAside}</span></div>
   <div class="games">${nextwk.map(gameRow).join('')}</div>
   <p class="foot">Five highest-ranked conference champions get in automatically, plus the next seven teams. Top four seeds skip round one.<br>Rankings: CFP committee, Nov 10.${LIVE.updated?' Scores and records live from ESPN.':''} Chances from 5,000 simulated finishes in-app.</p>`;

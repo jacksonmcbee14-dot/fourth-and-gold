@@ -8,6 +8,7 @@ function allGames(lg){
   return base.map(g0=>{
     const g=Object.assign({},g0), o=LIVE.games[g.id];
     if(o){ if(o.s)g.s=o.s; if(o.as!=null)g.as=o.as; if(o.hs!=null)g.hs=o.hs; if(o.clock)g.clock=o.clock; if(o.q)g.q=o.q; if(o.t)g.t=o.t; if(o.tba!=null)g.tba=o.tba; }
+    g.mine=isMyGame(g)?1:0;
     if(!g.s){ const k=new Date(g.t).getTime(); g.s = g.tba? 'pre' : now<k ? 'pre' : now<k+3.6*3600e3 ? 'inprog' : 'await'; }
     return g;
   }).sort((a,b)=>new Date(a.t)-new Date(b.t));
