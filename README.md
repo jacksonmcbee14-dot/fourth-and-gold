@@ -43,8 +43,9 @@ The first time, macOS may ask whether Python can accept incoming network connect
 | `js/lodge/heist.js` | Visit and rob friends' lodges: a look at their room, the safe-cracking game (harder the higher their VIP table is above yours), defence items (guard dog, bouncer, cameras, laser grid, steel safe, vault door), characters on the leaderboard. Needs `supabase/update-7-heists.sql`. |
 | `js/lodge/buyall.js` | Buy all unlocked items in the shop's current tab and filter. |
 | `js/share.js` | Share cards (1080×1920 pictures for Instagram stories), the phone share sheet, and the pop-up layer. |
-| `js/economy.js` | The economy: endless VIP tables you choose (Lodge $1K, Silver $100K, Gold $10M, Diamond $1B, Emerald $100B, Ruby $10T … each 100× the last, needing 20× its minimum in net worth; you always see the next 5); higher tables give more XP, perks and a badge, never bigger payouts; Diamond-only shop items; shop prices × (net worth ÷ $1M); drinks a share of net worth. |
+| `js/economy.js` | The economy: endless VIP tables you choose (Lodge $1K, Silver $100K, Gold $10M, Diamond $1B, Emerald $100B, Ruby $10T … each 100× the last, needing 20× its minimum in net worth; you always see the next 5); higher tables give more XP, perks and a badge, never bigger payouts; Diamond-only shop items; shop prices × (net worth ÷ $1M)^0.8; drinks a share of net worth. |
 | `js/update.js` | Auto-update: when the app opens or comes back on screen it checks for a newer published version and reloads into it. |
+| `js/perks.js` · `js/lodge/extras-items.js` | Reasons to spend: your stuff counts toward net worth at 60% of what you paid (and Silas buys it back for that), perk items, collections (finish a set for +1,000 XP and +5% XP for good), and a weekly limited shelf. |
 | `js/money.js` | Daily top-up to $1M, borrowing (any amount up to $250K a loan), and what a reset wipes. |
 | `supabase/` | Database setup script, plus numbered update scripts to run in order. |
 | `js/football/sportsbook.js` | Prices, bet slip and settling bets. |

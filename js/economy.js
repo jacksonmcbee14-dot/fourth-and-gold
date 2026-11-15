@@ -5,14 +5,15 @@
 //      Each needs 20× its minimum in net worth.
 //    Payouts are the same at every table, so no table can be farmed for free money. If your net worth drops
 //    below what a table needs, you're moved down to the best table you can afford.
-//  • Silas's prices: the original price × (net worth ÷ $1M), never below the original.
+//  • Silas's prices: the original price × (net worth ÷ $1M)^0.8, never below the original.
 //  • Drinks are a share of net worth (never below the old price): old fashioned 10%, hot cocoa 2%,
 //    spiced cider 1%, eggnog 0.5%. Hot cocoa is still free while you're in debt.
 // Friend challenges and duels aren't affected: that money is between players.
 
 const worth=()=>Math.max(0,scoreNow());
 const nice=n=>{ if(n<1000) return Math.round(n); const p=Math.pow(10,Math.floor(Math.log10(n))-1); return Math.round(n/p)*p; };
-const wealthX=()=>Math.max(1,worth()/1e6);
+// Prices grow a little slower than wealth (power 0.8), so pricey items come within reach as you get richer.
+const wealthX=()=>Math.max(1,Math.pow(worth()/1e6,.8));
 
 /* ---------- VIP tables (endless) ---------- */
 // Each table's minimum is 100× the one before, and it needs 20× its minimum in net worth.

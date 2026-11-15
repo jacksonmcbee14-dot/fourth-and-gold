@@ -2,7 +2,7 @@
 //   Hot cocoa     — every win, in every game, pays 1.5× the normal winnings.
 //   Spiced cider  — half price on everything in Silas's shop.
 //   Old fashioned — you're a little drunk: every bet you make is automatically doubled,
-//                   but when you win you get 2.5× the winnings that bet would normally pay.
+//                   and your winnings are multiplied by game: slots 10×, roulette and craps 3×, poker 2.5×, sports 2×, blackjack 1.75×.
 //   Eggnog        — puts you in a full Santa suit for 5 minutes.
 // The games call betX() when taking a stake and boostRet() when paying out.
 
@@ -10,14 +10,17 @@ const POWERS={
   cocoa:  '1.5× winnings on every game',
   cider:  'Half price at Silas’s shop',
   eggnog: 'Santa suit for 5 minutes',
-  oldfash:'Every bet doubled · wins pay 2.5×',
+  oldfash:'Bets doubled · wins ×10 slots, ×3 roulette & craps, ×2.5 poker, ×2 sports, ×1.75 blackjack',
 };
 const SANTA_MS=5*60e3;
 const drinkOn=id=>{ const d=heldDrink(); return !!d&&d.id===id; };
 // How much each bet is multiplied when you place it.
 const betX=()=>drinkOn('oldfash')?2:1;
 // How much the winnings (profit) of a bet are multiplied.
-const winX=()=>drinkOn('oldfash')?2.5:drinkOn('cocoa')?1.5:1;
+// Old fashioned: how much the winnings are multiplied depends on the game you're playing.
+const OLDFASH_X={slots:10,roulette:3,craps:3,poker:2.5,blackjack:1.75,sports:2};
+const oldfashX=()=>S.mode==='casino'?(OLDFASH_X[S.ctab]||2):OLDFASH_X.sports;
+const winX=()=>drinkOn('oldfash')?oldfashX():drinkOn('cocoa')?1.5:1;
 // ret = the total paid back; stake = the part of that which is your own bet coming back.
 // Only the profit is boosted, so a push or a refund pays the same as always.
 function boostRet(ret,stake,x){ if(x==null) x=winX(); const profit=ret-stake; return profit>0&&x!==1?Math.round(stake+profit*x):ret; }

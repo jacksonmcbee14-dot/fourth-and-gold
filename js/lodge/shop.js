@@ -104,7 +104,7 @@ function iconCanvas(it,scale){
 function renderShop(){
   closeShop();
   const lv=myLevel(), box=document.createElement('div'); box.className='lg-shop';
-  const tabs=[['clothes','Clothes'],['carry','Carry'],['decor','Decor'],['closet','Closet']];
+  const tabs=[['clothes','Clothes'],['carry','Carry'],['decor','Decor'],['limited','Limited'],['sets','Sets'],['closet','Closet']];
   let body='';
   const it=SHOP.sel&&ITEM[SHOP.sel];
   if(it&&SHOP.confirm){
@@ -124,7 +124,7 @@ function renderShop(){
       <div class="lg-grid">${list.map(i=>{const mine=owns(i.id),wearing=i.slot&&(S.lodge.outfit||{})[i.slot]===i.id,locked=lv<i.lvl;
         return `<button class="lg-item ${locked?'locked':''} ${wearing?'wearing':''}" data-lg="shopSel" data-id="${i.id}"><span class="lg-ic" data-ic="${i.id}"></span><span class="lg-in">${esc(i.name)}</span><span class="lg-ip">${SHOP.tab==='closet'?(wearing?'WEARING':'TAP TO WEAR'):mine?'OWNED':locked?'LV '+i.lvl:k$(shopPrice(i))}</span></button>`;}).join('')||'<div class="lg-prev-desc">Nothing here yet.</div>'}</div>`;
   }
-  box.innerHTML=`<div class="lg-shop-head"><span class="lg-dlg-who">SILAS · MERCHANT</span><span class="lg-bank-s">${fmt$(S.bank)} · LV ${lv}</span><button class="lg-btn lg-round" data-lg="shopClose" aria-label="Close">X</button></div>
+  box.innerHTML=`<div class="lg-shop-head"><span class="lg-dlg-who">SILAS · MERCHANT</span><span class="lg-bank-s">${bank$(S.bank)} · LV ${lv}</span><button class="lg-btn lg-round" data-lg="shopClose" aria-label="Close">X</button></div>
     <div class="lg-dlg-text" id="lgSilas"></div>
     <div class="lg-tabs">${tabs.map(([k,l])=>`<button class="lg-tab ${SHOP.tab===k?'on':''}" data-lg="shopTab" data-v="${k}">${l}</button>`).join('')}</div>
     <div class="lg-shop-body">${body}</div>`;
