@@ -226,3 +226,26 @@ body.vip-high .chip{box-shadow:0 3px 0 rgba(0,0,0,.4),inset 0 0 0 3px var(--vipc
 .hg-time{height:6px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden}
 .hg-time b{display:block;height:100%;background:var(--gold);width:100%}
 .hg-go{padding:18px;font-size:18px}
+/* sports: daily boost, streaks, pick'em, tail */
+.boost{display:flex;flex-direction:column;gap:10px;padding:14px;margin-bottom:12px;border-radius:var(--r);background:linear-gradient(135deg,rgba(232,150,60,.18),rgba(200,164,92,.06));border:1px solid rgba(232,150,60,.5)}
+.boost-k{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ember);font-weight:700}
+.boost-b{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.boost-b small{display:block;color:var(--muted)}
+.boost-o{display:flex;flex-direction:column;align-items:flex-end}
+.boost-o s{color:var(--muted);font-size:13px}.boost-o b{font-size:22px;color:var(--gold2)}
+.sharp{margin-bottom:12px;padding:8px 12px;border-radius:12px;background:var(--panel);border:1px solid var(--line);font-size:13px;color:var(--muted)}
+.sharp b{color:var(--text)}
+.pkc{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;margin:10px 0 0;border-radius:16px;text-align:left;background:var(--panel);border:1px solid var(--line2)}
+.pkc>span{font-size:24px}.pkc div{flex:1}.pkc small{display:block;color:var(--muted)}
+.pkc i{font-style:normal;font-weight:700;color:var(--ink);background:var(--gold);padding:6px 12px;border-radius:10px}
+.pk-st{display:flex;flex-direction:column;gap:2px;margin-bottom:10px;padding:6px 10px;border-radius:12px;background:rgba(0,0,0,.2)}
+.pk-st>div{display:flex;gap:10px}.pk-st>div b{flex:1}.pk-st>div.me b{color:var(--gold2)}
+.pk-g{padding:8px 0;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:5px}
+.pk-b{display:flex;align-items:center;gap:6px}.pk-b span{color:var(--muted);font-size:12px}
+.pk-b button{flex:1;padding:9px 6px;border-radius:10px;border:1px solid var(--line2);font-weight:600;font-size:13px}
+.pk-b button.on{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.pk-b button.won{background:var(--win);border-color:var(--win)}.pk-b button.lost{background:var(--loss);border-color:var(--loss)}
+.pk-b button:disabled:not(.on){opacity:.45}
+.tailb{margin-left:6px;vertical-align:middle}
+.rank[data-a=visitLodge]{cursor:pointer}
+.rank[data-a=visitLodge]:active{background:rgba(200,164,92,.08)}

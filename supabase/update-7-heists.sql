@@ -2,7 +2,7 @@
 -- Paste into Supabase → SQL Editor → New query, then click Run. Safe to run more than once. Needs update 4 first.
 --
 -- How a heist works
---  • You can visit and rob anyone who shares a league with you. You get 3 attempts a day.
+--  • You can visit and rob any player (from the leaderboard or your leagues). You get 3 attempts a day.
 --  • The app plays the safe-cracking game (harder the higher their VIP table is above yours) and says
 --    whether you cracked it. The server decides the rest:
 --      cracked → their guard dog, bouncer, cameras and laser grid may still catch you (up to 60%);
@@ -10,7 +10,7 @@
 --                 and never more than your own net worth (at least $1M). They're then shielded for 12 hours.
 --      caught or failed → you pay them a fine of 2% of your net worth (at least $10K).
 --  • The victim's app applies the loss (or the fine they collect) from their inbox; the thief's app applies
---    the result straight away. Every heist is posted to the leagues you share.
+--    the result straight away. Every heist is posted to both players' leagues.
 
 create table if not exists public.fg_heists (
   id       bigserial primary key,
@@ -49,7 +49,6 @@ begin
   if not found then return json_build_object('error','signed_out'); end if;
   select * into them from fg_players where name_key = lower(btrim(p_name));
   if not found then return json_build_object('error','no_player'); end if;
-  if them.id <> me.id and not fg_share_league(me.id, them.id) then return json_build_object('error','not_friends'); end if;
   select count(*) into tries from fg_heists where thief = me.id and at > now() - interval '24 hours';
   select max(at) + interval '12 hours' into shield from fg_heists where victim = them.id and result = 'stole';
   return json_build_object('name', them.name, 'me', them.id = me.id,
@@ -69,7 +68,6 @@ begin
   if not found then return json_build_object('error','signed_out'); end if;
   select * into them from fg_players where name_key = lower(btrim(p_name)) for update;
   if not found or them.id = me.id then return json_build_object('error','no_player'); end if;
-  if not fg_share_league(me.id, them.id) then return json_build_object('error','not_friends'); end if;
   select count(*) into tries from fg_heists where thief = me.id and at > now() - interval '24 hours';
   if tries >= 3 then return json_build_object('error','no_tries'); end if;
   if exists (select 1 from fg_heists where victim = them.id and result = 'stole' and at > now() - interval '12 hours') then return json_build_object('error','shielded'); end if;
@@ -88,7 +86,7 @@ begin
   else
     insert into fg_inbox(player_id, kind, amount, label) values (them.id, 'heist_fine', fine, me.name);
   end if;
-  for lg in select a.league_id from fg_league_members a join fg_league_members b on a.league_id = b.league_id where a.player_id = me.id and b.player_id = them.id loop
+  for lg in select distinct league_id from fg_league_members where player_id in (me.id, them.id) loop
     insert into fg_feed(league_id, player_id, name, kind, game, amount, n, other)
       values (lg, me.id, me.name, 'heist', res, case when res='stole' then amt else fine end, case res when 'stole' then 1 when 'caught' then 0 else 2 end, them.name);
   end loop;
