@@ -69,12 +69,12 @@ function boardRows(list,limit){
   const tm=p=>[p.nfl_team&&NFL[p.nfl_team]?NFL[p.nfl_team].n:'',p.cfb_team?((CFB.find(t=>t.ab===p.cfb_team)||CFB_DIR[p.cfb_team]||{n:p.cfb_team}).n):''].filter(Boolean).join(' · ');
   let rows=list.map((p,i)=>({p,i}));
   if(limit&&rows.length>limit){const mine=rows.find(r=>r.p.name.trim().toLowerCase()===meKey);rows=rows.slice(0,limit);if(mine&&mine.i>=limit)rows.push(mine);}
-  return rows.map(({p,i})=>`<div class="rank ${p.name.trim().toLowerCase()===meKey?'me':''}"><span class="no">${i+1}</span>${typeof avatarImg==='function'?avatarImg(p.outfit,i===0):`<span style="font-size:20px;text-align:center">${i===0?'🔥':''}</span>`}<div><div style="font-weight:600">${esc(p.name)}${typeof vipBadge==='function'?vipBadge(p.vip):''}${p.xp!=null&&typeof levelOf==='function'?` <span class="gold small">· Lv ${levelOf(p.xp).L} ${titleOf(levelOf(p.xp).L)}</span>`:''}</div><div class="small muted">${p.casino!=null?`Casino ${signed$(p.casino)} · Football ${signed$(p.football)}`:esc(tm(p))} · ${p.resets} reset${p.resets===1?'':'s'}${p.debt>0?` · <span style="color:var(--loss-hi)">owes ${k$(p.debt)}</span>`:''}</div></div><span class="score">${k$(p.bank)}</span></div>`).join('');
+  return rows.map(({p,i})=>`<div class="rank ${p.name.trim().toLowerCase()===meKey?'me':''}" data-a="visitLodge" data-v="${esc(p.name)}" role="button" title="Visit ${esc(p.name)}’s lodge"><span class="no">${i+1}</span>${typeof avatarImg==='function'?avatarImg(p.outfit,i===0):`<span style="font-size:20px;text-align:center">${i===0?'🔥':''}</span>`}<div><div style="font-weight:600">${esc(p.name)}${typeof vipBadge==='function'?vipBadge(p.vip):''}${p.xp!=null&&typeof levelOf==='function'?` <span class="gold small">· Lv ${levelOf(p.xp).L} ${titleOf(levelOf(p.xp).L)}</span>`:''}</div><div class="small muted">${p.casino!=null?`Casino ${signed$(p.casino)} · Football ${signed$(p.football)}`:esc(tm(p))} · ${p.resets} reset${p.resets===1?'':'s'}${p.debt>0?` · <span style="color:var(--loss-hi)">owes ${k$(p.debt)}</span>`:''}</div></div><span class="score">${k$(p.bank)}</span></div>`).join('');
 }
 function boardSection(limit){
   if(!cloudOn()) return '';
   if(!PROF.board||Date.now()-PROF.boardAt>60e3) loadBoard().then(()=>{ if(((S.mode==='football'&&S.ftab==='ranks')||(S.mode==='casino'&&S.ctab==='ranks'))&&!SLIP) render(); });
-  return `<div class="sechead"><h2>Leaderboard</h2><span class="aside">Most money · fewest resets</span></div>
+  return `<div class="sechead"><h2>Leaderboard</h2><span class="aside">Tap anyone to visit or rob them</span></div>
   <div class="panel" style="padding:4px 8px">${boardRows(PROF.board,limit)}</div>
   ${PROF.me?'':`<button class="btn gold" style="width:100%;margin-top:8px" data-a="pfShowSignup">Create a profile to join</button>`}`;
 }

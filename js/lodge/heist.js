@@ -1,5 +1,6 @@
 // Visit and rob friends' lodges (supabase/update-7-heists.sql), and the defence items that stop you.
-//  • From your league's standings tap 🏠 to look around a friend's room: their character, decor, table and defences.
+//  • Tap 🏠 next to anyone in your league, or tap anyone on the leaderboard, to look around their room: character,
+//    decor, table and defences. You can rob any player.
 //  • Tap "Rob them" for the safe-cracking game: a row of dials, each with a spinning needle — stop it in the gold
 //    zone. More dials, faster needles and smaller zones the higher their VIP table is above yours (cameras shrink
 //    the zone, a laser grid adds a dial). Miss one and the alarm goes off.
@@ -48,7 +49,7 @@ async function visitLodge(name){
   if(!socOn()){ ACT.pfShowSignup(); return; }
   HV.name=name; modal(`<div class="fgm-k">${esc(name)}’s lodge</div><div class="empty">Walking over…</div>`);
   let d=null; try{ d=await srpc('fg_lodge_view',{p_name:name}); }catch(e){}
-  if(!d||d.error){ modal(`<div class="fgm-k">${esc(name)}’s lodge</div><p>${{not_friends:'You can only visit people in your leagues.',no_player:'No player by that name.'}[d&&d.error]||(SOC.err==='setup'||!d?'Visits need the latest server update (supabase/update-7-heists.sql).':'Couldn’t get there. Check your connection.')}</p>`); return; }
+  if(!d||d.error){ modal(`<div class="fgm-k">${esc(name)}’s lodge</div><p>${{no_player:'No player by that name.'}[d&&d.error]||(SOC.err==='setup'||!d?'Visits need the latest server update (supabase/update-7-heists.sql).':'Couldn’t get there. Check your connection.')}</p>`); return; }
   HV.data=d; visitDraw();
 }
 function visitDraw(){
@@ -105,7 +106,7 @@ async function heistEnd(cracked,why){
   if(!cracked){ tone(220,.4,'sawtooth',.06); tone(180,.4,'sawtooth',.06,.25); }
   modal(`<div class="hg"><div class="fgm-k">${cracked?'Cracked it…':'🚨 '+esc(why)}</div><div class="empty">${cracked?'Sneaking out with the cash…':'Security is on the way…'}</div></div>`,'stay');
   let r=null; try{ r=await srpc('fg_heist',{p_name:HV.data.name,p_cracked:cracked}); }catch(e){}
-  if(!r||r.error){ modal(`<div class="fgm-k">Heist called off</div><p>${{shielded:'They were just robbed — they’re shielded for 12 hours.',no_tries:'You’re out of tries for today.',not_friends:'You can only rob people in your leagues.'}[r&&r.error]||'Couldn’t reach the server.'}</p>`); return; }
+  if(!r||r.error){ modal(`<div class="fgm-k">Heist called off</div><p>${{shielded:'They were just robbed — they’re shielded for 12 hours.',no_tries:'You’re out of tries for today.'}[r&&r.error]||'Couldn’t reach the server.'}</p>`); return; }
   HV.data.tries_left=r.tries_left;
   if(r.result==='stole'){ setBank(r.amount); try{ fx.coins(80,2200); fx.confetti(140); }catch(e){} [523,659,784,1047,1319].forEach((f,i)=>tone(f,.12,'square',.05,i*.08));
     modal(`<div class="cel"><div class="cel-emoji">💰</div><div class="cel-t">You robbed ${esc(HV.data.name)}!</div><div class="cel-big">+${fmt$(r.amount)}</div>

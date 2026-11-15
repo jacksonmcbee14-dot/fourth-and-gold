@@ -104,6 +104,8 @@ function feedItem(f){
     golf:`⛳ ${n} shot <b>${f.amount}</b> (${f.n===0?'even':f.n>0?'+'+f.n:f.n}) at ${esc(course)}`,
     taunt:`💬 ${n}: “${esc(TAUNTS[f.n]||'…')}”`,level:`⭐ ${n} reached level <b>${f.n}</b>`,join:`👋 ${n} joined the league`,
     champion:`👑 ${n} won ${esc((f.other||'').replace(/^.*-W/,'week '))} with ${amt}`,challenge:`⚔️ ${n} beat <b>${esc(f.other||'')}</b> at ${gameName(f.game)} and took ${amt}`,
+    bet:`🎟️ ${n} bet <b>${k$(f.amount||0)}</b> on ${esc(((f.data&&f.data.legs)||[]).map(l=>l.label).join(' + ')||'a game')} <button class="btn sm gold tailb" data-a="tailBet" data-id="${f.id}">Tail</button>`,
+    pickem:`🏈 ${n} won the weekly pick’em with <b>${f.n}</b> right`,
     heist:f.n===1?`💰 ${n} robbed <b>${esc(f.other||'')}</b> for ${amt}`:f.n===0?`🚨 ${n} got caught robbing <b>${esc(f.other||'')}</b> and paid ${k$(f.amount||0)}`:`🚨 ${n} set off <b>${esc(f.other||'')}</b>’s alarm and paid ${k$(f.amount||0)}`}[f.kind]||`${n}`;
   const R=f.reacts||{}, mine=f.mine||[];
   return `<div class="lgx-post"><div class="tx">${txt}<small class="muted"> · ${ago(f.created_at)}</small></div><div class="rx">${REACTS.map(e=>`<button class="${mine.includes(e)?'on':''}" data-a="lgReact" data-id="${f.id}" data-e="${e}">${e}${R[e]?`<i>${R[e]}</i>`:''}</button>`).join('')}</div></div>`;
