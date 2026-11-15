@@ -45,7 +45,17 @@ function drawExteriorStatic(){
   rect(x,68,138,56,10,LP.wal5); rect(x,68,138,56,1,LP.wal6); rect(x,68,147,56,1,LP.wal1);
   ptext(x,'FOURTH & GOLD',96-ptextW('FOURTH & GOLD')/2,140,LP.brass2);
   rect(x,70,238,52,4,LP.st2); rect(x,66,242,60,4,LP.st1); rect(x,66,238,60,1,LP.snow2);
+  if(!SEASON.snow) seasonRecolor(x);
   return EXT_BG=c;
+}
+// Outside of winter, the snowy ground, roof and trees turn into the season's colours.
+function seasonRecolor(x){
+  const P={spring:['#3f7a3a','#4f8c4a','#5a9a50'],summer:['#5a8a3a','#6a9a44','#7aa84e'],fall:['#6a6a2a','#8a6a2a','#a8783a']}[SEASON.id]; if(!P) return;
+  const hex=h=>[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];
+  const map=new Map([[LP.snow0,P[0]],[LP.snow1,P[1]],[LP.snow2,P[2]],['#dfe6ea','#b8a078']].map(([a,b])=>[hex(a).join(),hex(b)]));
+  const img=x.getImageData(0,0,PW,PH), d=img.data;
+  for(let i=0;i<d.length;i+=4){ const m=map.get(d[i]+','+d[i+1]+','+d[i+2]); if(m){ d[i]=m[0]; d[i+1]=m[1]; d[i+2]=m[2]; } }
+  x.putImageData(img,0,0);
 }
 
 function makeWelcome(host,onDone){
@@ -81,12 +91,12 @@ function makeWelcome(host,onDone){
     else if(t<4.4){ feet=250; frame=((t*7|0)%2)?'brush0':'brush1'; if(coatSnow>0&&Math.random()<dt*7){ coatSnow-=.5; for(let i=0;i<3;i++) bits.push({x:px+3+Math.random()*7,y:feet-15,vx:(Math.random()-.5)*14,vy:-6-Math.random()*8}); } }
     else if(t<5.2){ const k=(t-4.4)/.8; feet=250-k*12; frame='walk'+((t*8|0)%4); alpha=1-k; }
     else { alpha=0; }
-    for(const [fx,fy] of prints) rect(ctx,fx,fy,2,1,LP.snow0);
+    if(SEASON.snow) for(const [fx,fy] of prints) rect(ctx,fx,fy,2,1,LP.snow0);
     if(alpha>0&&feet<PH+21){ ctx.globalAlpha=alpha; ctx.drawImage(personSprite('player',frame,look),px,feet-PERSON_H);
-      if(coatSnow>0){ rect(ctx,px+4,feet-PERSON_H+3,4,1,LP.snow2); if(coatSnow>2) rect(ctx,px+1,feet-PERSON_H+10,2,1,LP.snow2); if(coatSnow>4) rect(ctx,px+9,feet-PERSON_H+10,2,1,LP.snow2); }
+      if(coatSnow>0&&SEASON.snow){ rect(ctx,px+4,feet-PERSON_H+3,4,1,LP.snow2); if(coatSnow>2) rect(ctx,px+1,feet-PERSON_H+10,2,1,LP.snow2); if(coatSnow>4) rect(ctx,px+9,feet-PERSON_H+10,2,1,LP.snow2); }
       ctx.globalAlpha=1; }
     for(const b of bits){ b.vy+=60*dt; b.x+=b.vx*dt; b.y+=b.vy*dt; } bits=bits.filter(b=>b.y<feet+1); for(const b of bits) rect(ctx,b.x,b.y,1,1,LP.snow2);
-    snowBack.draw(ctx,dt,LP.snow1); snowFront.draw(ctx,dt,LP.snow2);
+    if(SEASON.snow){ snowBack.draw(ctx,dt,LP.snow1); snowFront.draw(ctx,dt,LP.snow2); } else snowFront.draw(ctx,dt,SEASON.fall);
     if(t>5.0){ ctx.globalAlpha=clamp((t-5)/1,0,.1); rect(ctx,0,0,PW,PH,LP.emb1); ctx.globalAlpha=1; }
   });
   loop.start();

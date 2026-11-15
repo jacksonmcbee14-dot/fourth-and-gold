@@ -1,6 +1,8 @@
 // The great room: every part of the app is a spot in the room.
 
 const SPOTS=[ // [id, x, y, w, h, label, where it goes, where you stand]   (TV is checked before the fireplace it hangs on)
+  ['league', 27, 24, 30, 82,'Trophy Board · League',  {league:true},[42,198]],
+  ['links', 138, 24, 28, 82,'Out the Back · Golf',    {golf:true},[150,198]],
   ['tv',      74, 58, 44, 36,'The TV · Scores & Today', {mode:'football',ftab:'today'},[92,212]],
   ['fireside',54, 50, 86,158,'The Fireside · Blackjack', {mode:'casino',ctab:'blackjack'},[92,212]],
   ['library',  2,106, 26, 78,'The Library · Video Poker',{mode:'casino',ctab:'poker'},[30,198]],
@@ -43,8 +45,13 @@ function drawHubStatic(){
   for(let y=132;y<182;y++){ const k=(y-132)/14, w=y<146?Math.round(16*Math.sqrt(Math.max(0,1-(1-k)*(1-k)))):16; rect(x,96-w-2,y,w*2+4,1,LP.st1); rect(x,96-w,y,w*2,1,LP.ink); }
   rect(x,54,180,84,6,LP.st2); rect(x,54,180,84,1,LP.st3);
   rect(x,58,98,76,7,LP.wal5); rect(x,58,98,76,1,LP.wal6); rect(x,58,104,76,1,LP.wal1);
-  for(let xx=58;xx<134;xx+=2){ const sag=Math.round(Math.sin((xx-58)/76*Math.PI*3)*1.5); rect(x,xx,105+Math.abs(sag),2,2,(xx/2)%2?LP.pine4:LP.pine3); if(xx%10===0) rect(x,xx,107+Math.abs(sag),1,1,LP.cran3); }
-  for(const sx of [70,92,114]){ rect(x,sx,108,6,10,LP.cran1); rect(x,sx,108,6,2,LP.snow2); rect(x,sx-3,115,6,4,LP.cran1); }
+  if(SEASON.xmas){ for(let xx=58;xx<134;xx+=2){ const sag=Math.round(Math.sin((xx-58)/76*Math.PI*3)*1.5); rect(x,xx,105+Math.abs(sag),2,2,(xx/2)%2?LP.pine4:LP.pine3); if(xx%10===0) rect(x,xx,107+Math.abs(sag),1,1,LP.cran3); }
+  for(const sx of [70,92,114]){ rect(x,sx,108,6,10,LP.cran1); rect(x,sx,108,6,2,LP.snow2); rect(x,sx-3,115,6,4,LP.cran1); } }
+  // the league trophy board (in the left window frame)
+  rect(x,30,30,24,70,LP.wal1); rect(x,31,31,22,68,'#24170f');
+  rect(x,36,36,12,2,LP.brass1); rect(x,37,38,10,7,LP.brass1); rect(x,34,38,2,4,LP.brass1); rect(x,48,38,2,4,LP.brass1); rect(x,39,39,2,4,LP.brass3); rect(x,41,45,2,4,LP.brass0); rect(x,38,49,8,2,LP.brass1);
+  ptext(x,'LEAGUE',31,56,LP.brass2);
+  for(let i=0;i<4;i++){ rect(x,33,66+i*8,3,5,i?LP.st3:LP.brass1); rect(x,38,67+i*8,(4-i)*3+3,3,i?LP.wal5:LP.brass2); }
   // TV bezel (picture drawn live)
   rect(x,74,60,44,32,LP.ink); rect(x,75,61,42,30,'#101418'); rect(x,94,92,4,6,LP.st0);
   // armchairs
@@ -94,9 +101,11 @@ function makeHub(host,onSpot){
     const g=.8+Math.sin(t*3)*.05+Math.sin(t*11)*.04; ctx.globalAlpha=.12*g; for(let rr=34;rr>0;rr-=8) rect(ctx,96-rr,22-rr/3,rr*2,rr*.8,LP.emb2); ctx.globalAlpha=1;
     rect(ctx,95,14,2,8,LP.brass0); rect(ctx,86,22,20,2,LP.brass1); for(const cx of [86,92,98,104]) rect(ctx,cx,19,2,3,g>.82?LP.emb3:LP.emb2);
     // windows: night, moon, snow, sill
-    rect(ctx,30,30,24,70,LP.night1); rect(ctx,138,30,24,70,LP.night1);
-    for(let yy=-4;yy<=4;yy++)for(let xx=-4;xx<=4;xx++) if(xx*xx+yy*yy<=16) rect(ctx,44+xx,44+yy,1,1,LP.moon);
-    for(const [i,wx] of [[0,30],[1,138]]){ rect(ctx,wx,92,24,8,LP.snow1); winSnow[i].draw(ctx,dt,LP.snow2); rect(ctx,wx+11,30,2,70,LP.wal4); rect(ctx,wx,62,24,2,LP.wal4); }
+    rect(ctx,138,30,24,70,SEASON.sky);
+    for(let yy=-4;yy<=4;yy++)for(let xx=-4;xx<=4;xx++) if(xx*xx+yy*yy<=16) rect(ctx,154+xx,40+yy,1,1,LP.moon);
+    rect(ctx,138,86,24,14,SEASON.snow?LP.snow1:'#3f7a3a'); rect(ctx,141,84,10,4,SEASON.snow?'#9fd0b0':'#72c86c'); rect(ctx,147,72,1,13,LP.snow2); rect(ctx,148,72,4,3,Math.sin(t*5)>0?LP.cran3:LP.cran2);
+    winSnow[1].draw(ctx,dt,SEASON.fall); rect(ctx,149,30,2,70,LP.wal4); rect(ctx,138,62,24,2,LP.wal4);
+    if(Math.sin(t*2.3)>.7) rect(ctx,46,37,1,1,'#ffffff');
     // fire
     for(let col=0;col<28;col++){ const xx=82+col, h=10+Math.round(8*Math.abs(Math.sin(t*6+col*.7))+5*Math.abs(Math.sin(t*13+col*1.9))+(col>6&&col<22?8:0));
       for(let y=0;y<h;y++){ const k=y/h; rect(ctx,xx,178-y,1,1,k<.25?LP.emb4:k<.5?LP.emb3:k<.75?LP.emb1:LP.emb0); } }
@@ -108,11 +117,19 @@ function makeHub(host,onSpot){
     rect(ctx,75,61,42,30,LP.pine2); rect(ctx,75,61,42,6,LP.pine3); ptext(ctx,'LIVE',77,62,LP.cran3);
     if(Math.sin(t*4)>0) rect(ctx,94,63,2,2,LP.cran3);
     ptext(ctx,tv[0].slice(0,10),96-ptextW(tv[0].slice(0,10))/2,70,LP.brass2); ptext(ctx,tv[1].slice(0,10),96-ptextW(tv[1].slice(0,10))/2,79,LP.snow2);
-    // tree with lights and star
-    for(let i=0;i<50;i++){ const w=Math.round(i*.26)+1; rect(ctx,15-w,188+i,w*2,1,i%7<3?LP.pine3:LP.pine4); }
-    rect(ctx,13,238,4,4,LP.wal3); rect(ctx,9,241,12,3,LP.cran1);
-    for(const L of lights){ if(Math.sin(t*2.2+L.p)>-.3) rect(ctx,L.x,L.y,1,1,L.c); }
-    const sp=Math.sin(t*3)>0; rect(ctx,14,183,3,3,LP.brass1); rect(ctx,15,182,1,5,sp?LP.brass3:LP.brass1); rect(ctx,13,184,5,1,sp?LP.brass3:LP.brass1);
+    // tree with lights and star (holiday) · a snowy pine (winter) · a big potted plant and a golf bag (spring–fall)
+    if(SEASON.snow){
+      for(let i=0;i<50;i++){ const w=Math.round(i*.26)+1; rect(ctx,15-w,188+i,w*2,1,i%7<3?LP.pine3:LP.pine4); if(!SEASON.xmas&&i%7===0) rect(ctx,15-w,188+i,w*2,1,LP.snow1); }
+      rect(ctx,13,238,4,4,LP.wal3); rect(ctx,9,241,12,3,SEASON.xmas?LP.cran1:LP.wal4);
+      if(SEASON.xmas){ for(const L of lights){ if(Math.sin(t*2.2+L.p)>-.3) rect(ctx,L.x,L.y,1,1,L.c); }
+        const sp=Math.sin(t*3)>0; rect(ctx,14,183,3,3,LP.brass1); rect(ctx,15,182,1,5,sp?LP.brass3:LP.brass1); rect(ctx,13,184,5,1,sp?LP.brass3:LP.brass1); }
+    } else {
+      const leaf=SEASON.id==='fall'?['#c9782c','#e8963c']:SEASON.id==='spring'?['#2a6a3a','#e88aa8']:['#2a6a3a','#3a8a4a'];
+      for(let i=0;i<22;i++){ const a=i/22*Math.PI, r=12+Math.sin(i*1.7)*3; rect(ctx,15+Math.cos(a)*r-1,224-Math.sin(a)*r*1.4+Math.sin(t*1.5+i)*.5,3,2,leaf[i%2]); }
+      for(let i=0;i<10;i++) rect(ctx,8+i,214+(i%3),2,12,leaf[0]);
+      rect(ctx,8,226,14,10,LP.cran1); rect(ctx,7,226,16,2,LP.cran2); rect(ctx,9,236,12,4,LP.cran0);
+      rect(ctx,22,214,5,22,'#2b3a5c'); rect(ctx,22,214,5,2,LP.brass1); rect(ctx,23,208,1,6,LP.st3); rect(ctx,25,206,1,8,LP.st3); rect(ctx,22,207,2,2,LP.st3); rect(ctx,25,205,2,2,LP.st3);
+    }
     // slot machine reels and bulbs
     const syms=[LP.cran3,LP.brass2,LP.pine5,LP.snow2];
     for(let i=0;i<3;i++){ const k=(t*1.5+i*.4)%4|0; rect(ctx,170+i*6,138,4,8,syms[(k+i)%4]); }
