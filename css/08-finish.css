@@ -1,0 +1,7 @@
+/* Final "lodge" touches: wood grain and brass borders (must load last) */
+
+/* lodge: wood grain + brass borders on cards */
+.stat,.game,.betcard,.mybet,.fut,.pg,.toggle,.bk,.bye,.book,.tip,.leg,.empty{background-image:var(--grain);background-size:240px 240px}
+.game,.book,.tip,.fut,.mybet,.stat,.pg,.toggle,.bk,.bye{border-color:var(--line2)}
+.status{background-image:var(--grain),radial-gradient(400px 200px at 100% 0%,rgba(125,31,42,.35),transparent 70%),linear-gradient(180deg,var(--panel2),var(--panel))}
+.ml,.cell,.input,.amts button{background-color:#150e0a}
