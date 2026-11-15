@@ -11,18 +11,10 @@ function migrate(){S.bets=(S.bets||[]).map(b=>b.legs?b:{id:b.id,stake:b.stake,pa
 const decOf0=o=>o>0?1+o/100:1+100/(-o);
 migrate();
 let LIVE = {games:{}, extra:[], futures:{}, records:{}, updated:null, connected:false};
-let DB=null, UID=null, saveT=null, writing=false, pendingWrite=false;
+// Everything is saved in this browser's local storage, on this device only.
+// (The Claude-artifact version also copied it to your Claude account; that is gone.)
 function save(){
   S.upd=Date.now();
   try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){}
-  clearTimeout(saveT); saveT=setTimeout(remoteSave,1500);
-}
-async function remoteSave(){
-  if(!DB||!UID) return;
-  if(writing){pendingWrite=true;return;}
-  writing=true;
-  try{ await DB.doc('data/users/'+UID+'/wallet').set({s:JSON.stringify(S),upd:S.upd}); }catch(e){}
-  writing=false;
-  if(pendingWrite){pendingWrite=false;remoteSave();}
 }
 
