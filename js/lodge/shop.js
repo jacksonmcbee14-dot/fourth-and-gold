@@ -109,20 +109,20 @@ function renderShop(){
   const it=SHOP.sel&&ITEM[SHOP.sel];
   if(it&&SHOP.confirm){
     body=`<div class="lg-prev"><div class="lg-prev-art"></div><div class="lg-prev-name">${esc(it.name)}</div>
-      <div class="lg-prev-desc">Buy it for ${fmt$(it.price)}? It’s yours until you reset your bankroll.</div>
+      <div class="lg-prev-desc">Buy it for ${fmt$(shopPrice(it))}? It’s yours until you reset your bankroll.</div>
       <div class="lg-row"><button class="lg-btn lg-gold" data-lg="shopBuy">Yes, buy it</button><button class="lg-btn" data-lg="shopNo">No</button></div></div>`;
   } else if(it){
     const mine=owns(it.id), wearing=it.slot&&(S.lodge.outfit||{})[it.slot]===it.id, locked=lv<it.lvl;
     body=`<div class="lg-prev"><div class="lg-prev-art"></div><div class="lg-prev-name">${esc(it.name)}</div><div class="lg-prev-desc">${esc(it.desc)}</div>
-      <div class="lg-prev-desc gold">${it.free?'Free':fmt$(it.price)} · ${locked?`Needs level ${it.lvl}`:it.cat==='decor'?'Goes in My Room':`Level ${it.lvl}+`}</div>
+      <div class="lg-prev-desc gold">${it.free?'Free':fmt$(shopPrice(it))}${shopPrice(it)<it.price?' (half off — spiced cider)':''} · ${locked?`Needs level ${it.lvl}`:it.cat==='decor'?'Goes in My Room':`Level ${it.lvl}+`}</div>
       <div class="lg-row">${mine?(it.slot?`<button class="lg-btn lg-gold" data-lg="shopWear">${wearing?'Take it off':'Wear it'}</button>`:`<span class="lg-owned">Yours — place it in My Room</span>`)
-        :locked?`<span class="lg-owned">Reach level ${it.lvl} to buy</span>`:`<button class="lg-btn lg-gold" data-lg="shopAsk" ${it.price>S.bank?'disabled':''}>${it.price>S.bank?'Not enough money':'Buy · '+k$(it.price)}</button>`}
+        :locked?`<span class="lg-owned">Reach level ${it.lvl} to buy</span>`:`<button class="lg-btn lg-gold" data-lg="shopAsk" ${shopPrice(it)>S.bank?'disabled':''}>${shopPrice(it)>S.bank?'Not enough money':'Buy · '+k$(shopPrice(it))}</button>`}
       <button class="lg-btn" data-lg="shopBack">Back</button></div></div>`;
   } else {
     const list=SHOP.tab==='closet'?ITEMS.filter(i=>i.slot&&owns(i.id)):ITEMS.filter(i=>i.cat===SHOP.tab&&!i.free);
     body=`${SHOP.tab==='closet'?`<div class="lg-closet-me"></div><div class="lg-prev-desc">Tap something you own to wear it or take it off.</div>`:''}
       <div class="lg-grid">${list.map(i=>{const mine=owns(i.id),wearing=i.slot&&(S.lodge.outfit||{})[i.slot]===i.id,locked=lv<i.lvl;
-        return `<button class="lg-item ${locked?'locked':''} ${wearing?'wearing':''}" data-lg="shopSel" data-id="${i.id}"><span class="lg-ic" data-ic="${i.id}"></span><span class="lg-in">${esc(i.name)}</span><span class="lg-ip">${SHOP.tab==='closet'?(wearing?'WEARING':'TAP TO WEAR'):mine?'OWNED':locked?'LV '+i.lvl:k$(i.price)}</span></button>`;}).join('')||'<div class="lg-prev-desc">Nothing here yet.</div>'}</div>`;
+        return `<button class="lg-item ${locked?'locked':''} ${wearing?'wearing':''}" data-lg="shopSel" data-id="${i.id}"><span class="lg-ic" data-ic="${i.id}"></span><span class="lg-in">${esc(i.name)}</span><span class="lg-ip">${SHOP.tab==='closet'?(wearing?'WEARING':'TAP TO WEAR'):mine?'OWNED':locked?'LV '+i.lvl:k$(shopPrice(i))}</span></button>`;}).join('')||'<div class="lg-prev-desc">Nothing here yet.</div>'}</div>`;
   }
   box.innerHTML=`<div class="lg-shop-head"><span class="lg-dlg-who">SILAS · MERCHANT</span><span class="lg-bank-s">${fmt$(S.bank)} · LV ${lv}</span><button class="lg-btn lg-round" data-lg="shopClose" aria-label="Close">X</button></div>
     <div class="lg-dlg-text" id="lgSilas"></div>
@@ -136,8 +136,9 @@ function renderShop(){
 function buyItem(id){
   const it=ITEM[id]; if(!it||owns(id)) return;
   if(myLevel()<it.lvl){ toast('Reach level '+it.lvl+' first','loss'); return; }
-  if(it.price>S.bank){ toast('Not enough in the bankroll','loss'); return; }
-  setBank(-it.price); S.lodge.owned=(S.lodge.owned||[]).concat(id);
+  const pr=shopPrice(it);   // spiced cider: half off
+  if(pr>S.bank){ toast('Not enough in the bankroll','loss'); return; }
+  setBank(-pr); S.lodge.owned=(S.lodge.owned||[]).concat(id);
   if(it.slot){ S.lodge.outfit=Object.assign({},S.lodge.outfit,{[it.slot]:id}); }
   save(); hudBank();
   [784,988,1175,1568].forEach((f,i)=>tone(f,.12,'square',.05,i*.07));

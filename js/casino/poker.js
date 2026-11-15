@@ -34,7 +34,8 @@ function viewPoker(){
   </div>`;
 }
 function vpDeal(){
-  const cost=VP.unit*VP.coins; if(cost>S.bank){toast('Not enough in the bankroll','loss');return;}
+  const x=betX(), cost=VP.unit*VP.coins*x; if(cost>S.bank){noFunds();return;}
+  VP.x=x; VP.wx=winX(); VP.cost=cost;   // old fashioned: the bet is doubled
   setBank(-cost); VP.deck=newDeck(1); VP.hand=[0,1,2,3,4].map(()=>VP.deck.pop()); VP.held=[false,false,false,false,false]; VP.phase='draw'; VP.res=null;
   const e=evalHand(VP.hand); VP.msg=e>=0?`You're holding ${PAY[e][0]} — keep it?`:'Tap the cards you want to keep.'; VP.mcls=e>=0?'gold':'';
   render();
@@ -42,7 +43,7 @@ function vpDeal(){
 function vpDraw(){
   VP.hand=VP.hand.map((c,i)=>VP.held[i]?c:VP.deck.pop()); VP.phase='bet';
   const e=evalHand(VP.hand); VP.res=e;
-  if(e>=0){const w=vpMult(e)*VP.unit*VP.coins; setBank(w); VP.msg=`${PAY[e][0]}! Pays ${fmt$(w)}`; VP.mcls='win'; toast('+'+fmt$(w),'win');}
+  if(e>=0){const w=boostRet(vpMult(e)*VP.unit*VP.coins*(VP.x||1),VP.cost||0,VP.wx); setBank(w); VP.msg=`${PAY[e][0]}! Pays ${fmt$(w)}`; VP.mcls='win'; toast('+'+fmt$(w),'win');}
   else {VP.msg='No win. Deal again.'; VP.mcls='loss';}
   render();
 }

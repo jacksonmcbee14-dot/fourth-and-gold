@@ -40,8 +40,9 @@ function viewRoulette(){
   </div>`;
 }
 function rSpin(){
-  const tot=rTotal(); if(!tot||RL.spinning)return; if(tot>S.bank){toast('Not enough in the bankroll','loss');return;}
-  setBank(-tot); RL.last={...RL.bets}; RL.spinning=true; RL.msg='No more bets…'; RL.mcls='';
+  const x=betX(), wx=winX(), tot=rTotal()*x; if(!tot||RL.spinning)return; if(tot>S.bank){noFunds();return;}
+  RL.last={...RL.bets}; if(x>1) for(const k in RL.bets) RL.bets[k]*=x;   // old fashioned: every bet doubled
+  setBank(-tot); RL.spinning=true; RL.msg='No more bets…'; RL.mcls='';
   const idx=rint(37), n=WHEEL[idx], a=360/37;
   const newRot=RL.rot-360*5-(((RL.rot+idx*a)%360)+360)%360;
   const newB=RL.brot+360*7+((360-(RL.brot%360))%360);
@@ -49,7 +50,8 @@ function rSpin(){
   setTimeout(()=>{RL.rot=newRot;RL.brot=newB;const w=$('#wheel'),b=$('#ball');if(w)w.style.transform=`rotate(${RL.rot}deg)`;if(b)b.style.transform=`rotate(${RL.brot}deg)`;},40);
   setTimeout(()=>{
     RL.spinning=false; RL.res=n; RL.hist.unshift(n);
-    let win=0; for(const k in RL.bets) if(rWins(k,n)) win+=RL.bets[k]*rMult(k);
+    let win=0, back=0; for(const k in RL.bets) if(rWins(k,n)){ win+=RL.bets[k]*rMult(k); back+=RL.bets[k]; }
+    win=boostRet(win,back,wx);
     if(win){setBank(win); RL.msg=`${n} ${colOf(n)==='R'?'Red':colOf(n)==='Z'?'Zero':'Black'} — pays ${fmt$(win)}`; RL.mcls='win'; if(win>tot)toast('+'+fmt$(win-tot),'win');}
     else{RL.msg=`${n} ${colOf(n)==='R'?'Red':colOf(n)==='Z'?'Zero':'Black'} — house wins`; RL.mcls='loss';}
     RL.bets={}; render();

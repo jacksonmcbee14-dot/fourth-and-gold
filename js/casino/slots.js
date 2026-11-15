@@ -140,8 +140,8 @@ function pickBonus(){
 async function slotSpin(){
   if(SL.spinning){SL.quick=true;SL.anims.forEach(a=>{try{if(a.playState==='running')a.updatePlaybackRate(8);}catch(e){}});return;}
   if(S.mode!=='casino'||S.ctab!=='slots'||(S.howto&&S.howto.slots)||!$('#reels'))return;
-  const free=SL.fs>0, bet=S.slotBet;
-  if(!free){ if(bet>S.bank){toast('Not enough in the bankroll','loss');SL.auto=0;slUI();return;} setBank(-bet); S.jp=Math.round(S.jp+bet*.015); save(); }
+  const free=SL.fs>0, bet=S.slotBet*(free?1:betX()), wx=winX();   // old fashioned: paid spins cost double
+  if(!free){ if(bet>S.bank){noFunds();SL.auto=0;slUI();return;} setBank(-bet); S.jp=Math.round(S.jp+bet*.015); save(); }
   else SL.fs--;
   ac();
   SL.spinning=true;SL.quick=false;clearLines();SL.lastWin=0;setText('#slWin','—');setText('#slMsg',free?`Free game · ${SL.fs} left after this`:'Spinning…');slUI();
@@ -172,6 +172,7 @@ async function slotSpin(){
   const wins=res.wins.map(w=>({...w,amt:Math.round(w.mult*bet*PAY_UNIT*mult)}));
   let win=wins.reduce((s,w)=>s+w.amt,0);
   if(res.scat)win+=res.scat[0]*bet*mult;
+  if(wx!==1&&win>0){ win=Math.round(win*wx); wins.forEach(w=>w.amt=Math.round(w.amt*wx)); }   // drink power on the winnings
   SL.spinning=false;
   if(free)SL.fsTotal+=win;
   if(win>0)setBank(win);
@@ -188,8 +189,8 @@ async function slotSpin(){
     SL.auto=0;slUI();
     await starTrigger();
     const W=await pickBonus();
-    const amt=Math.round(jpVal(W));
-    if(W.k==='grand'&&bet===MAXBET)S.jp=2500000;
+    const amt=Math.round(jpVal(W)*wx);
+    if(W.k==='grand'&&S.slotBet===MAXBET)S.jp=2500000;
     setBank(amt);SL.lastWin+=amt;
     const lp=document.querySelector(`.jpl.${W.k}`);if(lp){lp.classList.add('hitjp');setTimeout(()=>lp.classList.remove('hitjp'),6000);}
     await bigWin(amt,W.k==='grand'?'jackpot':W.k==='major'?'epic':W.k==='maxi'?'mega':'big',W.n+' Jackpot');

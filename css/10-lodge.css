@@ -96,3 +96,4 @@ body.in-lodge .xppop{top:auto;bottom:80px;right:50%;transform:translateX(50%)}
 .lg-trophy .lg-prev-name{font-size:9px}
 .lg-trophy.off{opacity:.55}
 .lg-trophy .lg-ic{min-height:0}
+.lg-drink em{grid-column:2;font-style:normal;font-size:7px;line-height:1.4;color:#cfd9e0}

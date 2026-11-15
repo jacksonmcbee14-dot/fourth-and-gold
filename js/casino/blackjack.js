@@ -24,9 +24,10 @@ function viewBlackjack(){
   </div>`;
 }
 function bjDeal(){
-  if(!BJ.bet)return; if(BJ.bet>S.bank){toast('Not enough in the bankroll','loss');return;}
-  setBank(-BJ.bet); BJ.lastBet=BJ.bet;
-  BJ.hands=[{cards:[draw(),],bet:BJ.bet}]; BJ.dealer=[draw()]; BJ.hands[0].cards.push(draw()); BJ.dealer.push(draw());
+  const x=betX(), stake=BJ.bet*x;   // old fashioned: the bet is doubled
+  if(!BJ.bet)return; if(stake>S.bank){noFunds();return;}
+  setBank(-stake); BJ.lastBet=BJ.bet; BJ.wx=winX();
+  BJ.hands=[{cards:[draw(),],bet:stake}]; BJ.dealer=[draw()]; BJ.hands[0].cards.push(draw()); BJ.dealer.push(draw());
   BJ.act=0; BJ.phase='play'; BJ.msg='Your move.'; BJ.mcls='';
   const p=isBJ(BJ.hands[0].cards), d=isBJ(BJ.dealer);
   if(p||d){ BJ.phase='dealer'; bjSettle(); return; }
@@ -44,14 +45,15 @@ function bjNext(){
 function bjSettle(){
   const d=hv(BJ.dealer).t, dBJ=isBJ(BJ.dealer); let ret=0, staked=0;
   for(const h of BJ.hands){
-    staked+=h.bet; const p=hv(h.cards).t, pBJ=isBJ(h.cards)&&BJ.hands.length===1;
-    if(pBJ&&!dBJ){h.res='Blackjack';ret+=h.bet*2.5;}
+    staked+=h.bet; const p=hv(h.cards).t, pBJ=isBJ(h.cards)&&BJ.hands.length===1; let r=0;
+    if(pBJ&&!dBJ){h.res='Blackjack';r=h.bet*2.5;}
     else if(dBJ&&!pBJ){h.res='Dealer BJ';}
-    else if(pBJ&&dBJ){h.res='Push';ret+=h.bet;}
+    else if(pBJ&&dBJ){h.res='Push';r=h.bet;}
     else if(p>21){h.res='Bust';}
-    else if(d>21||p>d){h.res='Win';ret+=h.bet*2;}
-    else if(p===d){h.res='Push';ret+=h.bet;}
+    else if(d>21||p>d){h.res='Win';r=h.bet*2;}
+    else if(p===d){h.res='Push';r=h.bet;}
     else h.res='Lose';
+    ret+=boostRet(r,h.bet,BJ.wx);   // drink power on the winnings
   }
   if(ret)setBank(ret);
   const net=ret-staked;
