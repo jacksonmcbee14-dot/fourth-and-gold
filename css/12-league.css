@@ -166,3 +166,7 @@ html[data-season=fall] .lodge[data-mode=welcome],html[data-season=fall] .lodge[d
 .gx-pick button.on{background:var(--gold);color:var(--ink);border-color:var(--gold)}
 .gx-pick.col{grid-template-columns:1fr}
 .gx-pick.col button{text-align:left;padding:12px 14px}.gx-pick.col small{display:block;font-weight:400;font-size:12px;opacity:.8}
+/* table minimum (js/economy.js) */
+.tblmin{margin:-6px 0 12px;padding:8px 12px;border-radius:12px;background:rgba(200,164,92,.1);border:1px solid var(--line2);font-size:13px}
+.tblmin span{color:var(--muted)}
+.chip span{white-space:nowrap}

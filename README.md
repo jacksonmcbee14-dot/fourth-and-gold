@@ -41,7 +41,7 @@ The first time, macOS may ask whether Python can accept incoming network connect
 | `js/custom-bets.js` | The Custom amount pop-up: casino chips, video poker coins, slot bet, duel chips and challenge stakes. |
 | `js/lodge/buyall.js` | Buy all unlocked items in the shop's current tab and filter. |
 | `js/share.js` | Share cards (1080×1920 pictures for Instagram stories), the phone share sheet, and the pop-up layer. |
-| `js/economy.js` | Keeping money hard: over $100M net worth a win pays at most 1.2× the bet; the old fashioned costs $25M or 10% of your worth; shop prices are 25× the originals. |
+| `js/economy.js` | The economy scales with net worth: table minimum (net worth ÷ $100K)², capped at 25% of net worth; shop prices × (net worth ÷ $1M); drinks a share of net worth. Wins are never capped. |
 | `js/money.js` | Daily top-up to $1M, borrowing (any amount up to $250K a loan), and what a reset wipes. |
 | `supabase/` | Database setup script, plus numbered update scripts to run in order. |
 | `js/football/sportsbook.js` | Prices, bet slip and settling bets. |
