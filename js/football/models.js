@@ -38,7 +38,7 @@ function cfbRun(agg,n,opt){
     const L={},champ={},tl={};
     for(const t of CFB){
       let l=t.l, rem=t.rem;
-      if(t===byu){ opt.g.forEach((f,j)=>{ if(f==='L')l++; else if(f==='A'&&Math.random()>BYU_SCHED[j].p) l++; }); }
+      if(t===byu){ opt.g.forEach((f,j)=>{ if(BYU_SCHED[j].done) return; if(f==='L')l++; else if(f==='A'&&Math.random()>BYU_SCHED[j].p) l++; }); }
       else{
         if((t.n==='Utah'&&opt.utahL)||(t.n==='Texas Tech'&&opt.ttuL)){l++;rem--;}
         for(let r=0;r<rem;r++) if(Math.random()>1/(1+Math.exp(-(t.s-34)/16))) l++;

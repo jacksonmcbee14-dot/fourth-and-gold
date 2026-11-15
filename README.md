@@ -35,7 +35,7 @@ The first time, macOS may ask whether Python can accept incoming network connect
 | `js/casino/roulette.js`, `blackjack.js`, `poker.js`, `craps.js` | One file per table game. |
 | `js/casino/common.js`, `sound.js`, `effects.js`, `help.js` | Shared casino pieces, sounds, effects, How-to-play pages. |
 | `js/app.js` | Tab bar, drawing the screen, and what every button does. |
-| `js/live.js` | Hook for a live scores feed (none connected yet). |
+| `js/live.js` | Live scores, records and new games from ESPN's free public scoreboard (unofficial, so it could change). |
 | `manifest.webmanifest`, `icons/` | Home-screen install: name, icon, full-screen. |
 | `original/fourth-and-gold.html` | The untouched single-file original, for reference. |
 
