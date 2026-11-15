@@ -28,7 +28,7 @@ function viewPoker(){
     <div class="vp">${(VP.hand.length?VP.hand:[null,null,null,null,null]).map((c,i)=>`<div class="slot"><div class="held">${VP.held[i]?'HELD':''}</div>${c?cardHTML(c,{cls:VP.held[i]?'h':'',d:i*70,attr:`data-a="vphold" data-i="${i}"`}):cardHTML(null,{d:i*70})}</div>`).join('')}</div>
     <div class="cmsg ${VP.mcls}" style="margin-top:10px">${VP.msg}</div>
     <div class="betinfo" style="margin-bottom:10px"><span>Coin <b>${k$(VP.unit)}</b></span><span>Bet <b>${fmt$(VP.unit*VP.coins)}</b></span></div>
-    ${VP.phase==='bet'?`<div class="coins" style="margin-bottom:8px">${units.map(u=>`<button style="width:auto;padding:0 10px" class="${VP.unit===u?'on':''}" data-a="vpunit" data-v="${u}">${k$(u)}</button>`).join('')}</div>
+    ${VP.phase==='bet'?`<div class="coins" style="margin-bottom:8px">${units.map(u=>`<button style="width:auto;padding:0 10px" class="${VP.unit===u?'on':''}" data-a="vpunit" data-v="${u}">${k$(u)}</button>`).join('')}<button style="width:auto;padding:0 10px" class="${units.includes(VP.unit)?'':'on'}" data-a="vpCustom">${units.includes(VP.unit)?'Custom':cmp$(VP.unit)}</button></div>
     <div class="coins">${[1,2,3,4,5].map(c=>`<button class="${VP.coins===c?'on':''}" data-a="vpcoins" data-v="${c}">${c}</button>`).join('')}</div>`:''}
     <div class="cactions"><button class="btn gold" style="min-width:160px" data-a="${VP.phase==='bet'?'vpdeal':'vpdraw'}">${VP.phase==='bet'?'Deal':'Draw'}</button></div>
   </div>`;

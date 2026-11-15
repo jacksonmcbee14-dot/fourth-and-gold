@@ -99,7 +99,7 @@ function viewLeague(){
 }
 function feedItem(f){
   const n=`<b>${esc(f.name)}</b>`, amt=f.amount!=null?`<b class="up">${k$(f.amount)}</b>`:'';
-  const course=SEASONS[f.game]?SEASONS[f.game].course:'the links';
+  const course=GOLF_COURSES[f.game]?courseName(f.game):SEASONS[f.game]?SEASONS[f.game].course:'the links';
   const txt={win:`🎰 ${n} won ${amt} on ${gameName(f.game)}`,share:`📣 ${n} hit ${amt} on ${gameName(f.game)}`,
     golf:`⛳ ${n} shot <b>${f.amount}</b> (${f.n===0?'even':f.n>0?'+'+f.n:f.n}) at ${esc(course)}`,
     taunt:`💬 ${n}: “${esc(TAUNTS[f.n]||'…')}”`,level:`⭐ ${n} reached level <b>${f.n}</b>`,join:`👋 ${n} joined the league`,
@@ -163,8 +163,8 @@ function viewChallenges(){
   const live=C.filter(c=>c.status==='accepted'&&(c.game==='pick'||(c.mine&&c.to_score==null)));
   const done=C.filter(c=>!['open','accepted'].includes(c.status));
   const card=(c,btns)=>{ const g=CH_GAMES[c.game], other=c.mine?c.to_name:c.from_name;
-    const detail=c.game==='pick'?esc(c.data.title||'')+' · '+(c.mine?'you have ':'they have ')+esc(c.data.label||'')
-      :c.from_score!=null&&!c.mine&&c.status!=='done'?`Score to beat: <b>${c.from_score}${c.game==='golf'?' strokes':' chips'}</b>`:c.from_score!=null?`${c.mine?'You':esc(c.from_name)}: ${c.from_score}${c.to_score!=null?` · ${c.mine?esc(c.to_name):'You'}: ${c.to_score}`:''}`:'';
+    const detail=(c.game==='golf'&&c.data&&c.data.course?esc(courseName(c.data.course))+' · '+(c.data.holes||6)+' holes · ':'')+(c.game==='pick'?esc(c.data.title||'')+' · '+(c.mine?'you have ':'they have ')+esc(c.data.label||'')
+      :c.from_score!=null&&!c.mine&&c.status!=='done'?`Score to beat: <b>${c.from_score}${c.game==='golf'?' strokes':' chips'}</b>`:c.from_score!=null?`${c.mine?'You':esc(c.from_name)}: ${c.from_score}${c.to_score!=null?` · ${c.mine?esc(c.to_name):'You'}: ${c.to_score}`:''}`:'');
     return `<div class="chx"><span class="chx-ic">${g[0]}</span><div class="chx-tx"><b>${g[1]} ${c.mine?'vs':'from'} ${esc(other)}</b><small class="muted">${detail}${c.stake?` · ${k$(c.stake)} each`:''}</small></div><div class="chx-b">${btns}</div></div>`; };
   const resTxt=c=>c.status==='done'?(c.result==='me'?`<span class="up">Won ${k$(c.stake*2)}</span>`:c.result==='them'?'<span class="down">Lost</span>':'Tie'):c.status==='declined'?'Declined':c.status==='cancelled'?'Cancelled':'Expired';
   return `<button class="btn gold wide" data-a="chNew" style="margin-bottom:6px">⚔️ New challenge</button>
@@ -180,7 +180,7 @@ const CHN={};
 function friendsList(){ const seen=new Set(), out=[]; for(const id in LV.view){ for(const p of LV.view[id].members||[]) if(!p.me&&!seen.has(p.name)){ seen.add(p.name); out.push(p); } } return out; }
 function challengeStart(pre){
   if(!socOn()){ ACT.pfShowSignup(); return; }
-  Object.keys(CHN).forEach(k=>delete CHN[k]); Object.assign(CHN,{game:null,to:null,stake:0,staked:false,pick:null},pre||{});
+  Object.keys(CHN).forEach(k=>delete CHN[k]); Object.assign(CHN,{game:null,to:null,stake:0,staked:false,pick:null,golf:null},pre||{});
   (SOC.me&&SOC.me.leagues||[]).forEach(l=>loadLeague(l.id)); chStep();
 }
 function chStep(){
@@ -191,7 +191,11 @@ function chStep(){
     paintAvatars(); return m; }
   if(!CHN.staked){
     return modal(`<div class="fgm-k">${CH_GAMES[CHN.game][0]} vs ${esc(CHN.to)} · stake</div><p class="small muted">You both put this up. Winner takes it all. Ties get it back.</p>
-      <div class="chx-stakes">${[0,50000,100000,250000,1000000].map(v=>`<button data-a="chStake" data-v="${v}" ${v>S.bank?'disabled':''}>${v?k$(v):'Just for fun'}</button>`).join('')}</div>`); }
+      <div class="chx-stakes">${[0,100000,250000,1000000,5000000].map(v=>`<button data-a="chStake" data-v="${v}" ${v>S.bank?'disabled':''}>${v?k$(v):'Just for fun'}</button>`).join('')}<button data-a="chStakeCustom">Custom amount</button></div>`); }
+  if(CHN.game==='golf'&&!CHN.golf){
+    return modal(`<div class="fgm-k">⛳ Which course?</div><div class="gx-pick col">${Object.keys(GOLF_COURSES).map(k=>`<button class="${k===(S.golfCourse||'links')?'on':''}" data-a="chCourse" data-v="${k}"><b>${esc(courseName(k))}</b><small>${esc(GOLF_COURSES[k].blurb)}</small></button>`).join('')}</div>
+      <div class="gx-pick holes" style="margin-top:10px">${[3,6,9].map(h=>`<button class="${h===(S.golfHoles||6)?'on':''}" data-a="chHoles" data-v="${h}">${h} holes</button>`).join('')}</div>
+      <button class="btn gold wide" style="margin-top:12px" data-a="chGolfGo">Tee off</button>`); }
   if(CHN.game==='pick'&&!CHN.pick){
     const G=allGames().filter(g=>betable(g)&&g.s!=='live'&&g.s!=='final').sort((a,b)=>new Date(a.t)-new Date(b.t)).slice(0,24);
     return modal(`<div class="fgm-k">🏈 Pick a game and a side</div><p class="small muted">${esc(CHN.to)} gets the other team. Whoever’s team wins takes the pot.</p>
@@ -202,7 +206,7 @@ function chStep(){
   closeModal();
   const seed=1+Math.floor(Math.random()*99999), vs=`Challenge vs ${CHN.to} · set the score to beat`;
   const onFinish=score=>chSend(seed,score);
-  if(CHN.game==='golf') openGolf({seed,vs,onFinish});
+  if(CHN.game==='golf'){ CHN.pick=CHN.golf; openGolf({seed,vs,onFinish,course:CHN.golf.course,holes:CHN.golf.holes,noCash:true}); }
   else openDuel({game:CHN.game,vs,onFinish});
 }
 async function chSend(seed,score){
@@ -218,6 +222,9 @@ async function chSend(seed,score){
 Object.assign(ACT,{
   chNew:el=>{ const d=el&&el.dataset||{}, pre={}; if(d.to) pre.to=d.to; if(d.game) pre.game=d.game; challengeStart(pre); },
   chGame:el=>{ CHN.game=el.dataset.v; chStep(); },
+  chCourse:el=>{ S.golfCourse=el.dataset.v; el.parentNode.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b===el)); },
+  chHoles:el=>{ S.golfHoles=+el.dataset.v; el.parentNode.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b===el)); },
+  chGolfGo:()=>{ save(); CHN.golf={course:S.golfCourse||'links',holes:S.golfHoles||6}; chStep(); },
   chTo:el=>{ CHN.to=el.dataset.v; chStep(); },
   chToName:()=>{ const n=($('#chName').value||'').trim(); if(n.length<2) return lgMsg('Type their profile name.'); if(PROF.me&&n.toLowerCase()===PROF.me.name.toLowerCase()) return lgMsg('That’s you!'); CHN.to=n; chStep(); },
   chStake:el=>{ CHN.stake=+el.dataset.v; CHN.staked=true; chStep(); },
@@ -241,7 +248,7 @@ function chPlay(c){
   const onFinish=async score=>{ const r=await srpc('fg_ch_score',{p_id:c.id,p_score:score}); needMe();
     if(!r||!r.ok) return 'That challenge already ended.';
     return r.result==='me'?`You beat ${c.from_name} (${r.their_score})!${c.stake?' +'+k$(c.stake*2)+' is on its way.':''}`:r.result==='tie'?`Tied with ${c.from_name}. Stakes returned.`:`${c.from_name} wins with ${r.their_score}. Rematch?`; };
-  if(c.game==='golf') openGolf({seed:c.seed,vs,onFinish,noCash:true}); else openDuel({game:c.game,vs,onFinish});
+  if(c.game==='golf') openGolf({seed:c.seed,vs,onFinish,noCash:true,course:(c.data&&c.data.course)||'links',holes:(c.data&&c.data.holes)||6}); else openDuel({game:c.game,vs,onFinish});
 }
 // Pick'ems settle themselves once the real game is final.
 function chSettlePicks(){
@@ -252,17 +259,20 @@ function chSettlePicks(){
 
 /* ---------- Golf tab ---------- */
 function viewGolf(){
-  const G=S.golf||{};
-  return `<div class="lgx-hero golf-hero"><div class="lgx-emoji">⛳</div><h2 class="serif">${esc(SEASON.course)}</h2><p class="muted">${esc(SEASON.tagline)} 6 holes · par ${GOLF_PAR}.</p>
-    <button class="btn gold wide" data-a="golfPlay">Play 6 holes</button><button class="btn wide" style="margin-top:8px" data-a="golfCh">Challenge a friend</button>
-    ${G.rounds?`<p class="small muted" style="margin:10px 0 0">Best round <b class="gold">${G.best}</b> (${vsPar(G.best-GOLF_PAR)}) · ${G.rounds} played</p>`:''}</div>
+  const G=S.golf||{}, cid=S.golfCourse||'links', n=S.golfHoles||6, best=G.best&&typeof G.best==='object'?G.best[cid+'-'+n]:null;
+  return `<div class="lgx-hero golf-hero"><div class="lgx-emoji">⛳</div><h2 class="serif">${esc(courseName(cid))}</h2><p class="muted">${esc(GOLF_COURSES[cid].blurb)} ${n} holes · par ${coursePar(cid,n)}.</p>
+    <div class="gx-pick">${Object.keys(GOLF_COURSES).map(k=>`<button class="${k===cid?'on':''}" data-a="golfCourse" data-v="${k}">${esc(courseName(k))}</button>`).join('')}</div>
+    <div class="gx-pick holes">${[3,6,9].map(h=>`<button class="${h===n?'on':''}" data-a="golfHoles" data-v="${h}">${h} holes</button>`).join('')}</div>
+    <button class="btn gold wide" data-a="golfPlay">Play ${n} holes</button><button class="btn wide" style="margin-top:8px" data-a="golfCh">Challenge a friend</button>
+    ${best!=null?`<p class="small muted" style="margin:10px 0 0">Your best here <b class="gold">${best}</b> (${vsPar(best-coursePar(cid,n))})${G.rounds?' · '+G.rounds+' rounds played':''}</p>`:''}</div>
     <div class="sechead"><h2>How to play</h2></div>
     <div class="panel lgx-rules"><div><b>1</b><span><b>Tap the course</b> where you want the ball to land. The club is picked for you — change it with ‹ ›.</span></div>
     <div><b>2</b><span><b>Tap SWING</b>, then tap again when the marker is in the <b class="up">green</b>. Yellow is a bit off; red is a big miss.</span></div>
     <div><b>3</b><span><b>Watch the wind</b> (top right) and aim into it. Water and out of bounds cost a stroke. Sand and rough cost distance.</span></div>
     <div><b>💰</b><span>Birdie +$25K · Eagle +$150K · Hole in one +$500K</span></div></div>
-    <p class="foot">The course changes with the seasons. You can also walk out the lodge’s back window to the links.</p>`;
+    <p class="foot">The courses change with the seasons. You can also walk out the lodge’s back window to the links.</p>`;
 }
+Object.assign(ACT,{ golfCourse:el=>{ S.golfCourse=el.dataset.v; save(); render(); }, golfHoles:el=>{ S.golfHoles=+el.dataset.v; save(); render(); } });
 Object.assign(ACT,{ golfPlay:()=>openGolf({}), golfCh:()=>challengeStart({game:'golf'}) });
 
 /* ---------- Invite tab ---------- */

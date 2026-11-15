@@ -150,3 +150,19 @@ html[data-season=fall] .lodge[data-mode=welcome],html[data-season=fall] .lodge[d
 .duel-dice{display:flex;gap:12px}
 .duel-acts{display:flex;gap:8px}.duel-acts .btn{flex:1}
 .duel-bets.three{grid-template-columns:repeat(3,1fr)}
+/* custom amounts */
+.cust-in{font-size:30px;text-align:center;margin:6px 0 10px}
+.cust-quick{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.cust-quick button{padding:9px 0;border-radius:10px;border:1px solid var(--line2);font-family:var(--mono);font-size:12px}
+.chip.custom span{font-size:9px;letter-spacing:0}
+.betcust{display:flex;flex-direction:column;align-items:center;color:inherit}
+.betcust:disabled{opacity:.6}
+.chx-stakes button[data-a=chStakeCustom]{grid-column:1/-1;font-family:var(--sans);border-style:dashed}
+.duel-amts{grid-template-columns:repeat(5,1fr)}
+.lg-buyall{display:block;width:100%;margin-top:8px;font-size:8px}
+/* golf course and hole pickers */
+.gx-pick{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:0 0 10px}
+.gx-pick button{padding:9px 4px;border-radius:12px;border:1px solid var(--line2);font-size:13px;font-weight:600;line-height:1.2;background:rgba(0,0,0,.2)}
+.gx-pick button.on{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.gx-pick.col{grid-template-columns:1fr}
+.gx-pick.col button{text-align:left;padding:12px 14px}.gx-pick.col small{display:block;font-weight:400;font-size:12px;opacity:.8}

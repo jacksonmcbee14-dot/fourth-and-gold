@@ -81,7 +81,7 @@ function makeRoom(host){
   const {c,ctx}=makeCanvas(host);
   const snow=snowField(16,61,{x:68,y:32,w:32,h:48});
   const me={x:150,y:262,tx:150,ty:262,face:-1,speed:40,walkT:0};
-  const ED={on:false,drag:null,sel:null,moved:false};
+  const ED={on:false,drag:null,sel:null,moved:false,min:false};
   const loop=makeLoop((t,dt)=>{
     ctx.drawImage(drawRoomStatic(),0,0);
     rect(ctx,68,32,32,48,LP.night1); for(let yy=-3;yy<=3;yy++)for(let xx=-3;xx<=3;xx++) if(xx*xx+yy*yy<=9) rect(ctx,90+xx,40+yy,1,1,LP.moon);
@@ -108,10 +108,10 @@ function makeRoom(host){
   const inR=(R,px,py)=>px>=R.x&&px<R.x+R.w&&py>=R.y&&py<R.y+R.h;
   c.addEventListener('pointerdown',e=>{
     const [px,py]=toRoom(e);
-    if(ED.on){ const p=hitDecor(px,py); ED.sel=p||null; ED.moved=false; if(p){ ED.drag={p,ox:px-p.x,oy:py-p.y}; c.setPointerCapture(e.pointerId); } roomTray(); return; }
+    if(ED.on){ const p=hitDecor(px,py); ED.sel=p||null; ED.moved=false; if(p){ ED.drag={p,ox:px-p.x,oy:py-p.y}; c.setPointerCapture(e.pointerId); trayFade(true); } roomTray(); return; }
   });
   c.addEventListener('pointermove',e=>{ if(!ED.on||!ED.drag) return; const [px,py]=toRoom(e), {p,ox,oy}=ED.drag; const [nx,ny]=clampDecor(ITEM[p.id],Math.round(px-ox),Math.round(py-oy)); if(nx!==p.x||ny!==p.y){ p.x=nx; p.y=ny; ED.moved=true; } });
-  c.addEventListener('pointerup',()=>{ if(ED.drag){ ED.drag=null; if(ED.moved){ save(); tone(500,.04,'square',.02); } } });
+  c.addEventListener('pointerup',()=>{ trayFade(false); if(ED.drag){ ED.drag=null; if(ED.moved){ save(); tone(500,.04,'square',.02); } } });
   c.addEventListener('click',e=>{
     if(ED.on) return;
     const [px,py]=toRoom(e);
@@ -120,21 +120,45 @@ function makeRoom(host){
     if(inR(ROOM_STAIRS,px,py)){ walk(30,274,()=>lodgeHub()); return; }
     if(py>=176) walk(px,py);
   });
+  function trayFade(on){ const b=LODGE.el.querySelector('.lg-tray'); if(b) b.classList.toggle('dragging',on); }
+  // Arrange for me: every piece you own, placed at random but tidily — rugs in the middle, art at eye level
+  // on the walls, furniture against the back and side walls, nothing overlapping. Each press gives a new layout.
+  function arrange(){
+    const R=Math.random, own=ITEMS.filter(i=>i.cat==='decor'&&owns(i.id)).sort((a,b)=>b.w*b.h-a.w*a.h||b.price-a.price);
+    const walls=[], rugs=[], furn=[], out=[];
+    const hit=(x,y,w,h,L)=>L.some(b=>x<b.x+b.w+2&&x+w+2>b.x&&y<b.y+b.h+2&&y+h+2>b.y);
+    const fit=(it,Z,L,score)=>{ let best=null; for(let k=0;k<220;k++){ const x=Math.round(Z.x+R()*(Z.w-it.w)), y=Math.round(Z.y+R()*(Z.h-it.h)); if(Z.w<it.w||Z.h<it.h||hit(x,y,it.w,it.h,L)) continue;
+        const sc=score(x,y,it)+R()*10; if(!best||sc<best.sc) best={x,y,sc}; } return best; };
+    let left=0;
+    for(const it of own){
+      let L,Z,score;
+      if(it.wall){ L=walls; Z={x:44,y:92,w:PW-46,h:66}; score=(x,y,i)=>Math.abs(y+i.h/2-118)*1.5; }
+      else if(it.floor){ L=rugs; Z={x:44,y:176,w:PW-48,h:120}; score=(x,y,i)=>Math.abs(x+i.w/2-112)*.6+Math.abs(y+i.h/2-238)*.8; if(rugs.length>=3){ left++; continue; } }
+      else { L=furn; Z={x:44,y:174,w:PW-46,h:126}; score=(x,y,i)=>Math.min(y-174,(x-44)*1.2,(PW-2-x-i.w)*1.2,(300-y-i.h)*1.6)*2; }
+      const b=fit(it,Z,L,score); if(!b){ left++; continue; }
+      const [x,y]=clampDecor(it,b.x,b.y); const box={id:it.id,x,y,w:it.w,h:it.h}; L.push(box); out.push({id:it.id,x,y});
+    }
+    S.lodge.room=out; ED.sel=null; save(); roomTray();
+    [523,659,784,1047].forEach((f,i)=>tone(f,.08,'square',.04,i*.06));
+    toast(out.length?`Arranged ${out.length} piece${out.length>1?'s':''}`+(left?` · ${left} didn’t fit`:''):'Buy some decor from Silas first','gold');
+  }
   function walk(x,y,arrive){ me.tx=clamp(x,10,182); me.ty=clamp(y,186,300); const d=Math.hypot(me.tx-me.x,me.ty-me.y); me.speed=Math.max(40,d/.85); tone(520,.04,'square',.02);
     if(arrive) setTimeout(arrive,d/me.speed*1000+120); }
   // Decorating: the tray of owned decor, and Store for the selected piece.
   function roomTray(){
     const box=LODGE.el.querySelector('.lg-tray'); if(!box) return;
     const unplaced=ITEMS.filter(i=>i.cat==='decor'&&owns(i.id)&&!placed().some(p=>p.id===i.id));
-    box.innerHTML=`<div class="lg-tray-h">${ED.sel?`<span>${esc(ITEM[ED.sel.id].name)}</span><button class="lg-btn" data-lg="decStore">Store it</button>`:`<span>${unplaced.length?'Tap a piece to place it · drag to move':(placed().length?'Drag pieces to move them':'Buy decor from Silas the merchant')}</span>`}</div>
+    box.classList.toggle('min',ED.min);
+    box.innerHTML=`<div class="lg-tray-h">${ED.sel?`<span>${esc(ITEM[ED.sel.id].name)}</span><button class="lg-btn" data-lg="decStore">Store it</button>`:`<span>${unplaced.length?(ED.min?unplaced.length+' pieces to place':'Tap a piece to place it · drag to move'):(placed().length?'Drag pieces to move them':'Buy decor from Silas the merchant')}</span>`}
+        <button class="lg-btn" data-lg="decArrange">Arrange for me</button><button class="lg-btn lg-round" data-lg="decMin" aria-label="${ED.min?'Show pieces':'Hide pieces'}">${ED.min?'▲':'▼'}</button></div>
       <div class="lg-tray-list">${unplaced.map(i=>`<button class="lg-item" data-lg="decPlace" data-id="${i.id}"><span class="lg-ic" data-ic="${i.id}"></span><span class="lg-in">${esc(i.name)}</span></button>`).join('')}</div>`;
     box.querySelectorAll('[data-ic]').forEach(s=>s.appendChild(iconCanvas(ITEM[s.dataset.ic],1)));
   }
-  const api={loop,canvas:c,me,ED,
+  const api={loop,canvas:c,me,ED,arrange,tray:roomTray,
     setEdit(on){ ED.on=on; ED.sel=null; ED.drag=null; let box=LODGE.el.querySelector('.lg-tray');
       if(on&&!box){ box=document.createElement('div'); box.className='lg-tray'; LODGE.el.querySelector('.lg-stage').appendChild(box); }
       if(!on&&box) box.remove(); if(on) roomTray(); save(); },
-    place(id){ const it=ITEM[id]; if(!it||!owns(id)||placed().some(p=>p.id===id)) return; const n=placed().length, [x,y]=clampDecor(it,Math.round(96-it.w/2)+(n%3-1)*24,(it.wall?100:226)+(n%2)*14); const p={id,x,y}; S.lodge.room=placed().concat(p); ED.sel=p; save(); tone(784,.08,'square',.04); roomTray(); },
+    place(id){ const it=ITEM[id]; if(!it||!owns(id)||placed().some(p=>p.id===id)) return; const n=placed().length, [x,y]=clampDecor(it,Math.round(96-it.w/2)+(n%3-1)*24,(it.wall?100:226)+(n%2)*14); const p={id,x,y}; S.lodge.room=placed().concat(p); ED.sel=p; ED.min=true; save(); tone(784,.08,'square',.04); roomTray(); },
     store(){ if(!ED.sel) return; S.lodge.room=placed().filter(p=>p!==ED.sel); ED.sel=null; save(); roomTray(); },
   };
   return api;
@@ -151,5 +175,7 @@ Object.assign(LG_ACT,{
   decorate:()=>{ const r=LODGE.room; if(!r) return; r.setEdit(!r.ED.on); setHud('room'); },
   decPlace:b=>LODGE.room&&LODGE.room.place(b.dataset.id),
   decStore:()=>LODGE.room&&LODGE.room.store(),
+  decArrange:()=>LODGE.room&&LODGE.room.arrange(),
+  decMin:()=>{ const r=LODGE.room; if(!r) return; r.ED.min=!r.ED.min; r.tray(); },
 });
 titleTrophies();
