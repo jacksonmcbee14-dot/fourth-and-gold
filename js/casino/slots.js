@@ -22,14 +22,14 @@ function viewSlots(){
     <div class="meters"><div><span>Credit</span><b class="mono" id="slBal">${cmp$(S.bank)}</b></div><div class="wm"><span>Win</span><b class="mono" id="slWin">${SL.lastWin?fmt$(SL.lastWin):'—'}</b></div><div><span>Bet</span><b class="mono" id="slBet">${cmp$(S.slotBet)}</b></div></div>
     <div class="slmsg" id="slMsg">${SL.fs>0?SL.fs+' free games waiting — tap Spin':'Any spin can light the Golden Star'}</div>
     <div class="ctrl">
-      <div class="betc"><button data-a="slBet" data-v="-1" aria-label="Lower bet">−</button><button data-a="slCustom" class="betcust" aria-label="Type a custom bet"><span>Bet · tap to type</span><b class="mono" id="slBet2">${cmp$(S.slotBet)}</b></button><button data-a="slBet" data-v="1" aria-label="Raise bet">+</button></div>
+      <div class="betc"><button data-a="slBet" data-v="-1" aria-label="Lower bet">−</button><button data-a="slCustom" class="betcust" aria-label="Type a custom bet"><span>Bet <i>✎</i></span><b class="mono" id="slBet2">${cmp$(S.slotBet)}</b></button><button data-a="slBet" data-v="1" aria-label="Raise bet">+</button></div>
       <button class="spin" id="spinBtn" data-a="slSpin"><span>SPIN</span></button>
       <div class="side"><button class="pillb" id="autoBtn" data-a="slAuto">AUTO</button><button class="pillb ${S.turbo?'on':''}" id="turboBtn" data-a="slTurbo">TURBO</button><button class="pillb ${S.sound?'on':''}" id="sndBtn" data-a="slSound">${S.sound?'SOUND':'MUTED'}</button></div>
     </div>
   </div>`;
 }
 function slUI(){
-  setText('#slBal',cmp$(S.bank));setText('#slBet',cmp$(S.slotBet));setText('#slBet2',cmp$(S.slotBet)+(S.slotBet>=MAXBET?' MAX':''));
+  setText('#slBal',cmp$(S.bank));setText('#slBet',cmp$(S.slotBet));setText('#slBet2',cmp$(S.slotBet));
   JPT.forEach(t=>setText(`[data-j=${t.k}]`,cmp$(jpVal(t))));
   const b=$('#spinBtn');if(b){b.classList.toggle('free',SL.fs>0&&!SL.spinning);b.classList.toggle('going',SL.spinning);b.firstChild.textContent=SL.spinning?'STOP':SL.fs>0?'FREE':'SPIN';}
   const a=$('#autoBtn');if(a){a.classList.toggle('on',SL.auto>0);a.textContent=SL.auto>0?'STOP '+SL.auto:'AUTO';}

@@ -21,7 +21,10 @@ function evalHand(h){
 }
 function vpMult(i){return i===0&&VP.coins===5?800:PAY[i][1];}
 function viewPoker(){
-  const units=[1000,5000,25000,100000];
+  // Coin sizes start at the table minimum (js/economy.js): with 5 coins, the smallest coin is a fifth of it.
+  const m=typeof tableMin==='function'?tableMin():1000, floor=Math.ceil(m/5), base=[1000,5000,25000,100000].filter(u=>u>=floor);
+  const units=base.length>=4?base:[floor,m/2,m,m*2.5].map(u=>typeof nice==='function'?nice(u):Math.round(u)).filter((u,i,a)=>u>=floor&&a.indexOf(u)===i).concat(base).slice(0,4).sort((a,b)=>a-b);
+  if(VP.phase==='bet'&&VP.unit*VP.coins<m){ VP.coins=5; if(VP.unit*5<m) VP.unit=units[0]; }
   return `<div class="felt">
     <div class="label">Jacks or Better · full-pay 9/6</div>
     <div class="paytable" style="margin-top:12px">${PAY.map((p,i)=>`<span class="hn ${VP.res===i&&VP.phase==='bet'?'hit':''}">${p[0]}</span>${[1,2,3,4,5].map(c=>`<span class="${c===VP.coins?'col':''} ${VP.res===i&&c===VP.coins&&VP.phase==='bet'?'hit':''}">${i===0&&c===5?800*5:p[1]*c}</span>`).join('')}`).join('')}</div>
