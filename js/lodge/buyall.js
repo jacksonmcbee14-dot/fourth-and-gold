@@ -18,9 +18,9 @@ Object.assign(LG_ACT,{
   shopBuyAll:()=>{
     if(!SHOP.allAsk){ SHOP.allAsk=true; renderShop(); setTimeout(()=>{ if(SHOP.allAsk){ SHOP.allAsk=false; if(LODGE.el&&LODGE.el.querySelector('.lg-shop')) renderShop(); } },6000); return; }
     SHOP.allAsk=false; const L=shopUnowned(); let sum=0; const got=[];
-    for(const i of L){ const pr=shopPrice(i); if(sum+pr>S.bank) break; sum+=pr; got.push(i.id); }
+    const prices=[]; for(const i of L){ const pr=shopPrice(i); if(sum+pr>S.bank) break; sum+=pr; got.push(i.id); prices.push(pr); }
     if(!got.length){ toast('Not enough in the bankroll','loss'); renderShop(); return; }
-    setBank(-sum); S.spent=(S.spent||0)+sum; S.lodge.owned=(S.lodge.owned||[]).concat(got); save(); hudBank();
+    setBank(-sum); S.spent=(S.spent||0)+sum*(typeof RESALE==='number'?1-RESALE:1); if(typeof notePaid==='function') notePaid(got,prices); S.lodge.owned=(S.lodge.owned||[]).concat(got); save(); hudBank();
     [784,988,1175,1568,2093].forEach((f,i)=>tone(f,.12,'square',.05,i*.07));
     try{ const b=LODGE.el.querySelector('.lg-stage').getBoundingClientRect(); fx.burst(b.left+b.width/2,b.top+b.height*.35,90,'#ecd9a8'); fx.confetti(120); }catch(e){}
     toast(`Bought ${got.length} item${got.length>1?'s':''} for ${fmt$(sum)}`+(got.length<L.length?` · ${L.length-got.length} left (not enough money)`:''),'gold');

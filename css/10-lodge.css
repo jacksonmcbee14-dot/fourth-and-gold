@@ -117,3 +117,13 @@ body.in-lodge .xppop{top:auto;bottom:80px;right:50%;transform:translateX(50%)}
 .lg-vibe .ic{font-size:22px;line-height:1}
 .lg-vibe small{font-size:6px;color:#c8a45c;text-transform:none}
 .lg-vibe.off{opacity:.45}
+/* collections, perks, limited shelf */
+.lg-set{display:flex;flex-direction:column;gap:6px;padding:8px;margin-top:8px;box-shadow:0 0 0 2px #3a2617}
+.lg-set.done{box-shadow:0 0 0 2px #c8a45c}
+.lg-set-h{display:flex;justify-content:space-between;font-size:8px;color:#f6ebcb}
+.lg-set i{display:block;height:5px;background:#2a1d15}.lg-set i b{display:block;height:100%;background:#c8a45c}
+.lg-set-items{display:flex;flex-wrap:wrap;gap:4px}
+.lg-set-it{padding:2px;background:#1c1410;opacity:.35;box-shadow:0 0 0 1px #3a2617}
+.lg-set-it.own{opacity:1;box-shadow:0 0 0 1px #c8a45c}
+.lg-item.perk .lg-in::after{content:' ✨'}
+.lg-tabs{flex-wrap:wrap}

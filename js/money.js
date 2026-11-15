@@ -4,7 +4,7 @@
 const LOAN=250000, MAX_DEBT=5000000;
 const dayKey=()=>{const d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();};
 const openStakes=()=>S.bets.filter(b=>b.st==='open').reduce((s,b)=>s+b.stake,0);
-const scoreNow=()=>Math.round(S.bank+openStakes()-(S.debt||0));
+const scoreNow=()=>Math.round(S.bank+openStakes()-(S.debt||0)+(typeof assetValue==='function'?assetValue():0));   // + what your stuff is worth (js/perks.js)
 
 // Each new day, anyone below $1,000,000 cash is topped back up to $1,000,000. (Debt stays until repaid.)
 function dailyTopUp(){
