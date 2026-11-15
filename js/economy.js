@@ -12,6 +12,9 @@
 const worth=()=>Math.max(0,scoreNow());
 const nice=n=>{ if(n<1000) return Math.round(n); const p=Math.pow(10,Math.floor(Math.log10(n))-1); return Math.round(n/p)*p; };
 function tableMin(){ const w=worth(); return Math.max(1000,nice(Math.min(w*w/2e10,w*.10))); }
+// Slots are played fast and often, so their minimum is far smaller: net worth² ÷ $400B, at most 0.5% of net worth.
+// $100M → $25K · $1B → $2.5M · $2B and up → 0.5% ($4.4B → $22M).
+function slotMin(){ const w=worth(); return Math.max(1000,nice(Math.min(w*w/4e11,w*.005))); }
 const wealthX=()=>Math.max(1,worth()/1e6);
 
 // Prices follow your net worth. Each item keeps its original price as a base.
@@ -28,20 +31,20 @@ const _bjDealE=bjDeal; bjDeal=function(){ if(BJ.bet>0&&belowMin(BJ.bet)) return;
 const _vpDealE=vpDeal; vpDeal=function(){ if(VP.phase==='bet'&&belowMin(VP.unit*VP.coins)) return; return _vpDealE.apply(this,arguments); };
 const _crbetE=ACT.crbet; ACT.crbet=el=>{ if(!CR.rolling&&belowMin(S.chip)) return; _crbetE(el); };
 const _slotSpinE=slotSpin;
-slotSpin=function(){ if(!SL.spinning&&!(SL.fs>0)&&S.slotBet<tableMin()){ S.slotBet=tableMin(); save(); slUI(); toast('Bet raised to the table minimum: '+fmt$(S.slotBet),'gold'); }
+slotSpin=function(){ if(!SL.spinning&&!(SL.fs>0)&&S.slotBet<slotMin()){ S.slotBet=slotMin(); save(); slUI(); toast('Bet raised to the slots minimum: '+fmt$(S.slotBet),'gold'); }
   return _slotSpinE.apply(this,arguments); };
 const _placeE=ACT.placeSlip; ACT.placeSlip=el=>{ const c=slipCalc(); if(c.legs.length&&c.stake>0&&belowMin(c.stake)) return; _placeE(el); };
 
 // Slots: the − / + buttons step through bets at or above the minimum, and a bet below it is raised.
-function slotLadder(){ const m=tableMin(), L=SLOT_BETS.filter(v=>v>=m); for(const k of [1,2.5,5,10,25,50,100]){ const v=nice(m*k); if(!L.includes(v)&&v>=m) L.push(v); } return L.sort((a,b)=>a-b).filter(v=>v<=Math.max(S.bank,m)).slice(0,10); }
+function slotLadder(){ const m=slotMin(), L=SLOT_BETS.filter(v=>v>=m); for(const k of [1,2.5,5,10,25,50,100]){ const v=nice(m*k); if(!L.includes(v)&&v>=m) L.push(v); } return L.sort((a,b)=>a-b).filter(v=>v<=Math.max(S.bank,m)).slice(0,10); }
 ACT.slBet=el=>{ if(SL.spinning||SL.fs>0) return; const L=slotLadder(), d=+el.dataset.v; let i=L.findIndex(v=>v>=S.slotBet);
   if(i<0) i=d>0?L.length-1:L.length-2; else if(L[i]===S.slotBet) i+=d; else if(d<0) i--;
   i=clamp(i,0,L.length-1); S.slotBet=L[i]; save(); slUI(); tone(500+i*60,.06,'square',.04); };
-const _slUIE=slUI; slUI=function(){ if(!SL.spinning&&!(SL.fs>0)&&S.slotBet<tableMin()){ S.slotBet=tableMin(); save(); } return _slUIE.apply(this,arguments); };
+const _slUIE=slUI; slUI=function(){ if(!SL.spinning&&!(SL.fs>0)&&S.slotBet<slotMin()){ S.slotBet=slotMin(); save(); } return _slUIE.apply(this,arguments); };
 
 /* ---------- Showing it ---------- */
 const _gameHeadE=gameHead;
-gameHead=function(key,title){ const h=_gameHeadE(key,title), m=tableMin(); return m>1000?h+`<div class="tblmin" title="The minimum bet grows with your bankroll"><i></i>Min bet <b class="mono">${cmp$(m)}</b></div>`:h; };
+gameHead=function(key,title){ const h=_gameHeadE(key,title), m=key==='slots'?slotMin():tableMin(); return m>1000?h+`<div class="tblmin" title="The minimum bet grows with your bankroll"><i></i>Min bet <b class="mono">${cmp$(m)}</b></div>`:h; };
 const _renderSlipE=renderSlip;
 renderSlip=function(){ _renderSlipE(); const m=tableMin(); if(m>1000&&$('#sheet').classList.contains('on')){ const a=$('#sheet .amts'); if(a) a.insertAdjacentHTML('beforebegin',`<div class="small muted" style="margin:10px 0 -4px">Minimum bet at your bankroll: <b class="gold">${fmt$(m)}</b></div>`); } };
 const _bankSheetE=ACT.bankSheet;

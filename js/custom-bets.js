@@ -29,7 +29,7 @@ Object.assign(ACT,{
   // casino chips: roulette, blackjack and craps add this amount per tap
   chipCustom:()=>askAmount({title:'Custom chip',value:S.chip,min:typeof tableMin==='function'?tableMin():1,max:Math.max(S.bank,1000),note:'Each tap on the table adds this much',onSet:v=>{ S.chip=v; save(); render(); }}),
   vpCustom:()=>{ if(VP.phase!=='bet') return; askAmount({title:'Custom coin size',value:VP.unit,min:typeof tableMin==='function'?Math.ceil(tableMin()/VP.coins):1,max:Math.max(1000,Math.floor(S.bank/VP.coins)),note:'Your bet is coin × coins ('+VP.coins+')',onSet:v=>{ VP.unit=v; render(); }}); },
-  slCustom:()=>{ if(SL.spinning||SL.fs>0) return; askAmount({title:'Custom slot bet',value:S.slotBet,max:Math.max(S.bank,2000),min:typeof tableMin==='function'?tableMin():1000,note:'$250K or more plays for the progressive Grand',onSet:v=>{ S.slotBet=v; save(); slUI(); }}); },
+  slCustom:()=>{ if(SL.spinning||SL.fs>0) return; askAmount({title:'Custom slot bet',value:S.slotBet,max:Math.max(S.bank,2000),min:typeof slotMin==='function'?slotMin():1000,note:'$250K or more plays for the progressive Grand',onSet:v=>{ S.slotBet=v; save(); slUI(); }}); },
   duelCustom:()=>{ if(DUEL.busy) return; askAmount({title:'Custom chips',value:DUEL.amt,max:DUEL.chips,note:'Duel chips',onSet:v=>{ DUEL.amt=v; duelDraw(); },onCancel:()=>duelDraw()}); },
   chStakeCustom:()=>askAmount({title:'Custom stake',value:CHN.stake||500000,max:S.bank,note:'You both put this up; winner takes it all',onSet:v=>{ CHN.stake=v; CHN.staked=true; chStep(); },onCancel:()=>chStep()}),
 });
