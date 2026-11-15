@@ -6,9 +6,10 @@ function statusFor(n){let i=0;for(let j=0;j<STATUS.length;j++)if(n>=STATUS[j][0]
 // Where your money came from since your last reset. Football = settled bets; casino = everything else.
 // (Net worth always equals $1,000,000 + football + casino, because a reset clears both.)
 function plSplit(){
-  const net=S.bank+S.bets.filter(b=>b.st==='open').reduce((s,b)=>s+b.stake,0);
+  // Score = cash + open bets − debt. Daily top-ups aren't winnings, so they're left out of the casino figure.
+  const net=S.bank+S.bets.filter(b=>b.st==='open').reduce((s,b)=>s+b.stake,0)-(S.debt||0);
   const football=S.bets.reduce((s,b)=>s+(b.st==='won'?b.pay-b.stake:b.st==='lost'?-b.stake:0),0);
-  return {net,football,casino:net-START_BANK-football};
+  return {net,football,casino:net-START_BANK-football-(S.topups||0)};
 }
 const signed$=n=>(n>=0?'+':'−')+fmt$(Math.abs(n));
 function viewRanks(){

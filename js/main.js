@@ -1,4 +1,5 @@
 // Start-up: run the models, settle bets, draw the screen
+dailyTopUp();
 applyMyTeams();
 baseModels();
 settleBets();

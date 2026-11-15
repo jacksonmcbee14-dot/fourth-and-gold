@@ -27,7 +27,7 @@ function todayGame(lg){
 }
 function viewToday(){
   const sg=suggestion(), open=S.bets.filter(b=>b.st==='open');
-  const net=S.bank+open.reduce((s,b)=>s+b.stake,0), si=statusFor(net), nx=STATUS[si+1];
+  const net=plSplit().net, si=statusFor(net), nx=STATUS[si+1];
   const board=typeof PROF!=='undefined'&&PROF.me&&PROF.board?PROF.board.findIndex(p=>p.name.trim().toLowerCase()===PROF.me.name.trim().toLowerCase()):-1;
   const sugCard=!sg?card('','—','No games are open for betting right now.',''):
     card('',`+${fmt$(sg.win)}`,`Bet ${fmt$(sg.stake)} on ${sg.g.lg==='nfl'?'the ':''}${esc(sg.t.name)} to beat ${sg.g.lg==='nfl'?'the ':''}${esc(sg.op.name)} and win ${fmt$(sg.win)}.`,'',

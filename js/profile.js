@@ -11,7 +11,7 @@ async function rpc(fn,args){
   if(!r.ok) throw new Error('rpc '+fn+' '+r.status);
   return r.json();
 }
-const cloudArgs=()=>({p_state:S,p_upd:S.upd||Date.now(),p_bank:Math.round(S.bank+S.bets.filter(b=>b.st==='open').reduce((s,b)=>s+b.stake,0)),p_peak:S.peak,p_resets:S.resets||0,p_nfl:myN(),p_cfb:myC()});
+const cloudArgs=()=>({p_state:S,p_upd:S.upd||Date.now(),p_bank:scoreNow(),p_peak:S.peak,p_resets:S.resets||0,p_nfl:myN(),p_cfb:myC()});
 function setMe(me){PROF.me=me;try{me?localStorage.setItem(PROFILE_KEY,JSON.stringify(me)):localStorage.removeItem(PROFILE_KEY);}catch(e){}}
 
 // Called by save(): send the game to your profile a moment after it changes.
@@ -69,7 +69,7 @@ function boardRows(list,limit){
   const tm=p=>[p.nfl_team&&NFL[p.nfl_team]?NFL[p.nfl_team].n:'',p.cfb_team?((CFB.find(t=>t.ab===p.cfb_team)||CFB_DIR[p.cfb_team]||{n:p.cfb_team}).n):''].filter(Boolean).join(' · ');
   let rows=list.map((p,i)=>({p,i}));
   if(limit&&rows.length>limit){const mine=rows.find(r=>r.p.name.trim().toLowerCase()===meKey);rows=rows.slice(0,limit);if(mine&&mine.i>=limit)rows.push(mine);}
-  return rows.map(({p,i})=>`<div class="rank ${p.name.trim().toLowerCase()===meKey?'me':''}"><span class="no">${i+1}</span><span style="font-size:20px;text-align:center">${i===0?'🔥':''}</span><div><div style="font-weight:600">${esc(p.name)}</div><div class="small muted">${p.casino!=null?`Casino ${signed$(p.casino)} · Football ${signed$(p.football)}`:esc(tm(p))} · ${p.resets} reset${p.resets===1?'':'s'}</div></div><span class="score">${k$(p.bank)}</span></div>`).join('');
+  return rows.map(({p,i})=>`<div class="rank ${p.name.trim().toLowerCase()===meKey?'me':''}"><span class="no">${i+1}</span><span style="font-size:20px;text-align:center">${i===0?'🔥':''}</span><div><div style="font-weight:600">${esc(p.name)}</div><div class="small muted">${p.casino!=null?`Casino ${signed$(p.casino)} · Football ${signed$(p.football)}`:esc(tm(p))} · ${p.resets} reset${p.resets===1?'':'s'}${p.debt>0?` · <span style="color:var(--loss-hi)">owes ${k$(p.debt)}</span>`:''}</div></div><span class="score">${k$(p.bank)}</span></div>`).join('');
 }
 function boardSection(limit){
   if(!cloudOn()) return '';
