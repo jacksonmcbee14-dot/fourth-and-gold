@@ -81,9 +81,10 @@ function boardSection(limit){
 function profileStart(){
   if(!cloudOn()) return;
   if(PROF.me) cloudPull(false);
-  else { let seen=false; try{seen=!!localStorage.getItem(WELCOME_KEY);}catch(e){} if(!seen) setTimeout(()=>openSheetHTML(profileForm('up')),600); }
+  else if(!(typeof lodgeActive==='function'&&lodgeActive())) setTimeout(profileWelcome,600);   // with the lodge, it waits until you pick Lodge or app
   loadBoard();
 }
+function profileWelcome(){ if(!cloudOn()||PROF.me) return; let seen=false; try{seen=!!localStorage.getItem(WELCOME_KEY);}catch(e){} if(!seen) openSheetHTML(profileForm('up')); }
 const pfMsg=t=>{const m=$('#pfMsg');if(m)m.textContent=t;};
 const pfVals=()=>({name:($('#pfName')||{}).value||'',pin:($('#pfPin')||{}).value||'',pin2:($('#pfPin2')||{}).value||''});
 Object.assign(ACT,{

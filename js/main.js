@@ -5,5 +5,6 @@ baseModels();
 settleBets();
 render();
 connect();
+lodgeStart();
 profileStart();
 setInterval(()=>{ if(S.mode==='football'&&(S.ftab==='today'||S.ftab==='home'||S.ftab==='bets')&&!SLIP) render(); },60000);
