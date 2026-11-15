@@ -1,7 +1,7 @@
 // The economy scales with your net worth (cash + open bets − debt), so nobody can break the game.
 //  • Table minimum: the smallest bet you can make grows faster than your money does —
-//      (net worth ÷ $100,000)² dollars, never under $1,000 and never over 25% of your net worth.
-//      $5M → $2,500 · $10M → $10K · $50M → $250K · $100M → $1M · $500M → $25M · $1B → $100M · $2.5B+ → 25%.
+//      net worth² ÷ $20B, never under $1,000 and never over 10% of your net worth.
+//      $10M → $5K · $50M → $130K · $100M → $500K · $500M → $13M · $1B → $50M · $2B and up → 10%.
 //    Rich players have to swing big every time, and the house edge does the rest. Wins are never capped.
 //  • Silas's prices: the original price × (net worth ÷ $1M), never below the original.
 //    Something that's 2% of $1M is 2% of $1B too.
@@ -11,7 +11,7 @@
 
 const worth=()=>Math.max(0,scoreNow());
 const nice=n=>{ if(n<1000) return Math.round(n); const p=Math.pow(10,Math.floor(Math.log10(n))-1); return Math.round(n/p)*p; };
-function tableMin(){ const w=worth(); return Math.max(1000,nice(Math.min((w/1e5)**2,w*.25))); }
+function tableMin(){ const w=worth(); return Math.max(1000,nice(Math.min(w*w/2e10,w*.10))); }
 const wealthX=()=>Math.max(1,worth()/1e6);
 
 // Prices follow your net worth. Each item keeps its original price as a base.
