@@ -5,4 +5,4 @@ settleBets();
 render();
 connect();
 profileStart();
-setInterval(()=>{ if(S.mode==='football'&&(S.ftab==='home'||S.ftab==='bets')&&!SLIP) render(); },60000);
+setInterval(()=>{ if(S.mode==='football'&&(S.ftab==='today'||S.ftab==='home'||S.ftab==='bets')&&!SLIP) render(); },60000);

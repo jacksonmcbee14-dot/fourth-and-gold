@@ -69,11 +69,11 @@ function boardRows(list,limit){
   const tm=p=>[p.nfl_team&&NFL[p.nfl_team]?NFL[p.nfl_team].n:'',p.cfb_team?((CFB.find(t=>t.ab===p.cfb_team)||CFB_DIR[p.cfb_team]||{n:p.cfb_team}).n):''].filter(Boolean).join(' · ');
   let rows=list.map((p,i)=>({p,i}));
   if(limit&&rows.length>limit){const mine=rows.find(r=>r.p.name.trim().toLowerCase()===meKey);rows=rows.slice(0,limit);if(mine&&mine.i>=limit)rows.push(mine);}
-  return rows.map(({p,i})=>`<div class="rank ${p.name.trim().toLowerCase()===meKey?'me':''}"><span class="no">${i+1}</span><span style="font-size:20px;text-align:center">${i===0?'🔥':''}</span><div><div style="font-weight:600">${esc(p.name)}</div><div class="small muted">${esc(tm(p))}${tm(p)?' · ':''}${p.resets} reset${p.resets===1?'':'s'}</div></div><span class="score">${k$(p.bank)}</span></div>`).join('');
+  return rows.map(({p,i})=>`<div class="rank ${p.name.trim().toLowerCase()===meKey?'me':''}"><span class="no">${i+1}</span><span style="font-size:20px;text-align:center">${i===0?'🔥':''}</span><div><div style="font-weight:600">${esc(p.name)}</div><div class="small muted">${p.casino!=null?`Casino ${signed$(p.casino)} · Football ${signed$(p.football)}`:esc(tm(p))} · ${p.resets} reset${p.resets===1?'':'s'}</div></div><span class="score">${k$(p.bank)}</span></div>`).join('');
 }
 function boardSection(limit){
   if(!cloudOn()) return '';
-  if(!PROF.board||Date.now()-PROF.boardAt>60e3) loadBoard().then(()=>{ if(S.mode==='football'&&S.ftab==='ranks'&&!SLIP) render(); });
+  if(!PROF.board||Date.now()-PROF.boardAt>60e3) loadBoard().then(()=>{ if(((S.mode==='football'&&S.ftab==='ranks')||(S.mode==='casino'&&S.ctab==='ranks'))&&!SLIP) render(); });
   return `<div class="sechead"><h2>Leaderboard</h2><span class="aside">Most money · fewest resets</span></div>
   <div class="panel" style="padding:4px 8px">${boardRows(PROF.board,limit)}</div>
   ${PROF.me?'':`<button class="btn gold" style="width:100%;margin-top:8px" data-a="pfShowSignup">Create a profile to join</button>`}`;
@@ -110,7 +110,7 @@ Object.assign(ACT,{
     }catch(e){el.disabled=false;pfMsg('Couldn’t reach the server. Check your connection.');}},
   pfSignOut:()=>{ if(!confirm('Sign out? This device will start fresh at $1,000,000. Your profile keeps its own bankroll.'))return;
     setMe(null); try{localStorage.removeItem(KEY);localStorage.removeItem(WELCOME_KEY);}catch(e){} location.reload(); },
-  board:()=>{closeSheet();S.mode='football';S.ftab='ranks';save();scrollTo(0,0);render();},
+  board:()=>{closeSheet();if(S.mode==='casino'){SL.auto=0;S.ctab='ranks';}else S.ftab='ranks';save();scrollTo(0,0);render();},
 });
 // The bankroll sheet gains your profile, teams and leaderboard (the original contents stay as they were).
 const _bankSheet=ACT.bankSheet;

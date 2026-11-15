@@ -24,12 +24,17 @@ The first time, macOS may ask whether Python can accept incoming network connect
 | Path | What it is |
 |---|---|
 | `index.html` | The page skeleton. It loads the files below **in order**, and the order matters. |
-| `css/01…08-*.css` | Styles, split by area. They load in number order; `08-finish.css` must stay last. |
+| `css/01…09-*.css` | Styles, split by area. They load in number order. `09-calm.css` is the calmer look for football and Ranks (3 font sizes, fewer borders). |
 | `js/core/state.js` | Your bankroll, bets and settings, and saving them. |
 | `js/core/helpers.js` | Money and odds formatting, toast messages, secure random numbers. |
 | `js/football/data.js` | The football snapshot: teams, records, schedules, rankings, games, futures. |
 | `js/football/models.js` | The season simulations. |
-| `js/football/home.js`, `predict.js`, `ranks.js` | The football tabs. |
+| `js/football/today.js` | The Today tab: your next games, a suggested bet, bankroll, open bets. |
+| `js/football/home.js`, `predict.js`, `ranks.js` | The Season, Predict and Ranks tabs (Ranks also appears in the Casino). |
+| `js/football/myteam.js` | Your chosen NFL and college teams and their schedules. |
+| `js/ui.js` | More sections, tappable terms, "Why it matters", shorter score lists, Simple/Full betting. |
+| `js/profile.js`, `js/config.js` | Profiles (name + PIN), saving to your profile, the leaderboard; Supabase address and public key. |
+| `supabase/` | Database setup script, plus numbered update scripts to run in order. |
 | `js/football/sportsbook.js` | Prices, bet slip and settling bets. |
 | `js/casino/slots*.js` | Jingle Jackpot: art, maths and the machine itself. |
 | `js/casino/roulette.js`, `blackjack.js`, `poker.js`, `craps.js` | One file per table game. |

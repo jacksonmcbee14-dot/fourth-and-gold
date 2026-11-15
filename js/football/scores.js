@@ -27,7 +27,7 @@ function gameRow(g){
   return `<div class="game ${g.mine?'mine':''}">
     <div class="tm ${hw?'lose':''}">${dotHTML(g.a)}${rk(g.a)}<span class="nm">${esc(g.a.name)}</span></div><div class="sc">${sc(g.as)}</div>
     <div class="tm ${aw?'lose':''}">${dotHTML(g.h)}${rk(g.h)}<span class="nm">${esc(g.h.name)}</span></div><div class="sc">${sc(g.hs)}</div>
-    <div class="gstatus"><span>${left}</span><span>${esc(right)}</span></div></div>`;
+    <div class="gstatus"><span>${left}</span><span>${esc(right)}</span></div>${g.mine&&typeof whyHTML==='function'?whyHTML(g):''}</div>`;
 }
 function syncChip(){
   if(LIVE.updated){const m=Math.round((Date.now()-new Date(LIVE.updated))/60000);return `<span class="sync ${m>90?'stale':''}"><i></i>Synced ${m<1?'just now':m<60?m+'m ago':Math.round(m/60)+'h ago'}</span>`;}

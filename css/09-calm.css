@@ -1,0 +1,54 @@
+/* Calmer football screens and Ranks: three font sizes, fewer borders, more space. Applied when <body> has class "calm" (set in js/app.js). Casino tables keep their own look. */
+
+/* New building blocks (used everywhere) */
+.card{position:relative;padding:20px;border-radius:var(--r);background:var(--grain),linear-gradient(180deg,rgba(236,217,168,.035),rgba(0,0,0,.06)),var(--panel)}
+.card.hero{padding:22px}
+.headline{font-family:var(--mono);font-weight:700;font-size:28px;line-height:1.1;letter-spacing:-.02em;color:var(--gold2);margin:8px 0 6px}
+.headline small{font-size:inherit;color:var(--muted)}
+.line{margin:0;line-height:1.45}
+.morebtn{display:inline-flex;align-items:center;gap:6px;margin-top:12px;padding:6px 0;font-size:12px;color:var(--muted)}
+.morebox{display:flex;flex-direction:column;gap:12px;margin-top:10px}
+.morebox .stats{margin-top:0}
+.term{font:inherit;color:inherit;text-decoration:underline dotted rgba(200,164,92,.75);text-underline-offset:3px;cursor:help}
+.termpop{position:fixed;left:16px;right:16px;margin:0 auto;max-width:440px;bottom:calc(env(safe-area-inset-bottom) + 100px);padding:16px 18px;border-radius:16px;background:#241911;border:1px solid var(--line2);box-shadow:0 14px 40px rgba(0,0,0,.55);z-index:61;font-size:15px;line-height:1.45;animation:termin .2s ease}
+@keyframes termin{from{opacity:0}}
+.termpop b{display:block;color:var(--gold2);margin-bottom:2px}
+.termpop p{margin:6px 0 0}
+.why{grid-column:1/-1;margin-top:6px;font-size:12px;line-height:1.4;color:var(--gold2)}
+.wide{width:100%;margin-top:12px}
+.todaygrid{display:flex;flex-direction:column;gap:16px}
+.tlist{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.pickrow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pickbtn{display:flex;flex-direction:column;align-items:stretch;gap:10px;padding:14px;border-radius:14px;background:#150e0a;text-align:left;transition:background .15s,transform .1s}
+.pickbtn:active{transform:scale(.98)}
+.pickbtn .pk-top{display:flex;align-items:center;gap:8px;font-weight:600;min-width:0}
+.pickbtn .pk-nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pickbtn .pk-pay{font-size:12px;color:var(--gold2)}
+.pickbtn.on{background:linear-gradient(180deg,var(--cran2),var(--cran))}
+.pickbtn.on .pk-pay{color:#f6ebcb}
+
+/* Three font sizes: small 12 · body 15 · headline 28 */
+body.calm{--fs-s:12px;--fs-m:15px;--fs-l:28px}
+body.calm :is(#view,#sheet,.top,.mode,.tabbar,#slipbar,.termpop) *{font-size:var(--fs-m)!important}
+body.calm :is(#view,#sheet,.top,.mode,.tabbar,#slipbar) :is(.eyebrow,.small,.aside,.gstatus,.gstatus *,.meta,.tier,.tag,.pct,.bk-c,.bk-c *,.distl span,.foot,.foot *,.counter,.mv,.rk,.s,.dot,.livebadge,.st,label,.lbl,.sync,.sync *,.why,.why *,.pk-pay,.hunt,.vs,.bye b,.btn.sm,.seg button,.tri button,.tabbar button,.cell span,.cell b,.bk-t i,.ring .val span,.morebtn,.morebtn *,.hint,.hint *,.x,.amts button,.distl,.byes .bye){font-size:var(--fs-s)!important}
+body.calm :is(#view,#sheet,.top) :is(.headline,.headline *,.word,.word *,.ring .val b,.ghead h2){font-size:var(--fs-l)!important}
+body.calm .dot{width:34px}
+body.calm .sechead h2{font-family:var(--sans);font-weight:600}
+body.calm .input{font-family:var(--sans)}
+
+/* Fewer borders and labels, more space */
+body.calm :is(.game,.book,.stat,.panel,.pg,.toggle,.bk,.bye,.mybet,.fut,.tip,.leg,.empty,.card,.status,.hero,.cell,.ml,.input,.amts button){border-color:transparent!important}
+body.calm .hero::after{background:linear-gradient(180deg,rgba(0,0,0,0) 20%,rgba(0,0,0,.5))}
+body.calm .sechead{border-bottom:0;margin:36px 2px 14px;padding-bottom:0}
+body.calm :is(.games,.chiprow,.bracket){gap:12px}
+body.calm .stats{gap:12px}
+body.calm .game{padding:16px}
+body.calm .book{padding:16px}
+body.calm :is(.seedrow,.rank){border-bottom-color:transparent}
+body.calm .gstatus{border-top:0;padding-top:4px}
+body.calm .hint{border:0;padding:0 2px;margin-bottom:16px}
+body.calm .subtabs{margin-bottom:18px}
+body.calm .foot{margin-top:32px}
+body.calm .game.mine,body.calm .book.mine{box-shadow:inset 3px 0 0 var(--gold)}
+body.calm .pg.W{box-shadow:inset 3px 0 0 var(--win)} body.calm .pg.L{box-shadow:inset 3px 0 0 var(--loss)}
+body.calm .cell.on{box-shadow:inset 0 0 0 1px var(--gold)}

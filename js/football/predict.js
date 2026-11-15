@@ -7,9 +7,8 @@ function predNFL(){
   const K=myN(), a=NFLM_S||NFLM;const t=a.t[K],n=a.n,p=t.po/n, F=nflForced();
   const mx=Math.max(...a.sfW.slice(7,18));
   return `
-  <div class="between" style="margin-bottom:14px">${leagueSeg()}<span class="eyebrow">Scenario lab</span></div>
-  <div class="panel pad">
-    <div class="between"><div><div class="eyebrow">${esc(NFL[K].n)} make the playoffs</div><div class="big" id="bigp">${pct(p).replace('%','')}<small>%</small></div></div>${ring(t.div/n,'Division',88,7)}</div>
+  <div class="between" style="margin-bottom:18px">${leagueSeg()}</div>
+  ${card('nflPred',`<span id="bigp">${pct(p).replace('%','')}<small>%</small></span>`,`${F.every(x=>x==='A')?'If every game goes as expected':'With your picks below'}, this is how often the ${esc(NFL[K].n)} make the playoffs.`,`<div class="between"><span class="small muted">Chance to win the division</span>${ring(t.div/n,'Division',88,7)}</div>
     <div class="dist">${a.sfW.slice(7,18).map((c,i)=>`<div class="${i+7>=11?'ok':''}" style="height:${Math.max(2,c/mx*100)}%"></div>`).join('')}</div>
     <div class="distl">${a.sfW.slice(7,18).map((c,i)=>`<span>${i+7}</span>`).join('')}</div>
     <div class="small muted" style="margin-top:6px">How many games they finish with — green bars are almost always a playoff spot.</div>
@@ -17,14 +16,13 @@ function predNFL(){
       <div class="stat"><span class="eyebrow">#1 seed</span><b>${pct(t.s1/n)}</b></div>
       <div class="stat"><span class="eyebrow">Avg wins</span><b>${(t.wins/n).toFixed(1)}</b></div>
       <div class="stat"><span class="eyebrow">Home game</span><b>${pct(t.div/n)}</b></div>
-    </div>
-    <div class="simbar"><i id="simfill"></i></div><div class="counter" id="simcount"></div>
-    <div class="row" style="margin-top:10px;flex-wrap:wrap"><button class="btn gold" data-a="runSim" style="flex:1">Run 10,000 seasons</button><button class="btn sm" data-a="sfAll" data-v="W">Win out</button><button class="btn sm" data-a="sfAll" data-v="L">Lose out</button><button class="btn sm" data-a="sfAll" data-v="A">Reset</button></div>
-  </div>
+    </div>`,{top:`<div class="eyebrow">${esc(NFL[K].n)} make the playoffs</div>`,after:`<div class="simbar"><i id="simfill"></i></div><div class="counter" id="simcount"></div>
+    <div class="row" style="margin-top:10px;flex-wrap:wrap"><button class="btn gold" data-a="runSim" style="flex:1">Run 10,000 seasons</button><button class="btn sm" data-a="sfAll" data-v="W">Win out</button><button class="btn sm" data-a="sfAll" data-v="L">Lose out</button><button class="btn sm" data-a="sfAll" data-v="A">Reset</button></div>`})}
   <div class="sechead"><h2>Call the games</h2><span class="aside">Tap W or L</span></div>
   <div class="chiprow">${MY_NSCHED.length?'':'<div class="empty">Schedule loads with live scores.</div>'}${MY_NSCHED.map((g,i)=>{const o=NFL[g.o];const f=F[i];return `<div class="pg ${f}${g.done?' done':''}"><div class="row">${dotHTML({ab:g.o,col:o.col})}<div><div style="font-weight:600">${g.loc==='away'?'@ ':g.loc==='neutral'?'vs ':'vs '}${o.n}</div><div class="meta">Wk ${g.wk} · ${new Date(g.t).toLocaleDateString('en-US',{month:'short',day:'numeric'})}${g.loc==='neutral'?' · '+g.venue:''} · <span class="gold">${Math.round(g.p*100)}% to win</span></div></div></div>${tri('sfF',i,f)}</div>`}).join('')}</div>
-  <div class="sechead"><h2>Bracket today</h2><div class="seg"><button data-a="conf" data-v="NFC" class="${S.conf==='NFC'?'on':''}">NFC</button><button data-a="conf" data-v="AFC" class="${S.conf==='AFC'?'on':''}">AFC</button></div></div>
-  ${nflBracket(S.conf)}
+  <div class="sechead"><h2>Bracket today</h2></div>
+  ${(()=>{const s=SEEDS[NFL[K].conf].indexOf(K)+1;return card('nflBracket',s?'#'+s:'Out',s?`If the playoffs started today, the ${esc(NFL[K].n)} would be the #${s} ${term('seed','seed')}${s===1?` and get a ${term('bye','bye')}`:`, playing in the first round`}.`:`If the playoffs started today, the ${esc(NFL[K].n)} wouldn’t be in them.`,
+    `<div class="seg" style="align-self:flex-start"><button data-a="conf" data-v="NFC" class="${S.conf==='NFC'?'on':''}">NFC</button><button data-a="conf" data-v="AFC" class="${S.conf==='AFC'?'on':''}">AFC</button></div>${nflBracket(S.conf)}`,{label:'Full bracket'});})()}
   <p class="foot">The model rates each team from its record and the Super Bowl market, gives home teams a small edge, then plays out the rest of the season thousands of times. It's an estimate for fun, not a guarantee.</p>`;
 }
 function nflBracket(conf){
@@ -37,24 +35,21 @@ function predCFB(){
   const me=meC(), a=CFBM_S||CFBM, t=a.t[me.n], n=a.n, p=t.po/n, F=cfbForced(), tg=hasTitleGame(), rv=cfbRivals(), isByu=me.ab==='BYU';
   const b12=[['auto','Auto'],['win','Win it'],['lose','Lose it'],['miss','Miss it']];
   return `
-  <div class="between" style="margin-bottom:14px">${leagueSeg()}<span class="eyebrow">Scenario lab</span></div>
-  <div class="panel pad">
-    <div class="between"><div><div class="eyebrow">${esc(me.n)} makes the CFP</div><div class="big" id="bigp">${pct(p).replace('%','')}<small>%</small></div></div>${tg?ring(t.b12w/n,me.cf,88,7):ring(t.bye/n,'Top-4 bye',88,7)}</div>
-    <div class="stats" style="margin-top:12px">
+  <div class="between" style="margin-bottom:18px">${leagueSeg()}</div>
+  ${card('cfbPred',`<span id="bigp">${pct(p).replace('%','')}<small>%</small></span>`,`${F.every(x=>x==='A')&&S.b12==='auto'&&!S.utahL&&!S.ttuL?'If every game goes as expected':'With your picks below'}, this is how often ${esc(me.n)} makes the College Football Playoff.`,`<div class="between"><span class="small muted">${tg?'Chance to win the '+esc(me.cf):'Chance of a top-4 bye'}</span>${tg?ring(t.b12w/n,me.cf,88,7):ring(t.bye/n,'Top-4 bye',88,7)}</div>
+    <div class="stats">
       <div class="stat"><span class="eyebrow">Proj. final rank</span><b>#${Math.round(t.rank/n)}</b></div>
       <div class="stat"><span class="eyebrow">Title game</span><b>${pct(t.b12g/n)}</b></div>
-      <div class="stat"><span class="eyebrow">Top-4 bye</span><b>${pct(t.bye/n)}</b></div>
-    </div>
-    <div class="simbar"><i id="simfill"></i></div><div class="counter" id="simcount"></div>
-    <div class="row" style="margin-top:10px;flex-wrap:wrap"><button class="btn gold" data-a="runSim" style="flex:1">Run 10,000 seasons</button><button class="btn sm" data-a="byuAll" data-v="W">Win out</button><button class="btn sm" data-a="byuAll" data-v="A">Reset</button></div>
-  </div>
+      <div class="stat"><span class="eyebrow">Top-4 ${term('bye','bye')}</span><b>${pct(t.bye/n)}</b></div>
+    </div>`,{top:`<div class="eyebrow">${esc(me.n)} makes the CFP</div>`,after:`<div class="simbar"><i id="simfill"></i></div><div class="counter" id="simcount"></div>
+    <div class="row" style="margin-top:10px;flex-wrap:wrap"><button class="btn gold" data-a="runSim" style="flex:1">Run 10,000 seasons</button><button class="btn sm" data-a="byuAll" data-v="W">Win out</button><button class="btn sm" data-a="byuAll" data-v="A">Reset</button></div>`})}
   <div class="sechead"><h2>Call the games</h2><span class="aside">Regular season</span></div>
   <div class="chiprow">${MY_CSCHED.length?'':'<div class="empty">Schedule loads with live scores.</div>'}${MY_CSCHED.map((g,i)=>`<div class="pg ${F[i]}${g.done?' done':''}"><div class="row">${dotHTML({ab:g.ab,col:g.col})}<div><div style="font-weight:600">${g.loc==='away'?'@ ':'vs '}${esc(g.o)}</div><div class="meta">${new Date(g.t).toLocaleDateString('en-US',{month:'short',day:'numeric'})} · <span class="gold">${Math.round(g.p*100)}% to win</span></div></div></div>${tri('byuF',i,F[i])}</div>`).join('')}</div>
-  ${tg?`<div class="sechead"><h2>${esc(me.cf)} Championship</h2><span class="aside">${isByu?'Fri, Dec 4 · Arlington':TITLE_SITE[me.cf]}</span></div>
-  <div class="seg" style="display:grid;grid-template-columns:repeat(4,1fr)">${b12.map(([v,l])=>`<button data-a="b12" data-v="${v}" class="${S.b12===v?'on':''}">${l}</button>`).join('')}</div>`:''}
-  ${tg&&rv.length?`<div class="sechead"><h2>Help from rivals</h2><span class="aside">Chaos switches</span></div>
+  ${tg?more('cfbScen',`<div class="sechead" style="margin-top:8px"><h2>${esc(me.cf)} Championship</h2><span class="aside">${isByu?'Fri, Dec 4 · Arlington':TITLE_SITE[me.cf]}</span></div>
+  <div class="seg" style="display:grid;grid-template-columns:repeat(4,1fr)">${b12.map(([v,l])=>`<button data-a="b12" data-v="${v}" class="${S.b12===v?'on':''}">${l}</button>`).join('')}</div>
+  ${rv.length?`<div class="sechead"><h2>Help from rivals</h2><span class="aside">Chaos switches</span></div>
   <div class="toggle" data-a="tog" data-v="utahL"><div><div style="font-weight:600">${esc(rv[0].n)} loses another game</div><div class="small muted">Opens the ${esc(me.cf)} title race</div></div><span class="sw ${S.utahL?'on':''}"></span></div>
-  ${rv[1]?`<div class="toggle" data-a="tog" data-v="ttuL"><div><div style="font-weight:600">${esc(rv[1].n)} loses another game</div><div class="small muted">Clears ${esc(me.n)}'s path to ${TITLE_SITE[me.cf]}</div></div><span class="sw ${S.ttuL?'on':''}"></span></div>`:''}`:''}
+  ${rv[1]?`<div class="toggle" data-a="tog" data-v="ttuL"><div><div style="font-weight:600">${esc(rv[1].n)} loses another game</div><div class="small muted">Clears ${esc(me.n)}'s path to ${TITLE_SITE[me.cf]}</div></div><span class="sw ${S.ttuL?'on':''}"></span></div>`:''}`:''}`,'More scenarios: title game and rivals'):''}
   <p class="foot">Simple version: win and you climb, lose and you drop about five spots, conference champs get a bump. The committee is human, so treat this as a smart guess.</p>`;
 }
 let NFLM_S=null, CFBM_S=null;

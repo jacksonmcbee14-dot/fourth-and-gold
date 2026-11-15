@@ -23,37 +23,40 @@ function homeNFL(){
   const games=allGames('nfl').filter(g=>g.wk===(LIVE.nflWeek||'Week 10'));
   const conf=S.conf;
   const seedRows=SEEDS[conf].map((k,i)=>seedRow(i+1,k)).join('')+`<div class="hunt">In the hunt</div>`+SEEDS[conf+'_hunt'].map(k=>seedRow('',k)).join('');
+  const heroMore=`<div class="between"><span>${rec(sf)} · ${ord(divRank(K))} in ${sf.conf} ${sf.div}</span><span class="gold">${seedNow?'#'+seedNow+' '+term('seed','seed')+' today':'Not seeded today'}</span></div>
+    <div>${oddsTxt(sf.sb)} to win it all (${term('odds','American odds')}). Most likely finish: <b>${Math.round(projW)}–${17-Math.round(projW)}</b> and the <b>#${seedMode} seed</b>.</div>
+    <div class="between"><span><span class="muted">Next</span> &nbsp;${esc(nextTxt)}</span>${next?'<button class="btn sm ghost" data-a="goBet">Bet it</button>':''}</div>
+    <div class="stats">
+      <div class="stat"><span class="eyebrow">Win division</span><b>${pct(a.div/NFLM.n)}</b></div>
+      <div class="stat"><span class="eyebrow">#1 seed + ${term('bye','bye')}</span><b>${pct(a.s1/NFLM.n)}</b></div>
+      <div class="stat"><span class="eyebrow">Proj. record</span><b>${Math.round(projW)}–${17-Math.round(projW)}</b></div>
+    </div>`;
+  const seedLine=seedNow?`If the season ended today, the ${esc(sf.n)} would be the #${seedNow} ${term('seed','seed')} in the ${sf.conf}${seedNow===1?` with a ${term('bye','bye')}`:seedNow>=5?` as a ${term('wildcard','wild card')}`:''}.`:`If the season ended today, the ${esc(sf.n)} would miss the playoffs.`;
   return `
-  <div class="between" style="margin-bottom:14px">${leagueSeg()}<span class="small muted">${syncChip()}</span></div>
-  <section class="hero" style="--hbg:${heroBg('nfl')}">
-    <div class="top2"><button class="eyebrow" style="color:rgba(255,255,255,.75)" data-a="teamSheet">Your team · ${sf.conf} ${sf.div} ›</button><span class="tag gold">${seedNow?'#'+seedNow+' seed today':'Not seeded today'}</span></div>
-    <div class="mainrow"><div><h1>${esc(sf.n)}</h1><div class="rec">${rec(sf)}</div><div class="sub">${ord(divRank(K))} in ${sf.conf} ${sf.div} · ${oddsTxt(sf.sb)} to win it all</div></div>${ring(p,'Playoffs')}</div>
-    <div class="plain">${plain(p,'the '+sf.n,`Most likely finish: <b>${Math.round(projW)}–${17-Math.round(projW)}</b> and the <b>#${seedMode} seed</b>.`)}</div>
-    <div class="next"><span><span class="muted">Next</span> &nbsp;${esc(nextTxt)}</span>${next?'<button class="btn sm ghost" data-a="goBet">Bet it</button>':''}</div>
-  </section>
-  <div class="stats">
-    <div class="stat"><span class="eyebrow">Win division</span><b>${pct(a.div/NFLM.n)}</b></div>
-    <div class="stat"><span class="eyebrow">#1 seed + bye</span><b>${pct(a.s1/NFLM.n)}</b></div>
-    <div class="stat"><span class="eyebrow">Proj. record</span><b>${Math.round(projW)}–${17-Math.round(projW)}</b></div>
-  </div>
+  <div class="between" style="margin-bottom:18px">${leagueSeg()}<span class="small muted">${syncChip()}</span></div>
+  ${card('nflHero',pct(p),playoffLine(p,'the '+esc(sf.n)),heroMore,{cls:'hero',style:`--hbg:${heroBg('nfl')}`,top:`<button class="eyebrow" style="color:rgba(255,255,255,.8)" data-a="teamSheet">${esc(sf.c)} ${esc(sf.n)} · playoff chance ›</button>`})}
   <div class="sechead"><h2>Scores</h2><span class="aside">${games[0]?games[0].wk:''}</span></div>
-  <div class="games">${(S.allScores?games:[...games.filter(g=>g.mine),...games.filter(g=>!g.mine).slice(0,4)]).map(gameRow).join('')}</div>
-  ${games.length>5?`<button class="btn" style="width:100%;margin-top:8px" data-a="allScores">${S.allScores?'Show fewer':'Show all '+games.length+' games'}</button>`:''}
-  <div class="sechead"><h2>Playoff picture</h2><div class="seg"><button data-a="conf" data-v="NFC" class="${conf==='NFC'?'on':''}">NFC</button><button data-a="conf" data-v="AFC" class="${conf==='AFC'?'on':''}">AFC</button></div></div>
-  <div class="panel" style="padding:6px 10px"><div class="seedrow" style="padding:6px 4px;border:0"><span></span><span></span><span class="eyebrow">If it started today</span><span></span><span class="eyebrow" style="text-align:right">Chance</span></div><div class="seeds">${seedRows}</div></div>
-  <p class="foot">Seeds 1–4 win their division. 5–7 are wild cards. Only the #1 seed skips the first round.<br>${LIVE.updated?'Scores and records live from ESPN':'Records through Thursday of Week 10'} · chances from 5,000 simulated seasons in-app.</p>`;
+  ${gamesList('nflScores',games)}
+  <div class="sechead"><h2>Playoff picture</h2></div>
+  ${card('nflSeeds',seedNow?'#'+seedNow:'Out',seedLine,`<div class="seg" style="align-self:flex-start"><button data-a="conf" data-v="NFC" class="${conf==='NFC'?'on':''}">NFC</button><button data-a="conf" data-v="AFC" class="${conf==='AFC'?'on':''}">AFC</button></div>
+    <div><div class="seedrow" style="padding:6px 4px;border:0"><span></span><span></span><span class="eyebrow">If it started today</span><span></span><span class="eyebrow" style="text-align:right">Chance</span></div><div class="seeds">${seedRows}</div></div>
+    <p class="foot" style="margin:0">Seeds 1–4 win their division. 5–7 are ${term('wildcard','wild cards')}. Only the #1 seed gets a ${term('bye','bye')}.</p>`,{label:'Full playoff picture'})}
+  <p class="foot">${LIVE.updated?'Scores and records live from ESPN':'Records through Thursday of Week 10'} · chances from 5,000 simulated seasons in-app.</p>`;
 }
 function seedRow(n,k){
   const t=NFL[k],p=nflP(k);
   return `<div class="seedrow ${k===myN()?'me':''}"><span class="n">${n}</span>${dotHTML({ab:k,col:t.col})}<span>${t.n} <span class="mono muted small">${rec(t)}</span></span><span class="pct">${pct(p)}</span><div class="bar"><i style="width:${p*100}%"></i></div></div>`;
 }
-function cfpBracket(list,meName){
+function cfpField(list){
   // 5 highest-ranked conference champs (current leaders) + 7 at-large, seeded by rank
   const leaders={};list.forEach(t=>{if(t.cf!=='Ind'&&!leaders[t.cf])leaders[t.cf]=t;});
   const champs=Object.values(leaders).sort((a,b)=>a.r-b.r).slice(0,5);
   const field=new Set(champs);
   for(const t of list){if(field.size>=12)break;field.add(t);}
-  const seeded=[...field].sort((a,b)=>a.r-b.r);
+  return {field,seeded:[...field].sort((a,b)=>a.r-b.r)};
+}
+function cfpBracket(list,meName){
+  const {field,seeded}=cfpField(list);
   const byes=seeded.slice(0,4), rest=seeded.slice(4);
   const pairs=[[0,7],[1,6],[2,5],[3,4]].map(([x,y])=>[rest[x],rest[y]]);
   const out=list.filter(t=>!field.has(t)).slice(0,2);
@@ -77,26 +80,26 @@ function homeCFB(){
   const sub=isByu&&(!last||last.id==='c1')?'Beat Baylor 28–7 tonight · win over #5 Notre Dame':!last?byu.cf:(()=>{const me=last.a.ab===byu.ab?last.as:last.hs, them=last.a.ab===byu.ab?last.hs:last.as;return `${me>them?'Beat':me<them?'Lost to':'Tied'} ${opp(last).name} ${Math.max(me,them)}–${Math.min(me,them)}`;})();
   const nx=games.find(g=>isB(g)&&g.s!=='final');
   const nextTxt=nx?`${nx.h.ab===byu.ab?'vs':'@'} ${opp(nx).name} · ${new Date(nx.t).toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})}`:'Regular season complete';
-  return `
-  <div class="between" style="margin-bottom:14px">${leagueSeg()}<span class="small muted">${syncChip()}</span></div>
-  <section class="hero" style="--hbg:${heroBg('cfb')}">
-    <div class="top2"><button class="eyebrow" style="color:rgba(255,255,255,.75)" data-a="teamSheet">Your team · ${esc(byu.cf)} ›</button><span class="tag gold">${byu.unr?'Unranked':'#'+byu.r+' CFP'}</span></div>
-    <div class="mainrow"><div><h1>${esc(byu.n)}</h1><div class="rec">${rec(byu)}</div><div class="sub">${esc(sub)}</div></div>${ring(p,'Playoff')}</div>
-    <div class="plain">${plain(p,isByu?'the Cougars':byu.n,`Projected next ranking: <b>#${Math.max(1,Math.round(projR-.4))}–${Math.round(projR+.6)}</b>.${tg?` Winning the ${esc(byu.cf)} title is a guaranteed ticket in.`:''}`)}</div>
-    <div class="next"><span><span class="muted">Next</span> &nbsp;${esc(nextTxt)}</span>${nx?`<button class="btn sm ghost" data-a="goBet" data-g="${nx.id}">Bet it</button>`:''}</div>
-  </section>
-  <div class="stats">
+  const heroMore=`<div class="between"><span>${rec(byu)} · ${esc(sub)}</span><span class="gold">${byu.unr?'Unranked':'#'+byu.r+' CFP'}</span></div>
+    <div>Projected next ranking: <b>#${Math.max(1,Math.round(projR-.4))}–${Math.round(projR+.6)}</b>.${tg?` Winning the ${esc(byu.cf)} title is a guaranteed ticket in.`:''}</div>
+    <div class="between"><span><span class="muted">Next</span> &nbsp;${esc(nextTxt)}</span>${nx?`<button class="btn sm ghost" data-a="goBet" data-g="${nx.id}">Bet it</button>`:''}</div>
+    <div class="stats">
     ${tg?`<div class="stat"><span class="eyebrow">${esc(byu.cf)} title game</span><b>${pct(a.b12g/CFBM.n)}</b></div>
     <div class="stat"><span class="eyebrow">Win ${esc(byu.cf)}</span><b>${pct(a.b12w/CFBM.n)}</b></div>`:`<div class="stat"><span class="eyebrow">Proj. final rank</span><b>#${Math.round(projR)}</b></div>
     <div class="stat"><span class="eyebrow">Make the CFP</span><b>${pct(p)}</b></div>`}
-    <div class="stat"><span class="eyebrow">First-round bye</span><b>${pct(a.bye/CFBM.n)}</b></div>
-  </div>
+    <div class="stat"><span class="eyebrow">First-round ${term('bye','bye')}</span><b>${pct(a.bye/CFBM.n)}</b></div>
+    </div>`;
+  const fs=cfpField(CFB).seeded.indexOf(byu)+1;
+  const bLine=fs?`If the playoff were picked today, ${esc(byu.n)} would be the #${fs} ${term('seed','seed')}${fs<=4?` with a first-round ${term('bye','bye')}`:''}.`:`If the playoff were picked today, ${esc(byu.n)} would miss the 12-team field.`;
+  return `
+  <div class="between" style="margin-bottom:18px">${leagueSeg()}<span class="small muted">${syncChip()}</span></div>
+  ${card('cfbHero',pct(p),playoffLine(p,isByu?'the Cougars':esc(byu.n),'the College Football Playoff'),heroMore,{cls:'hero',style:`--hbg:${heroBg('cfb')}`,top:`<button class="eyebrow" style="color:rgba(255,255,255,.8)" data-a="teamSheet">${esc(byu.n)} · playoff chance ›</button>`})}
   <div class="sechead"><h2>${tHead}</h2><span class="aside">${tAside}</span></div>
-  <div class="games">${today.map(gameRow).join('')}</div>
+  ${gamesList('cfbNow',today)}
   <div class="sechead"><h2>If it ended today</h2><span class="aside">12-team CFP</span></div>
-  ${cfpBracket(CFB,byu.n)}
+  ${card('cfbBracket',fs?'#'+fs:'Out',bLine,cfpBracket(CFB,byu.n)+`<p class="foot" style="margin:0">Five highest-ranked conference champions get in automatically, plus the next seven teams. Top four seeds get a ${term('bye','bye')}.</p>`,{label:'Full bracket'})}
   <div class="sechead"><h2>Next Saturday</h2><span class="aside">${nAside}</span></div>
-  <div class="games">${nextwk.map(gameRow).join('')}</div>
-  <p class="foot">Five highest-ranked conference champions get in automatically, plus the next seven teams. Top four seeds skip round one.<br>Rankings: CFP committee, Nov 10.${LIVE.updated?' Scores and records live from ESPN.':''} Chances from 5,000 simulated finishes in-app.</p>`;
+  ${gamesList('cfbNext',nextwk)}
+  <p class="foot">Rankings: CFP committee, Nov 10.${LIVE.updated?' Scores and records live from ESPN.':''} Chances from 5,000 simulated finishes in-app.</p>`;
 }
 
