@@ -62,5 +62,5 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const setText=(s,t)=>{const e=document.querySelector(s);if(e)e.textContent=t;};
 const cmp$=n=>short$(n,2);
 // The bankroll in full, until it's too long to fit (a trillion and up), then short.
-const bank$=n=>Math.abs(n)>=1e12?cmp$(n):fmt$(n);
+const bank$=n=>Math.abs(n)>=1e11?cmp$(n):fmt$(n);   // short from $100B up, so it always fits
 

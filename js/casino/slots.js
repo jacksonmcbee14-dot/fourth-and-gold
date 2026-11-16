@@ -189,7 +189,7 @@ async function slotSpin(){
   const wins=res.wins.map(w=>({...w,amt:Math.round(w.mult*bet*PAY_UNIT*mult)}));
   let win=wins.reduce((s,w)=>s+w.amt,0);
   if(res.scat)win+=res.scat[0]*bet*mult;
-  if(wx!==1&&win>0){ win=Math.round(win*wx); wins.forEach(w=>w.amt=Math.round(w.amt*wx)); }   // drink power on the winnings
+  if(wx!==1&&win>0){ const base=win; win=typeof drinkBonus==='function'?drinkBonus(base,Math.round(win*wx)):Math.round(win*wx); const k=win/base; wins.forEach(w=>w.amt=Math.round(w.amt*k)); }   // drink power on the winnings (capped: js/economy.js)
   SL.spinning=false;
   if(free)SL.fsTotal+=win;
   if(win>0)setBank(win);
@@ -206,7 +206,7 @@ async function slotSpin(){
     SL.auto=0;slUI();
     await starTrigger();
     const W=await pickBonus();
-    const amt=Math.round(jpVal(W)*wx);
+    const amt=typeof drinkBonus==='function'?drinkBonus(Math.round(jpVal(W)),Math.round(jpVal(W)*wx)):Math.round(jpVal(W)*wx);
     if(W.k==='grand'&&S.slotBet>=MAXBET)S.jp=2500000;
     setBank(amt);SL.lastWin+=amt;
     const lp=document.querySelector(`.jpl.${W.k}`);if(lp){lp.classList.add('hitjp');setTimeout(()=>lp.classList.remove('hitjp'),6000);}
