@@ -194,18 +194,25 @@ const HOTB_MS=120e3;
 const hotbOn=()=>(S.butlerHot||0)>Date.now();
 const _heatWinB=heatWin;
 heatWin=function(base,profit){ const r=_heatWinB(base,profit); return hotbOn()&&r>0?Math.round(r*butlerSuit().x):r; };
+// The butler button and the heat chip sit in their own row under the table limits, so they never cover the bet controls.
+function hotRow(casino){ const tbl=casino&&document.querySelector('#view .tblmin'); let row=document.getElementById('hotRow');
+  if(!tbl){ if(row) row.remove(); return; }
+  if(!row||row.previousElementSibling!==tbl){ if(row) row.remove(); row=document.createElement('div'); row.id='hotRow'; tbl.after(row); }
+  const chip=document.getElementById('heatChip'); if(chip&&chip.parentNode!==row) row.appendChild(chip); }
 function hotbUI(){ let el=document.getElementById('butlerHot');
   const casino=S.mode==='casino'&&!(typeof lodgeActive==='function'&&lodgeActive());
   const show=casino&&(hotbOn()||((S.heat||0)>=HEAT_MAX&&canDo('hot')));
+  hotRow(casino);
   if(!show){ if(el) el.remove(); return; }
-  if(!el){ el=document.createElement('button'); el.id='butlerHot'; el.onclick=hotbGo; document.body.appendChild(el); }
+  if(!el){ el=document.createElement('button'); el.id='butlerHot'; el.onclick=hotbGo; }
+  const row=document.getElementById('hotRow'); if(row&&el.parentNode!==row) row.insertBefore(el,row.firstChild); else if(!row&&el.parentNode!==document.body) document.body.appendChild(el);
   const t=hotbOn()?`🤵 ×${butlerSuit().x} · ${Math.ceil((S.butlerHot-Date.now())/1000)}s`:`🤵 ${trialHas('hot')?'★ ':''}Call ${butlersHave()[0].name} · ×${butlerSuit().x} wins for 2 min`;
   el.className=hotbOn()?'on':''; if(el.textContent!==t) el.textContent=t; }
 function hotbGo(){ if(hotbOn()) return; BT_JOB='hot'; const b=butlerFree(); if(!b||(S.heat||0)<HEAT_MAX){ BT_JOB=null; return; }
   butlerMark(b.name); BT_JOB=null; S.butlerHot=Date.now()+HOTB_MS; save(); butlerLog(b,'hot',0);
   try{ fx.confetti(80); }catch(e){} [784,988,1319].forEach((f,i)=>tone(f,.1,'square',.05,i*.08));
   toast(`🤵 ${b.name} is at your shoulder — wins ×${butlerSuit().x} for 2 minutes`,'gold'); hotbUI(); }
-setInterval(hotbUI,500);
+setInterval(hotbUI,500); const _renderHB=render; render=function(){ _renderHB(); hotbUI(); };
 
 // A free trial of every job, given through the inbox (see socInbox in js/league/social.js).
 function butlerTrialInbox(it){ S.lodge.butlerTrial=BT_ALL.slice(); S.lodge.butlers=null; save();

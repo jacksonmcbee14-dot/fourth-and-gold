@@ -280,3 +280,7 @@ body[data-heat] .chip.on,body[data-heat] .stack,body[data-heat] .pcard:not(.back
 .hv-rooms{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:8px 0 2px}
 .hv-rooms button{font-size:12px;padding:6px 10px;border-radius:999px;border:1px solid rgba(200,164,92,.45);background:transparent;color:inherit}
 .hv-rooms button.on{background:#c8a45c;color:#1a1006;border-color:#c8a45c}
+#hotRow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 10px}
+#hotRow:empty{display:none}
+#hotRow #butlerHot,#hotRow #heatChip{position:static;bottom:auto;left:auto}
+#hotRow #heatChip:not(.on){display:none}
