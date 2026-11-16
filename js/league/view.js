@@ -272,6 +272,7 @@ function viewGolf(){
     <div class="panel lgx-rules"><div><b>1</b><span><b>Tap the course</b> where you want the ball to land. The club is picked for you — change it with ‹ ›.</span></div>
     <div><b>2</b><span><b>Tap SWING</b>, then tap again when the marker is in the <b class="up">green</b>. Yellow is a bit off; red is a big miss.</span></div>
     <div><b>3</b><span><b>Watch the wind</b> (top right) and aim into it. Water and out of bounds cost a stroke. Sand and rough cost distance.</span></div>
+    <div><b>⛳</b><span><b>Read the green.</b> Every green slopes — the arrows by the cup point downhill and putts curl that way, so aim off the hole.</span></div>
     <div><b>💰</b><span>Birdie +$25K · Eagle +$150K · Hole in one +$500K</span></div></div>
     <p class="foot">The courses change with the seasons. You can also walk out the lodge’s back window to the links.</p>`;
 }
