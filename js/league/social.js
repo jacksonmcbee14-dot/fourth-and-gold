@@ -54,7 +54,7 @@ async function socRefresh(force){
   SOC.busy=false; socBadge(); return SOC.me;
 }
 // Apply money and prizes waiting on the server, then tell the server they arrived.
-const INBOX_KINDS=['invite','champion','challenge_win','robbed','heist_fine','home_gift','xp_set','butler_trial','palace','pickem_champ','challenge_refund'];
+const INBOX_KINDS=['invite','champion','challenge_win','robbed','heist_fine','home_gift','xp_set','butler_trial','palace','tub_guest','tub_party','pickem_champ','challenge_refund'];
 async function socInbox(items){
   if(!items.length) return;
   S.inboxDone=S.inboxDone||[]; const done=[];
@@ -69,6 +69,7 @@ async function socInbox(items){
     else if(it.kind==='xp_set'){ const L0=levelOf(S.lodge.xp).L; if(it.amount>(S.lodge.xp||0)){ S.lodge.xp=it.amount; save(); xpHud(); const L1=levelOf(S.lodge.xp).L; let hn=''; if(typeof homeTier==='function'){ const h0=S.lodge.home||0, h1=homeTier(); if(h1>h0) hn=' · New home: '+HOMES[h1].name; S.lodge.home=h1; homeSync(); } celebrate('Level '+L1+'!',(it.label||'Your level was upgraded.')+hn,'Level '+L0+' → '+L1); } }
     else if(it.kind==='butler_trial'&&typeof butlerTrialInbox==='function'){ butlerTrialInbox(it); }
     else if(it.kind==='palace'&&typeof homeGiftInbox==='function'&&typeof PALACE!=='undefined'){ homeGiftInbox(Object.assign({},it,{amount:PALACE})); }
+    else if((it.kind==='tub_guest'||it.kind==='tub_party')&&typeof tubInbox==='function'){ tubInbox(it); }
     else if(it.kind==='home_gift'&&typeof homeGiftInbox==='function'){ homeGiftInbox(it); }
     else if(it.kind==='pickem_champ'&&typeof pickemInbox==='function'){ pickemInbox(it); }
     else if(it.kind==='challenge_refund'){ S.bank=Math.round(S.bank+it.amount); save(); toast('Challenge stake returned · '+fmt$(it.amount),'gold'); }

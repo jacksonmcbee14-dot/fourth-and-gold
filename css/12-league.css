@@ -284,3 +284,7 @@ body[data-heat] .chip.on,body[data-heat] .stack,body[data-heat] .pcard:not(.back
 #hotRow:empty{display:none}
 #hotRow #butlerHot,#hotRow #heatChip{position:static;bottom:auto;left:auto}
 #hotRow #heatChip:not(.on){display:none}
+.hv-tub{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:8px 0;padding:10px 12px;border-radius:12px;background:rgba(58,176,208,.12);border:1px solid rgba(58,176,208,.45)}
+.hv-tub small{display:block;font-size:12px;opacity:.75}
+.hv-tub .btn{white-space:nowrap}
+.hv-tub-done{font-size:12px;opacity:.7;white-space:nowrap}
