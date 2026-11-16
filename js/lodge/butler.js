@@ -13,9 +13,15 @@ const BSUITS=[{lv:0,name:'Black tie',x:2},{lv:60,name:'Silver tails',x:2.25},{lv
 const butlerSuit=()=>{ let s=BSUITS[0]; for(const x of BSUITS) if(myLevel()>=x.lv) s=x; return s; };
 const butlerStake=()=>nice(Math.max(1e6,worth()*.05));
 const butlersHave=()=>BUTLERS.filter(b=>b.need());
-const butlerFree=()=>butlersHave().find(b=>!butlerUsed(b.name));
+// A free trial (S.lodge.butlerTrial: job keys left) lets you use each job once on top of the daily one.
+// BT_JOB is the job being run right now, so the trial is used before the butler's daily job.
+let BT_JOB=null;
+const BT_ALL=['slots','blackjack','roulette','golf','parlay','guard','rob','daily','shop','drink','hot'];
+const trialHas=j=>!!(S.lodge.butlerTrial&&S.lodge.butlerTrial.includes(j));
+const butlerFree=()=>{ const h=butlersHave(); if(BT_JOB&&trialHas(BT_JOB)&&h.length) return h[0]; return h.find(b=>!butlerUsed(b.name)); };
+const canDo=j=>!!butlersHave().length&&(trialHas(j)||butlersHave().some(b=>!butlerUsed(b.name)));
 function butlerUsed(name){ const d=S.lodge.butlers; return !!(d&&d.day===dayKey()&&(d.used||[]).includes(name)); }
-function butlerMark(name){ const day=dayKey(); if(!S.lodge.butlers||S.lodge.butlers.day!==day) S.lodge.butlers={day,used:[]}; S.lodge.butlers.used.push(name); save(); }
+function butlerMark(name){ if(BT_JOB&&trialHas(BT_JOB)){ S.lodge.butlerTrial=S.lodge.butlerTrial.filter(j=>j!==BT_JOB); save(); return; } const day=dayKey(); if(!S.lodge.butlers||S.lodge.butlers.day!==day) S.lodge.butlers={day,used:[]}; S.lodge.butlers.used.push(name); save(); }
 const guardOn=()=>(S.lodge.guardUntil||0)>Date.now();
 
 /* ---------- Playing for you ---------- */
@@ -121,7 +127,7 @@ async function butlerRob(){
     if(d.guard){ P.line('  Their butler is on the door. Moving on.'); continue; }
     target=p; view=d; break; }
   if(!target){ P.end('Nobody worth robbing right now. (This didn’t use him up.)'); return; }
-  butlerMark(b.name);
+  BT_JOB='rob'; butlerMark(b.name); BT_JOB=null;
   const wins=view.windows||0, cams=Math.min(wins,view.cams||0), entry=wins>cams?cams+1:0;
   P.line(entry?`Going in through window ${entry} — no camera on it.`:'Every window has a camera. Trying the front door.');
   const cracked=Math.random()<.75; P.line(cracked?'Cracked the safe…':'Fumbled the dial — alarm!',cracked?'win':'loss');
@@ -159,27 +165,29 @@ dailyState=function(){ const r=_dailyStateB(); const d=S.daily||{};
   return r; };
 
 /* ---------- The Home panel's butler section ---------- */
-const BACTS=[['butlerGo','slots','🎰 Slots'],['butlerGo','blackjack','🃏 Blackjack'],['butlerGo','roulette','🎡 Roulette'],['butlerGo','golf','⛳ Golf'],['butlerParlay','','🏈 Sports parlay'],
-  ['butlerGuard','','🛡 Stand guard'],['butlerRob','','🕵 Rob someone'],['butlerDaily','','📬 Daily bonus ×2'],['butlerShop','','🛍 Limited shelf'],['butlerDrink','','🥃 Old fashioned']];
+const BACTS=[['butlerGo','slots','🎰 Slots','slots'],['butlerGo','blackjack','🃏 Blackjack','blackjack'],['butlerGo','roulette','🎡 Roulette','roulette'],['butlerGo','golf','⛳ Golf','golf'],['butlerParlay','','🏈 Sports parlay','parlay'],
+  ['butlerGuard','','🛡 Stand guard','guard'],['butlerRob','','🕵 Rob someone','rob'],['butlerDaily','','📬 Daily bonus ×2','daily'],['butlerShop','','🛍 Limited shelf','shop'],['butlerDrink','','🥃 Old fashioned','drink']];
 function butlerSection(){
-  const have=butlersHave(), suit=butlerSuit(), ready=butlerFree();
+  const have=butlersHave(), suit=butlerSuit(), trial=(S.lodge.butlerTrial||[]).length, ready=have.length&&(trial||have.some(b=>!butlerUsed(b.name)));
   const rows=BUTLERS.map(b=>{ const ok=b.need(), used=ok&&butlerUsed(b.name);
     return `<div class="lg-home-row ${ok?(used?'done':'on'):''}"><span>🤵</span><b>${esc(b.name)}</b><small>${ok?(used?'Back tomorrow':'Ready'):esc(b.why)}</small></div>`; }).join('');
   const nextSuit=BSUITS.find(s=>s.lv>myLevel());
   return `<div class="lg-home-h">BUTLERS</div>
     <div class="lg-prev-desc">${have.length?`Each butler does one job a day. When he plays, he uses <b>${k$(butlerStake())}</b> of house money (5% of your net worth), his wins pay <b>×${suit.x}</b>, and his losses are on the house.<br>Suit: <b>${esc(suit.name)}</b>${nextSuit?` · ${esc(nextSuit.name)} (×${nextSuit.x}) at level ${nextSuit.lv}`:''}.<br>While you have a butler, your daily streak never breaks.${guardOn()?`<br>🛡 Standing guard until ${new Date(S.lodge.guardUntil).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}.`:''}`:'Your first butler comes with the Mansion. He plays for you with house money, guards the house, robs for you, runs errands and more.'}</div>
     ${rows}
-    ${ready?`<div class="lg-rooms">${BACTS.map(([a,v,t])=>`<button class="lg-btn lg-gold" data-lg="${a}" data-v="${v}">${t}</button>`).join('')}</div>`:''}`;
+    ${trial?`<div class="lg-prev-desc">🎁 <b>Free trial:</b> ${trial} job${trial>1?'s':''} on the house (marked ★). They don’t use up his daily job.</div>`:''}
+    ${ready?`<div class="lg-rooms">${BACTS.map(([a,v,t,j])=>{ const ok=canDo(j); return `<button class="lg-btn ${ok?'lg-gold':''}" data-lg="${a}" data-v="${v}" ${ok?'':'disabled'}>${trialHas(j)?'★ ':''}${t}</button>`; }).join('')}</div>`:''}`;
 }
 const _homeOpenB=homeOpen;
 homeOpen=function(){ _homeOpenB(); const body=LODGE.el&&LODGE.el.querySelector('.lg-home .lg-shop-body'); if(!body) return;
   const all=[...body.querySelectorAll('.lg-home-h')].find(h=>h.textContent==='ALL HOMES'); const wrap=document.createElement('div'); wrap.innerHTML=butlerSection();
   [...wrap.childNodes].forEach(n=>body.insertBefore(n,all||null)); };
-Object.assign(LG_ACT,{ butlerGo:b=>butlerPlay(b.dataset.v), butlerParlay:()=>butlerParlay(), butlerGuard:()=>butlerGuard(), butlerRob:()=>butlerRob(),
-  butlerDaily:()=>butlerDaily(), butlerShop:()=>butlerShop(), butlerDrink:()=>butlerDrink() });
+const bjob=(j,fn)=>{ BT_JOB=j; try{ return fn(); }finally{ BT_JOB=null; } };
+Object.assign(LG_ACT,{ butlerGo:b=>bjob(b.dataset.v,()=>butlerPlay(b.dataset.v)), butlerParlay:()=>bjob('parlay',butlerParlay), butlerGuard:()=>bjob('guard',butlerGuard), butlerRob:()=>bjob('rob',butlerRob),
+  butlerDaily:()=>bjob('daily',butlerDaily), butlerShop:()=>bjob('shop',butlerShop), butlerDrink:()=>bjob('drink',butlerDrink) });
 
 // A butler still free today? Show it on the Home button.
-setInterval(()=>{ const btn=document.getElementById('lgHome'); if(!btn) return; const t=butlerFree()?'Home 🤵':'Home'; if(btn.textContent!==t) btn.textContent=t; },2000);
+setInterval(()=>{ const btn=document.getElementById('lgHome'); if(!btn) return; const t=BT_ALL.some(canDo)?'Home 🤵':'Home'; if(btn.textContent!==t) btn.textContent=t; },2000);
 
 /* ---------- Hot-streak butler: at full heat (+50%), call a butler in and your wins pay ×2 (his suit) for 2 minutes ---------- */
 const HOTB_MS=120e3;
@@ -188,13 +196,17 @@ const _heatWinB=heatWin;
 heatWin=function(base,profit){ const r=_heatWinB(base,profit); return hotbOn()&&r>0?Math.round(r*butlerSuit().x):r; };
 function hotbUI(){ let el=document.getElementById('butlerHot');
   const casino=S.mode==='casino'&&!(typeof lodgeActive==='function'&&lodgeActive());
-  const show=casino&&(hotbOn()||((S.heat||0)>=HEAT_MAX&&butlerFree()));
+  const show=casino&&(hotbOn()||((S.heat||0)>=HEAT_MAX&&canDo('hot')));
   if(!show){ if(el) el.remove(); return; }
   if(!el){ el=document.createElement('button'); el.id='butlerHot'; el.onclick=hotbGo; document.body.appendChild(el); }
-  const t=hotbOn()?`🤵 ×${butlerSuit().x} · ${Math.ceil((S.butlerHot-Date.now())/1000)}s`:`🤵 Call ${butlerFree().name} · ×${butlerSuit().x} wins for 2 min`;
+  const t=hotbOn()?`🤵 ×${butlerSuit().x} · ${Math.ceil((S.butlerHot-Date.now())/1000)}s`:`🤵 ${trialHas('hot')?'★ ':''}Call ${butlersHave()[0].name} · ×${butlerSuit().x} wins for 2 min`;
   el.className=hotbOn()?'on':''; if(el.textContent!==t) el.textContent=t; }
-function hotbGo(){ if(hotbOn()) return; const b=butlerFree(); if(!b||(S.heat||0)<HEAT_MAX) return;
-  butlerMark(b.name); S.butlerHot=Date.now()+HOTB_MS; save(); butlerLog(b,'hot',0);
+function hotbGo(){ if(hotbOn()) return; BT_JOB='hot'; const b=butlerFree(); if(!b||(S.heat||0)<HEAT_MAX){ BT_JOB=null; return; }
+  butlerMark(b.name); BT_JOB=null; S.butlerHot=Date.now()+HOTB_MS; save(); butlerLog(b,'hot',0);
   try{ fx.confetti(80); }catch(e){} [784,988,1319].forEach((f,i)=>tone(f,.1,'square',.05,i*.08));
   toast(`🤵 ${b.name} is at your shoulder — wins ×${butlerSuit().x} for 2 minutes`,'gold'); hotbUI(); }
 setInterval(hotbUI,500);
+
+// A free trial of every job, given through the inbox (see socInbox in js/league/social.js).
+function butlerTrialInbox(it){ S.lodge.butlerTrial=BT_ALL.slice(); S.lodge.butlers=null; save();
+  setTimeout(()=>celebrate('Butler trial!',(it.label||'A gift')+': try every butler job once, on the house.','11 free jobs'),600); }
