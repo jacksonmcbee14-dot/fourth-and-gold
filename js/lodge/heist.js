@@ -59,7 +59,7 @@ function visitTabs(d){ const rs=visitRooms(d); if(rs.length<2) return ''; const 
 function visitDraw(){
   const d=HV.data, tier=typeof vipAt==='function'?vipAt(d.vipIdx||0):null, def=d.defense||{items:[]};
   const shield=d.shield_until&&new Date(d.shield_until)>new Date();
-  const left=shield?Math.ceil((new Date(d.shield_until)-Date.now())/36e5):0;
+  const left=shield?Math.ceil((new Date(d.shield_until)-Date.now())/6e4):0;   // minutes
   modal(`<div class="hv">
     <div class="fgm-k">${esc(d.name)}’s lodge ${tier?tier.icon:''}</div>
     <canvas class="px hv-room" width="${PW}" height="${PH}"></canvas>${visitTabs(d)}
@@ -113,7 +113,7 @@ async function heistEnd(cracked,why){
   if(!cracked){ tone(220,.4,'sawtooth',.06); tone(180,.4,'sawtooth',.06,.25); }
   modal(`<div class="hg"><div class="fgm-k">${cracked?'Cracked it…':'🚨 '+esc(why)}</div><div class="empty">${cracked?'Sneaking out with the cash…':'Security is on the way…'}</div></div>`,'stay');
   let r=null; try{ r=await srpc('fg_heist2',{p_name:HV.data.name,p_cracked:cracked,p_entry:HG.entry||0}); }catch(e){ try{ r=await srpc('fg_heist',{p_name:HV.data.name,p_cracked:cracked}); }catch(e2){} }
-  if(!r||r.error){ modal(`<div class="fgm-k">Heist called off</div><p>${{shielded:'They were just robbed — they’re shielded for 12 hours.',no_tries:'You’re out of tries for today.'}[r&&r.error]||'Couldn’t reach the server.'}</p>`); return; }
+  if(!r||r.error){ modal(`<div class="fgm-k">Heist called off</div><p>${{shielded:'They were just robbed — they’re shielded for an hour.',no_tries:'You’re out of tries for today.'}[r&&r.error]||'Couldn’t reach the server.'}</p>`); return; }
   HV.data.tries_left=r.tries_left;
   if(r.result==='stole'){ setBank(r.amount); try{ fx.coins(80,2200); fx.confetti(140); }catch(e){} [523,659,784,1047,1319].forEach((f,i)=>tone(f,.12,'square',.05,i*.08));
     modal(`<div class="cel"><div class="cel-emoji">💰</div><div class="cel-t">You robbed ${esc(HV.data.name)}!</div><div class="cel-big">+${fmt$(r.amount)}</div>
@@ -137,7 +137,7 @@ Object.assign(ACT,{
 function heistInbox(it){
   if(it.kind==='robbed'){ const amt=Math.min(it.amount,Math.max(0,S.bank)); S.bank=Math.round(S.bank-amt); save();
     modal(`<div class="cel"><div class="cel-emoji">🕵️</div><div class="cel-t">You got robbed!</div><p>${esc(it.label)} cracked your safe.</p><div class="cel-big" style="color:var(--loss-hi)">−${fmt$(amt)}</div>
-      <p class="small muted">You’re shielded for 12 hours. Buy security from Silas (Decor → Security) so it doesn’t happen again.</p>
+      <p class="small muted">You’re shielded for 1 hour. Buy security from Silas (Decor → Security) so it doesn’t happen again.</p>
       <div class="fgm-row"><button class="btn gold" data-a="heistRevenge" data-v="${esc(it.label)}">Get revenge</button><button class="btn" data-a="closeModal">OK</button></div></div>`); }
   else { setBank(it.amount); toast(`🚨 You caught ${it.label} trying to rob you · +${fmt$(it.amount)}`,'win'); }
 }

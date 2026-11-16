@@ -156,7 +156,7 @@ Object.defineProperty(GOLF_COURSES,'home',{enumerable:false,value:{name:()=>'Hom
 
 /* ---------- Robbing: choose your way in ---------- */
 function robChoices(d,shield,left){
-  if(shield) return `<button class="btn wide" disabled>🛡️ Shielded for ${left}h after a robbery</button>`;
+  if(shield) return `<button class="btn wide" disabled>🛡️ Shielded for ${left} min after a robbery</button>`;
   if(!d.tries_left) return `<button class="btn wide" disabled>No tries left today</button>`;
   const items=(d.defense||{}).items||[], guard=[items.includes('decor_guard_dog')?'dog':'',items.includes('decor_bouncer')?'bouncer':''].filter(Boolean);
   const wins=Math.max(1,d.windows||1), cams=d.cams||0;
