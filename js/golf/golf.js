@@ -166,18 +166,19 @@ function golfNewShot(){
 /* ---------- Taking a shot ---------- */
 function golfStrike(p){
   const H=GOLF.H, b=GOLF.ball, C=gclub(), putt=C[0]==='PT', d=Math.abs(p-.5)*2, side=p<.5?-1:1;
-  const q=d<.07?'perfect':d<.35?'good':'miss';
+  const K=golfK(), q=d<K.perfect?'perfect':d<K.good?'good':'miss';   // the green and yellow grow with your golf level (js/golf/skill.js)
   const ax=GOLF.aim[0]-b[0], ay=GOLF.aim[1]-b[1], want=Math.hypot(ax,ay)||1, reach=C[2]*lieF(GOLF.club);
   let dist=Math.min(want,reach), ang=Math.atan2(ay,ax);
-  if(putt){ dist*=q==='perfect'?1:q==='good'?1+side*d*.22:1+side*(.18+d*.3); ang+=(q==='perfect'?0:q==='good'?side*d*2.5:side*(2+d*4))*Math.PI/180; }
-  else { dist*=q==='perfect'?1:q==='good'?1-d*.12:.86-d*.22; ang-=(q==='perfect'?0:q==='good'?side*d*6:side*(4+d*9))*Math.PI/180; }
+  if(putt){ dist*=q==='perfect'?1:q==='good'?1+side*d*.22*K.err:1+side*(.18+d*.3)*K.err; ang+=(q==='perfect'?0:q==='good'?side*d*2.5:side*(2+d*4))*K.err*Math.PI/180; }
+  else { dist*=q==='perfect'?1:q==='good'?1-d*.12*K.err:1-(.14+d*.22)*K.err; ang-=(q==='perfect'?0:q==='good'?side*d*6:side*(4+d*9))*K.err*Math.PI/180; }
+  golfShotXP(q,putt);
   GOLF.strokes++; GOLF.prev=[b[0],b[1]];
   tone(putt?420:260,.08,'square',.05); if(!putt) tone(180,.12,'triangle',.05,.03);
   if(q==='perfect'){ tone(1046,.12,'square',.04,.05); golfMsg('PERFECT!','',700); }
   const dir=[Math.cos(ang),Math.sin(ang)];
   if(putt){ GOLF.anim={kind:'roll',from:[b[0],b[1]],dir,len:dist,t:0,dur:.35+dist/26}; }
   else{
-    const W=GOLF.wind, drift=dist/100*.7;
+    const W=GOLF.wind, drift=dist/100*.7*K.wind;
     const land=[b[0]+dir[0]*dist+W.x*drift, b[1]+dir[1]*dist+W.y*drift];
     GOLF.anim={kind:'fly',from:[b[0],b[1]],to:land,t:0,dur:.7+dist/260,h:Math.max(6,dist*.18)};
   }
@@ -232,7 +233,8 @@ function golfHoled(){
   const diff=GOLF.strokes-GOLF.H.par, name=GOLF.strokes===1?'HOLE IN ONE!':(SCORE_NAMES[diff]||('+'+diff));
   [659,784,988,1319].forEach((f,i)=>tone(f,.1,'square',.05,i*.08));
   if(diff<0||GOLF.strokes===1){ try{ const b=GOLF.c.getBoundingClientRect(); fx.burst(b.left+b.width/2,b.top+b.height*.4,diff<=-2?90:50,'#ecd9a8'); if(diff<=-2||GOLF.strokes===1) fx.confetti(160); }catch(e){} }
-  const bonus=GOLF.strokes===1?500000:diff<=-2?150000:diff===-1?25000:0;
+  const bonus=Math.round((GOLF.strokes===1?500000:diff<=-2?150000:diff===-1?25000:0)*golfPayX());
+  golfHoleXP(diff,GOLF.strokes);
   if(bonus&&!GOLF.o.noCash){ setBank(bonus); GOLF.cash+=bonus; }
   golfMsg(name,(bonus&&!GOLF.o.noCash?'+'+k$(bonus)+' · ':'')+GOLF.strokes+' stroke'+(GOLF.strokes>1?'s':''),1700);
   setTimeout(golfHoleDone,1700);
@@ -246,7 +248,7 @@ const golfTotal=()=>GOLF.cards.reduce((s,n)=>s+(n||0),0);
 async function golfFinish(){
   GOLF.phase='card'; const tot=golfTotal(), par=roundPar(), rel=tot-par, key=GOLF.o.course+'-'+GH().length;
   S.golf=S.golf||{}; if(typeof S.golf.best!=='object'||!S.golf.best) S.golf.best=S.golf.best!=null?{'links-6':S.golf.best}:{};
-  const best=S.golf.best[key]; if(best==null||tot<best) S.golf.best[key]=tot; S.golf.rounds=(S.golf.rounds||0)+1; save();
+  const best=S.golf.best[key]; if(best==null||tot<best) S.golf.best[key]=tot; S.golf.rounds=(S.golf.rounds||0)+1; golfRoundXP(rel); save();
   let note='';
   if(GOLF.o.onFinish){ try{ note=await GOLF.o.onFinish(tot)||''; }catch(e){ note='Couldn’t send your score. Check your connection.'; } }
   else if(typeof socPost==='function') socPost('golf',GOLF.o.course,tot,rel);
@@ -325,7 +327,7 @@ function golfDraw(t,dt){
   // big message
   const M=GOLF.msg; if(M&&performance.now()<M.until){ const w=Math.max(ptextW(M.a,2),ptextW(M.b||''))+12; rect(x,PW/2-w/2,PH*.36-4,w,M.b?28:20,'rgba(5,9,15,.78)'); ptext(x,M.a,PW/2-ptextW(M.a,2)/2,PH*.36,'#ecd9a8',2); if(M.b) ptext(x,M.b,PW/2-ptextW(M.b)/2,PH*.36+15,'#f3ead8'); }
   // the meter marker
-  if(GOLF.phase==='meter'){ const m=GOLF.meter; m.t+=dt; const per=gclub()[3]*({rough:.85,sand:.8}[golfLie()]||1); const ph2=(m.t/per)%2; m.p=ph2<1?ph2:2-ph2; const mk=GOLF.el.querySelector('.gf-mark'); if(mk) mk.style.left=(m.p*100)+'%'; }
+  if(GOLF.phase==='meter'){ const m=GOLF.meter; m.t+=dt; const per=gclub()[3]*golfK().speed*({rough:.85,sand:.8}[golfLie()]||1); const ph2=(m.t/per)%2; m.p=ph2<1?ph2:2-ph2; const mk=GOLF.el.querySelector('.gf-mark'); if(mk) mk.style.left=(m.p*100)+'%'; }
 }
 
 /* ---------- Opening and closing ---------- */
