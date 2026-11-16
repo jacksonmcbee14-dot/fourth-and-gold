@@ -145,6 +145,8 @@ const _saveV=save;
 save=function(){
   if(S.bank>VAULT){ S.bank=VAULT; if(Date.now()-vaultNoted>60e3){ vaultNoted=Date.now(); setTimeout(vaultFull,400); } }
   if(S.peak>VAULT) S.peak=VAULT;
+  // League bookkeeping (shop spending, gifts, top-ups, adjustments) must stay sane: anything runaway resets.
+  for(const k of ['spent','gifts','topups','ladj']) if(S[k]!=null&&!(Math.abs(S[k])<=1e16)) S[k]=0;
   return _saveV.apply(this,arguments);
 };
 function vaultFull(){
