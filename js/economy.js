@@ -204,6 +204,8 @@ function heatUI(){ let el=document.getElementById('heatChip');
   if(!el){ el=document.createElement('div'); el.id='heatChip'; document.body.appendChild(el); }
   const on=S.mode==='casino'&&S.heat>0&&!(typeof lodgeActive==='function'&&lodgeActive());
   el.className=on?'on':''; el.innerHTML=on?`${'🔥'.repeat(Math.min(S.heat,5))}<b>+${S.heat*10}%</b>`:''; }
+// Slots: a spin that pays at least your bet heats you up; a small win just keeps your heat.
+function slotHeat(win,bet){ if(!(win>0)) return win; if(win<bet){ heatWonSince=true; return win; } return heatWin(win,win); }
 function heatWager(){ if(!heatWonSince&&S.heat){ S.heat=0; heatUI(); } heatWonSince=false; }
 function heatWin(base,profit){
   if(S.mode!=='casino'||!(profit>0)) return profit;
@@ -215,7 +217,10 @@ function heatWin(base,profit){
 const _boostRetH=boostRet;
 boostRet=function(ret,stake,x){ const r=_boostRetH(ret,stake,x); if(S.mode!=='casino'||r<=stake) return r; return stake+heatWin(r,r-stake); };
 for(const fn of ['rSpin','bjDeal','vpDeal','crRoll']){ const f=window[fn]; window[fn]=function(){ heatWager(); return f.apply(this,arguments); }; }
-const _slotSpinH=slotSpin; slotSpin=function(){ if(!SL.spinning&&!(SL.fs>0)) heatWager(); return _slotSpinH.apply(this,arguments); };
+// Slots hit less often in a row, so they get grace: heat only cools after 3 spins in a row with no win.
+let slotDry=0;
+function slotWager(){ if(heatWonSince){ slotDry=0; heatWonSince=false; return; } slotDry++; if(slotDry>=3&&S.heat){ S.heat=0; slotDry=0; heatUI(); toast('🔥 Cooled off','loss'); } }
+const _slotSpinH=slotSpin; slotSpin=function(){ if(!SL.spinning&&!(SL.fs>0)) slotWager(); return _slotSpinH.apply(this,arguments); };
 const _renderH=render; render=function(){ _renderH(); heatUI(); };
 
 /* ---------- Prestige rewards: a piece of gear for each of your first five stars ---------- */
