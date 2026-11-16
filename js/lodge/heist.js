@@ -1,6 +1,6 @@
 // Visit and rob friends' lodges (supabase/update-7-heists.sql), and the defence items that stop you.
 //  • Tap 🏠 next to anyone in your league, or tap anyone on the leaderboard, to look around their room: character,
-//    decor, table and defences. You can rob any player.
+//    decor, table and defences. You can rob any player, 10 tries a day.
 //  • Tap "Rob them" for the safe-cracking game: a row of dials, each with a spinning needle — stop it in the gold
 //    zone. More dials, faster needles and smaller zones the higher their VIP table is above yours (cameras shrink
 //    the zone, a laser grid adds a dial). Miss one and the alarm goes off.
