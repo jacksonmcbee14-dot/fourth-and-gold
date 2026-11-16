@@ -5,8 +5,8 @@
 // The course art changes with the season (js/season.js). Challenges use a seed so both players get the same wind.
 
 const GOLF_CLUBS=[ // [short, name, max carry in yards, seconds for the meter to cross, roll after landing (share of carry)]
-  ['DR','Driver',240,.95,.14],['3W','3 wood',215,1.0,.12],['5I','5 iron',175,1.1,.08],['7I','7 iron',150,1.15,.06],
-  ['9I','9 iron',125,1.2,.05],['PW','Wedge',100,1.3,.03],['SW','Sand wedge',70,1.35,.02],['PT','Putter',40,1.5,0],
+  ['DR','Driver',240,.72,.14],['3W','3 wood',215,.76,.12],['5I','5 iron',175,.82,.08],['7I','7 iron',150,.86,.06],
+  ['9I','9 iron',125,.9,.05],['PW','Wedge',100,.95,.03],['SW','Sand wedge',70,1.0,.02],['PT','Putter',40,1.1,0],
 ];
 // Holes in yards: x is left(-)/right(+) of the tee, y is forward from the tee.
 // fair: capsules [x1,y1,x2,y2,radius] · green/sand/ellipse water: [x,y,rx,ry] · capsule water: [x1,y1,x2,y2,r] · trees: [x,y,r]
@@ -143,14 +143,16 @@ function paintCourse(){
 }
 
 /* ---------- Setting up a round and a hole ---------- */
-function golfWind(seed,h){ const r=prng((seed||1)*97+h*13); const mph=Math.round(r()*14), a=r()*Math.PI*2; return {mph,a,x:Math.cos(a)*mph,y:Math.sin(a)*mph}; }
+function golfWind(seed,h){ const r=prng((seed||1)*97+h*13); const mph=Math.round(4+r()*16), a=r()*Math.PI*2; return {mph,a,x:Math.cos(a)*mph,y:Math.sin(a)*mph}; }
+// Every green slopes: putts curl with the break (shown on the green), so you have to aim off the cup.
+function golfBreak(seed,h){ const r=prng((seed||1)*131+h*29); const a=r()*Math.PI*2, k=.06+r()*.12; return {x:Math.cos(a)*k,y:Math.sin(a)*k,k}; }
 function golfHole(i){
   const H=Object.assign({},GH()[i]); const s=(PH-30)/(H.len+34); H.hw=(PW/s)/2-3; H.cup=[H.green[0]+(i%2?2:-2),H.green[1]+(i%3-1)*2];
-  GOLF.h=i; GOLF.H=H; GOLF.strokes=0; GOLF.ball=[0,0]; GOLF.prev=[0,0]; GOLF.wind=golfWind(GOLF.o.seed,i);
+  GOLF.h=i; GOLF.H=H; GOLF.strokes=0; GOLF.ball=[0,0]; GOLF.prev=[0,0]; GOLF.wind=golfWind(GOLF.o.seed,i); GOLF.brk=golfBreak(GOLF.o.seed,i);
   golfNewShot(); golfMsg(`HOLE ${i+1} · PAR ${H.par}`,`${H.len} YARDS${GOLF.wind.mph?` · WIND ${GOLF.wind.mph} MPH`:' · NO WIND'}`,1800);
 }
 function golfLie(){ return terr(GOLF.H,GOLF.ball[0],GOLF.ball[1]); }
-const LIE_F={tee:1,fair:1,green:1,rough:.85,sand:.65};
+const LIE_F={tee:1,fair:1,green:1,rough:.75,sand:.55};
 function lieF(club){ const l=golfLie(); if(l==='sand'&&GOLF_CLUBS[club][0]==='SW') return .95; if(GOLF_CLUBS[club][0]==='PT'&&l!=='green') return l==='fair'||l==='tee'?.8:.5; return LIE_F[l]||1; }
 function golfNewShot(){
   const H=GOLF.H, b=GOLF.ball; GOLF.aim=[H.cup[0],H.cup[1]]; GOLF.phase='aim'; GOLF.meter=null;
@@ -164,7 +166,7 @@ function golfNewShot(){
 /* ---------- Taking a shot ---------- */
 function golfStrike(p){
   const H=GOLF.H, b=GOLF.ball, C=gclub(), putt=C[0]==='PT', d=Math.abs(p-.5)*2, side=p<.5?-1:1;
-  const q=d<.12?'perfect':d<.45?'good':'miss';
+  const q=d<.07?'perfect':d<.35?'good':'miss';
   const ax=GOLF.aim[0]-b[0], ay=GOLF.aim[1]-b[1], want=Math.hypot(ax,ay)||1, reach=C[2]*lieF(GOLF.club);
   let dist=Math.min(want,reach), ang=Math.atan2(ay,ax);
   if(putt){ dist*=q==='perfect'?1:q==='good'?1+side*d*.22:1+side*(.18+d*.3); ang+=(q==='perfect'?0:q==='good'?side*d*2.5:side*(2+d*4))*Math.PI/180; }
@@ -175,7 +177,7 @@ function golfStrike(p){
   const dir=[Math.cos(ang),Math.sin(ang)];
   if(putt){ GOLF.anim={kind:'roll',from:[b[0],b[1]],dir,len:dist,t:0,dur:.35+dist/26}; }
   else{
-    const W=GOLF.wind, drift=dist/100*.5;
+    const W=GOLF.wind, drift=dist/100*.7;
     const land=[b[0]+dir[0]*dist+W.x*drift, b[1]+dir[1]*dist+W.y*drift];
     GOLF.anim={kind:'fly',from:[b[0],b[1]],to:land,t:0,dur:.7+dist/260,h:Math.max(6,dist*.18)};
   }
@@ -184,7 +186,7 @@ function golfStrike(p){
 // After the ball lands: hazards, trees, then the roll.
 function golfLand(to,from){
   const H=GOLF.H, C=gclub(), t=terr(H,to[0],to[1]);
-  if(Math.hypot(to[0]-H.cup[0],to[1]-H.cup[1])<.8) return golfHoled();
+  if(Math.hypot(to[0]-H.cup[0],to[1]-H.cup[1])<.55) return golfHoled();
   if(t==='water') return golfPenalty(GPAL[SEASON.id].waterName);
   if(t==='oob') return golfPenalty('Out of bounds');
   const tr=treeAt(H,to[0],to[1]);
@@ -203,8 +205,9 @@ function golfLand(to,from){
 function golfRollStep(A,k){
   const H=GOLF.H, dist=A.len*(1-(1-k)*(1-k)), prev=A.done||0;
   for(let s=prev+.5;s<=dist;s+=.5){
-    const x=A.from[0]+A.dir[0]*s, y=A.from[1]+A.dir[1]*s, t=terr(H,x,y);
-    if(Math.hypot(x-H.cup[0],y-H.cup[1])<.62&&A.len-s<6){ GOLF.ball=[H.cup[0],H.cup[1]]; GOLF.anim=null; golfHoled(); return true; }
+    const bk=A.putt&&GOLF.brk?(s*s)/(2*Math.max(4,A.len)):0;   // the break: the ball curls more as it slows
+    const x=A.from[0]+A.dir[0]*s+(GOLF.brk?GOLF.brk.x*bk:0), y=A.from[1]+A.dir[1]*s+(GOLF.brk?GOLF.brk.y*bk:0), t=terr(H,x,y);
+    if(Math.hypot(x-H.cup[0],y-H.cup[1])<.5&&A.len-s<4.5){ GOLF.ball=[H.cup[0],H.cup[1]]; GOLF.anim=null; golfHoled(); return true; }
     if(t==='water'){ GOLF.anim=null; golfPenalty(GPAL[SEASON.id].waterName); return true; }
     if(t==='oob'){ GOLF.anim=null; golfPenalty('Out of bounds'); return true; }
     if(t==='sand'&&!A.putt){ GOLF.ball=[x,y]; GOLF.anim=null; golfRest(); return true; }
@@ -290,6 +293,11 @@ function golfDraw(t,dt){
   rect(x,cX+1,cY-ph,5,4,P.flag); rect(x,cX+5+wave,cY-ph+1,2,2,P.flag);
   // aim line and landing spot
   const A=GOLF.anim, b=GOLF.ball;
+  // the slope of the green: arrows around the cup point downhill, and a BREAK note
+  if(GOLF.brk&&golfLie()==='green'&&(GOLF.phase==='aim'||GOLF.phase==='meter')){ const B=GOLF.brk, L=Math.hypot(B.x,B.y)||1, ux=B.x/L, uy=-B.y/L;
+    for(const [ox,oy] of [[-10,-6],[10,-6],[0,8],[-8,10],[8,10]]){ const sx=cX+ox, sy=cY+oy, sh=((t*12)|0)%6;
+      for(let i=0;i<5;i++) rect(x,sx+ux*(i+sh-3),sy+uy*(i+sh-3),1,1,'rgba(255,255,255,.55)'); }
+    const lbl='BREAK '+(B.k>.13?'HARD':B.k>.09?'MED':'SOFT'); rect(x,4,4,ptextW(lbl)+6,11,'rgba(5,9,15,.55)'); ptext(x,lbl,7,7,'#f3ead8'); }
   if(GOLF.phase==='aim'||GOLF.phase==='meter'){
     const C=gclub(), ax=GOLF.aim[0]-b[0], ay=GOLF.aim[1]-b[1], L=Math.hypot(ax,ay)||1, d=Math.min(L,C[2]*lieF(GOLF.club));
     const land=[b[0]+ax/L*d,b[1]+ay/L*d], [bX,bY]=toS(b[0],b[1]), [lX,lY]=toS(land[0],land[1]);
@@ -329,7 +337,7 @@ function golfDom(){
     <div class="gf-stage"><div class="gf-vs"></div><div class="gf-card"></div></div>
     <div class="gf-bot"><div class="gf-info"></div>
       <div class="gf-clubs"><button class="lg-btn" data-gf="club" data-v="-1" aria-label="Longer club">‹</button><div class="gf-club"></div><button class="lg-btn" data-gf="club" data-v="1" aria-label="Shorter club">›</button></div>
-      <div class="gf-meter" data-gf="swing"><i style="left:0;width:27.5%" class="r"></i><i style="left:27.5%;width:16.5%" class="y"></i><i style="left:44%;width:12%" class="g"></i><i style="left:56%;width:16.5%" class="y"></i><i style="left:72.5%;width:27.5%" class="r"></i><b class="gf-mark"></b></div>
+      <div class="gf-meter" data-gf="swing"><i style="left:0;width:32.5%" class="r"></i><i style="left:32.5%;width:14%" class="y"></i><i style="left:46.5%;width:7%" class="g"></i><i style="left:53.5%;width:14%" class="y"></i><i style="left:67.5%;width:32.5%" class="r"></i><b class="gf-mark"></b></div>
       <button class="gf-swing" data-gf="swing">SWING</button></div></div>`;
   document.body.appendChild(el); GOLF.el=el;
   const stage=el.querySelector('.gf-stage'); const {c,ctx}=makeCanvas(stage); GOLF.c=c; GOLF.ctx=ctx;
