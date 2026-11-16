@@ -249,3 +249,4 @@ body.vip-high .chip{box-shadow:0 3px 0 rgba(0,0,0,.4),inset 0 0 0 3px var(--vipc
 .tailb{margin-left:6px;vertical-align:middle}
 .rank[data-a=visitLodge]{cursor:pointer}
 .rank[data-a=visitLodge]:active{background:rgba(200,164,92,.08)}
+.pstar{font-size:12px;color:var(--gold2);font-weight:700}

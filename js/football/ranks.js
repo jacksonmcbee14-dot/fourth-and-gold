@@ -11,14 +11,14 @@ function plSplit(){
   const football=S.bets.reduce((s,b)=>s+(b.st==='won'?b.pay-b.stake:b.st==='lost'?-b.stake:0),0);
   return {net,football,casino:net-START_BANK-football-(S.topups||0)};
 }
-const signed$=n=>(n>=0?'+':'−')+fmt$(Math.abs(n));
+const signed$=n=>(n>=0?'+':'−')+bank$(Math.abs(n));
 function viewRanks(){
   const {net,football,casino}=plSplit(), inCasino=S.mode==='casino';
   const si=statusFor(net), nx=STATUS[si+1];
   const prog=nx?clamp((net-STATUS[si][0])/(nx[0]-STATUS[si][0]),0,1):1;
-  const statusCard=card('rankStatus',fmt$(net),`You’re ${/^[AEIOU]/.test(STATUS[si][1])?'an':'a'} ${STATUS[si][1]}: ${signed$(casino)} from the casino and ${signed$(football)} from football bets since your last reset.`,
+  const statusCard=card('rankStatus',bank$(net),`You’re ${/^[AEIOU]/.test(STATUS[si][1])?'an':'a'} ${STATUS[si][1]}: ${signed$(casino)} from the casino and ${signed$(football)} from football bets since your last reset.`,
     `<div class="between"><span class="muted">Football picks</span><span class="mono">${S.picks.w}–${S.picks.l}</span></div>
-    <div class="bar" style="height:6px"><i style="width:${prog*100}%"></i></div><div class="small muted">${nx?`${fmt$(nx[0]-net)} to <span class="gold">${nx[1]}</span>`:'Top of the house.'}</div>`,
+    <div class="bar" style="height:6px"><i style="width:${prog*100}%"></i></div><div class="small muted">${nx?`${bank$(nx[0]-net)} to <span class="gold">${nx[1]}</span>`:'Top of the house.'}</div>`,
     {top:'<div class="eyebrow">Your club status · net worth</div>'});
   let list='';
   if(S.lg==='nfl'){

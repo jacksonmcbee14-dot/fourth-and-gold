@@ -48,9 +48,9 @@ function vipLook(){ const t=vipTier(); document.body.classList.remove('vip-silve
   if(t.i===1) document.body.classList.add('vip-silver'); else if(t.i===2) document.body.classList.add('vip-gold'); else if(t.i===3) document.body.classList.add('vip-diamond');
   else if(t.i>3){ document.body.classList.add('vip-high'); document.body.style.setProperty('--vipc',t.color); } }
 function vipOpen(){
-  const cur=vipTier().i, top=Math.max(vipAfford(),vipIndex(S.vipBest)), last=top+5, list=[];
+  const cur=vipTier().i, top=Math.max(vipAfford(),vipIndex(S.vipBest)), last=Math.min(top+5,vipMaxTier()), list=[];
   for(let i=0;i<=last;i++) list.push(vipAt(i));
-  modal(`<div class="fgm-k">Choose your table</div><p class="small muted" style="margin:-4px 0 12px">Your minimum bet stays put until you change it. Payouts are the same everywhere — higher tables earn XP faster and bring VIP perks. Reach the top and 5 more appear.</p>
+  modal(`<div class="fgm-k">Choose your table</div><p class="small muted" style="margin:-4px 0 12px">Your minimum bet stays put until you change it. Payouts are the same everywhere — higher tables earn XP faster and bring VIP perks. Past the top table, Prestige (⭐) keeps you climbing.</p>
     <div class="vipx">${list.slice().reverse().map(v=>{ const ok=worth()>=v.need, on=v.i===cur;
       return `<button class="vipx-t ${on?'on':''}" style="--vc:${v.color}" data-a="vipPick" data-v="${v.i}" ${ok?'':'disabled'}><span class="vipx-ic">${v.icon}</span>
         <div><b>${esc(v.name)}</b><span>Min bet ${k$(v.min)}</span><small>${esc(v.perks)}</small></div>
@@ -132,3 +132,57 @@ renderSlip=function(){ _renderSlipE(); const m=tableMin(); if(m>1000&&$('#sheet'
 const _bankSheetE=ACT.bankSheet;
 ACT.bankSheet=el=>{ _bankSheetE(el); const t=vipTier();
   $('#sheet').insertAdjacentHTML('beforeend',`<button class="btn wide" style="margin-top:12px" data-a="vipOpen">${t.icon} ${t.name} table · min ${k$(t.min)} · change</button>`); };
+
+
+/* ---------- The vault, Prestige and a sober old fashioned ---------- */
+// Cash tops out at $1 quadrillion (the vault). Past that, Prestige: start again at $1M with a ⭐ that's
+// yours forever — +20% XP per star, a star next to your name, and stars rank first on the leaderboard.
+// Stars never run out, so the climb never ends, but the numbers always stay readable and exact.
+const VAULT=1e15;
+const vipMaxTier=()=>{ let i=0; while(vipAt(i+1).need<=VAULT) i++; return i; };
+let vaultNoted=0;
+const _saveV=save;
+save=function(){
+  if(S.bank>VAULT){ S.bank=VAULT; if(Date.now()-vaultNoted>60e3){ vaultNoted=Date.now(); setTimeout(vaultFull,400); } }
+  if(S.peak>VAULT) S.peak=VAULT;
+  return _saveV.apply(this,arguments);
+};
+function vaultFull(){
+  modal(`<div class="cel"><div class="cel-emoji">🏦</div><div class="cel-t">Your vault is full</div><p>You’ve hit ${k$(VAULT)} — the most the lodge can hold. Winnings past this are lost until you Prestige.</p>
+    <div class="cel-big">⭐ Prestige ${(S.prestige||0)+1}</div>
+    <p class="small muted">Start again at $1,000,000. Keep every item, trophy and title. +20% XP per star, forever, and a star next to your name. Stars rank first on the leaderboard.</p>
+    <div class="fgm-row"><button class="btn gold" data-a="prestigeGo">Prestige now</button><button class="btn" data-a="closeModal">Not yet</button></div></div>`);
+}
+ACT.prestigeGo=()=>{
+  if(scoreNow()<VAULT*.99&&S.bank<VAULT*.99){ toast('Fill your vault ('+k$(VAULT)+') first','loss'); return; }
+  const before=typeof leagueScoreRaw==='function'?leagueScoreRaw()+(S.ladj||0):0;
+  S.prestige=(S.prestige||0)+1; S.bank=START_BANK; S.peak=START_BANK; S.debt=0; S.bets=[]; S.slip=[]; S.vip='lodge'; S.lodge.drink=null;
+  if(typeof leagueScoreRaw==='function') S.ladj=before-leagueScoreRaw();
+  save(); closeModal(); render(); try{ fx.confetti(220); fireworks(6); }catch(e){}
+  celebrate('Prestige '+S.prestige+'!','You’re back at $1,000,000 with everything you own.','⭐'.repeat(Math.min(S.prestige,5))+' +'+S.prestige*20+'% XP forever');
+};
+const stars=n=>n>0?` <span class="pstar" title="Prestige ${n}">⭐${n>1?n:''}</span>`:'';
+const _gainXPV2=gainXP;
+gainXP=function(n,why,capped){ if(n>0&&S.prestige) n=Math.round(n*(1+.2*S.prestige)); return _gainXPV2(n,why,capped); };
+const _bankSheetV2=ACT.bankSheet;
+ACT.bankSheet=el=>{ _bankSheetV2(el);
+  $('#sheet').insertAdjacentHTML('beforeend',`<p class="small muted" style="text-align:center;margin-top:10px">${S.prestige?`⭐ Prestige ${S.prestige} · +${S.prestige*20}% XP. `:''}Your vault holds ${k$(VAULT)}. Fill it to Prestige.</p>${S.bank>=VAULT*.99?'<button class="btn gold wide" data-a="prestigeGo">⭐ Prestige now</button>':''}`); };
+
+// The old fashioned: one a day, and its extra winnings are capped at 3× what you paid for it.
+// Once that's used up, the drink wears off.
+const OF_CAP=3;
+function drinkBonus(base,boosted){
+  if(!drinkOn('oldfash')||boosted<=base) return boosted;
+  const d=S.lodge.drink, room=Math.max(0,(d.cap||0)-(d.used||0)), extra=Math.min(boosted-base,room);
+  d.used=(d.used||0)+extra;
+  if(room-extra<=0){ S.lodge.drink=null; setTimeout(()=>toast('🥃 The old fashioned wore off — its bonus is used up','gold'),800); }
+  return base+extra;
+}
+const _boostRetV=boostRet;
+boostRet=function(ret,stake,x){ const boosted=_boostRetV(ret,stake,x); return (x==null||x===winX())&&drinkOn('oldfash')?drinkBonus(ret,boosted):boosted; };
+const _orderDrinkV=orderDrink;
+orderDrink=function(id){
+  if(id==='oldfash'&&S.ofDay===dayKey()){ toast('One old fashioned a day — Mack’s cutting you off','loss'); return; }
+  const before=S.bank; _orderDrinkV(id);
+  if(id==='oldfash'&&S.lodge.drink&&S.lodge.drink.id==='oldfash'&&S.bank<before){ S.ofDay=dayKey(); S.lodge.drink.cap=(before-S.bank)*OF_CAP; S.lodge.drink.used=0; save(); toast(`🥃 Bonus winnings up to ${k$(S.lodge.drink.cap)} — then it wears off`,'gold'); }
+};
