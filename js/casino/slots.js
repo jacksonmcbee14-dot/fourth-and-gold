@@ -190,6 +190,7 @@ async function slotSpin(){
   let win=wins.reduce((s,w)=>s+w.amt,0);
   if(res.scat)win+=res.scat[0]*bet*mult;
   if(wx!==1&&win>0){ const base=win; win=typeof drinkBonus==='function'?drinkBonus(base,Math.round(win*wx)):Math.round(win*wx); const k=win/base; wins.forEach(w=>w.amt=Math.round(w.amt*k)); }   // drink power on the winnings (capped: js/economy.js)
+  if(win>0&&typeof slotHeat==='function'){ const h=slotHeat(win,bet); if(h!==win){ const k=h/win; wins.forEach(w=>w.amt=Math.round(w.amt*k)); win=h; } }   // 🔥 on a roll (js/economy.js)
   SL.spinning=false;
   if(free)SL.fsTotal+=win;
   if(win>0)setBank(win);
