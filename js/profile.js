@@ -39,7 +39,7 @@ async function cloudPull(force){
   if(!cloudOn()||!PROF.me)return;
   try{ const r=await rpc('fg_load',{p_token:PROF.me.token});
     if(!r){setMe(null);return;}
-    if(r.state&&(force||(r.upd||0)>(S.upd||0))) adoptState(r.state); else cloudPush();
+    if(r.state&&(force||(r.upd||0)>LOADED_UPD)) adoptState(r.state); else cloudPush();
   }catch(e){}
 }
 async function loadBoard(){
