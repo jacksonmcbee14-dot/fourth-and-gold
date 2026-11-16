@@ -288,3 +288,4 @@ body[data-heat] .chip.on,body[data-heat] .stack,body[data-heat] .pcard:not(.back
 .hv-tub small{display:block;font-size:12px;opacity:.75}
 .hv-tub .btn{white-space:nowrap}
 .hv-tub-done{font-size:12px;opacity:.7;white-space:nowrap}
+.hv-send{margin:8px 0}
