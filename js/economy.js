@@ -162,7 +162,7 @@ function vaultFull(){
 ACT.prestigeGo=()=>{
   if(scoreNow()<VAULT*.99&&S.bank<VAULT*.99){ toast('Fill your vault ('+k$(VAULT)+') first','loss'); return; }
   const before=typeof leagueScoreRaw==='function'?leagueScoreRaw()+(S.ladj||0):0;
-  S.prestige=(S.prestige||0)+1; S.bank=START_BANK; S.peak=START_BANK; S.debt=0; S.bets=[]; S.slip=[]; S.vip='lodge'; S.lodge.drink=null; S.lodge.paid={}; S.paidReset=S.prestige;
+  S.prestige=(S.prestige||0)+1; S.bank=START_BANK; S.peak=START_BANK; S.debt=0; S.bets=[]; S.slip=[]; S.vip='lodge'; S.lodge.drink=null; S.lodge.paid={}; S.paidReset=S.prestige; S.safe=0;
   if(typeof leagueScoreRaw==='function') S.ladj=before-leagueScoreRaw();
   save(); closeModal(); render(); try{ fx.confetti(220); fireworks(6); }catch(e){}
   celebrate('Prestige '+S.prestige+'!','You’re back at $1,000,000 with everything you own.','⭐'.repeat(Math.min(S.prestige,5))+' +'+S.prestige*20+'% XP forever');

@@ -268,3 +268,10 @@ body[data-heat] .chip.on,body[data-heat] .stack,body[data-heat] .pcard:not(.back
 @media (prefers-reduced-motion:reduce){body[data-heat] .chip.on,body[data-heat] .stack,body[data-heat] .pcard:not(.back),body[data-heat] .reel{animation:none;box-shadow:0 0 0 2px #ff8a2a,0 0 14px rgba(255,110,30,.6)}}
 .tblmin{white-space:nowrap;max-width:100%}
 .tblmin b{white-space:nowrap}
+/* robbing: choose a way in */
+.rob-h{font-weight:700;margin-top:4px}
+.rob-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
+.rob-e{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border-radius:14px;text-align:left;background:var(--panel);border:1px solid var(--line2)}
+.rob-e small{color:var(--muted)}
+.rob-e.open{border-color:var(--win)}.rob-e.open small{color:var(--win)}
+.rob-e.cov{border-color:rgba(226,133,139,.6)}.rob-e.cov small{color:var(--loss-hi)}
