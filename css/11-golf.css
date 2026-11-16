@@ -38,3 +38,11 @@ body.in-golf{overflow:hidden}
 .gf-tbl th{color:#c8a45c}.gf-tbl td.u{color:#3ad08a}.gf-tbl td.o{color:#e2858b}
 .gf-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
 .gf-row .lg-btn{font-size:8px}
+/* Golf level tag, skill card and the driving range */
+.gf-lv{font-size:8px;color:#3ad08a;white-space:nowrap}
+.gk-card{text-align:left;background:rgba(0,0,0,.25);border:1px solid rgba(200,164,92,.4);border-radius:12px;padding:10px 12px;margin:10px 0}
+.gk-top{display:flex;justify-content:space-between;font-size:14px}.gk-top span{font-size:12px;opacity:.75}
+.gk-bar{height:8px;border-radius:4px;background:rgba(255,255,255,.1);margin:6px 0 8px;overflow:hidden}.gk-bar i{display:block;height:100%;background:linear-gradient(90deg,#3ad08a,#c8a45c)}
+.gk-perks{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12px}.gk-note{font-size:11px;opacity:.7;margin-top:6px}
+.rg-game{display:flex;flex-direction:column;gap:4px;width:100%;text-align:left;margin:6px 0;padding:10px;background:#1a1006;color:#f3ead8;box-shadow:0 0 0 2px #c8a45c;font-size:9px;line-height:1.5}
+.rg-game small{font-size:7px;color:#cfc6b4}.rg-game small.gold{color:#ffd84a}

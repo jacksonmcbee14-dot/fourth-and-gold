@@ -130,7 +130,7 @@ function homeOpen(){
       ${safeCap?`<div class="lg-home-h">VAULT ROOM</div><div class="lg-prev-desc">No windows, no way in. Cash in here can’t be stolen — but you can’t bet it either.<br>Stored: <b>${fmt$(S.safe||0)}</b> of ${k$(safeCap)}</div>
         <div class="lg-rooms"><button class="lg-btn" data-lg="homeDeposit">Put cash in</button><button class="lg-btn" data-lg="homeWithdraw" ${(S.safe||0)>0?'':'disabled'}>Take cash out</button></div>`
         :`<div class="lg-home-h">VAULT ROOM</div><div class="lg-prev-desc">Comes with the Lodge house at level 35: a windowless room where your savings can’t be stolen.</div>`}
-      ${H.rooms.includes('green')?`<div class="lg-home-h">PUTTING GREEN</div><button class="lg-btn lg-gold" data-lg="homeGolf">⛳ Play your green</button>`:''}
+      ${H.rooms.includes('green')?`<div class="lg-home-h">PUTTING GREEN</div><button class="lg-btn lg-gold" data-lg="homeGolf">⛳ Practise on your green · 2× golf XP</button>`:''}
       <div class="lg-home-h">ALL HOMES</div>${HOMES.map((h,k)=>`<div class="lg-home-row ${k===i?'on':k<i?'done':''}"><span>${h.owner?'👑':'Lv '+h.lv}</span><b>${esc(h.name)}</b><small>${h.rooms.length} room${h.rooms.length>1?'s':''} · ${h.windows} win.</small></div>`).join('')}
     </div>`;
   LODGE.el.querySelector('.lg-stage').appendChild(box);

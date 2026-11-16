@@ -266,14 +266,14 @@ function viewGolf(){
   return `<div class="lgx-hero golf-hero"><div class="lgx-emoji">⛳</div><h2 class="serif">${esc(courseName(cid))}</h2><p class="muted">${esc(GOLF_COURSES[cid].blurb)} ${n} holes · par ${coursePar(cid,n)}.</p>
     <div class="gx-pick">${Object.keys(GOLF_COURSES).map(k=>`<button class="${k===cid?'on':''}" data-a="golfCourse" data-v="${k}">${esc(courseName(k))}</button>`).join('')}</div>
     <div class="gx-pick holes">${[3,6,9].map(h=>`<button class="${h===n?'on':''}" data-a="golfHoles" data-v="${h}">${h} holes</button>`).join('')}</div>
-    <button class="btn gold wide" data-a="golfPlay">Play ${n} holes</button><button class="btn wide" style="margin-top:8px" data-a="golfCh">Challenge a friend</button>
+    ${typeof golfSkillCard==='function'?golfSkillCard():''}<button class="btn gold wide" data-a="golfPlay">Play ${n} holes</button><button class="btn wide" style="margin-top:8px" data-a="rangeOpen">🎯 Driving range</button><button class="btn wide" style="margin-top:8px" data-a="golfCh">Challenge a friend</button>
     ${best!=null?`<p class="small muted" style="margin:10px 0 0">Your best here <b class="gold">${best}</b> (${vsPar(best-coursePar(cid,n))})${G.rounds?' · '+G.rounds+' rounds played':''}</p>`:''}</div>
     <div class="sechead"><h2>How to play</h2></div>
     <div class="panel lgx-rules"><div><b>1</b><span><b>Tap the course</b> where you want the ball to land. The club is picked for you — change it with ‹ ›.</span></div>
     <div><b>2</b><span><b>Tap SWING</b>, then tap again when the marker is in the <b class="up">green</b>. Yellow is a bit off; red is a big miss.</span></div>
     <div><b>3</b><span><b>Watch the wind</b> (top right) and aim into it. Water and out of bounds cost a stroke. Sand and rough cost distance.</span></div>
     <div><b>⛳</b><span><b>Read the green.</b> Every green slopes — the arrows by the cup point downhill and putts curl that way, so aim off the hole.</span></div>
-    <div><b>💰</b><span>Birdie +$25K · Eagle +$150K · Hole in one +$500K</span></div></div>
+    <div><b>💰</b><span>Birdie +${k$(25000*golfPayX())} · Eagle +${k$(150000*golfPayX())} · Hole in one +${k$(500000*golfPayX())} (grows with your golf level)</span></div></div>
     <p class="foot">The courses change with the seasons. You can also walk out the lodge’s back window to the links.</p>`;
 }
 Object.assign(ACT,{ golfCourse:el=>{ S.golfCourse=el.dataset.v; save(); render(); }, golfHoles:el=>{ S.golfHoles=+el.dataset.v; save(); render(); } });
