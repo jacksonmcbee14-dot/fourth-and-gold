@@ -155,9 +155,18 @@ Object.defineProperty(GOLF_COURSES,'home',{enumerable:false,value:{name:()=>'Hom
 ]}});
 
 /* ---------- Robbing: choose your way in ---------- */
+// Lockpicks: one more robbery try today. 1% of your net worth, doubling with each one (at least $50K), up to 10 a day.
+const lockpickPrice=n=>nice(Math.max(50000,worth()*.01*Math.pow(2,n||0)));
+ACT.buyTry=async el=>{ const d=HV.data; if(!d) return; const pr=lockpickPrice(d.tries_bought||0);
+  if(pr>S.bank){ toast('Not enough in the bankroll','loss'); return; } el.disabled=true;
+  let r=null; try{ r=await srpc('fg_buy_try'); }catch(e){}
+  if(!r||r.error){ el.disabled=false; toast(r&&r.error==='max'?'That’s all 10 lockpicks for today':'Couldn’t reach the server','loss'); return; }
+  setBank(-pr); S.spent=(S.spent||0)+pr; save(); d.tries_bought=r.bought; d.tries_left=1; tone(880,.06,'square',.04); toast('🔓 Lockpick bought · 1 more try','gold'); visitDraw(); };
 function robChoices(d,shield,left){
   if(shield) return `<button class="btn wide" disabled>🛡️ Shielded for ${left} min after a robbery</button>`;
-  if(!d.tries_left) return `<button class="btn wide" disabled>No tries left today</button>`;
+  if(!d.tries_left){ const n=d.tries_bought||0;
+    return n>=10?`<button class="btn wide" disabled>No tries left — that’s all 10 lockpicks for today</button>`
+      :`<div class="rob-h">🕵️ Out of tries for today</div><button class="btn gold wide" data-a="buyTry">🔓 Buy a lockpick · ${k$(lockpickPrice(n))} · +1 try</button><p class="small muted" style="margin:6px 0 0;text-align:center">${10-n} lockpick${10-n>1?'s':''} left today · each one costs double the last</p>`; }
   const items=(d.defense||{}).items||[], guard=[items.includes('decor_guard_dog')?'dog':'',items.includes('decor_bouncer')?'bouncer':''].filter(Boolean);
   const wins=Math.max(1,d.windows||1), cams=d.cams||0;
   let html=`<div class="rob-h">🕵️ Pick your way in · ${d.tries_left} ${d.tries_left===1?'try':'tries'} left today</div><div class="rob-grid">
