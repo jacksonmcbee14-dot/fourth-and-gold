@@ -73,6 +73,7 @@ async function socInbox(items){
     else if(it.kind==='challenge_refund'){ S.bank=Math.round(S.bank+it.amount); save(); toast('Challenge stake returned · '+fmt$(it.amount),'gold'); }
   }
   S.inboxDone=S.inboxDone.slice(-200); save(); render();
+  inboxKeep(items.filter(it=>INBOX_KINDS.includes(it.kind)));
   try{ await srpc('fg_ack',{p_ids:done}); }catch(e){}
 }
 function celebrate(title,line,big,item){
@@ -148,3 +149,17 @@ function socStart(){
   setInterval(()=>{ if(socOn()&&!document.hidden) socRefresh(false).then(()=>{ if(S.mode==='league'&&!SLIP&&!document.querySelector('#fgModal.on')) render(); }); },60e3);
   socBadge();
 }
+
+// Gifts are applied on this device and then saved. If a newer copy from another device replaces this one
+// before that save lands, the gift would be lost — so remember recent ones here (outside the game state)
+// and apply again any that the loaded copy doesn't have.
+const INBOX_KEEP='fg_inbox_keep';
+function inboxKeep(items){ if(!items.length) return; try{ const now=Date.now(), old=JSON.parse(localStorage.getItem(INBOX_KEEP)||'[]').filter(x=>now-x.at<3*864e5);
+  for(const it of items) if(!old.some(x=>x.it.id===it.id)) old.push({at:now,it}); localStorage.setItem(INBOX_KEEP,JSON.stringify(old.slice(-50))); }catch(e){} }
+let INBOX_QUIET=0;   // until when pop-ups are skipped (re-applied gifts were already celebrated)
+const _celebrateK=celebrate; celebrate=function(...a){ if(Date.now()>INBOX_QUIET) return _celebrateK(...a); };
+const _adoptStateK=adoptState;
+adoptState=function(st){ _adoptStateK(st);
+  let keep=[]; try{ keep=JSON.parse(localStorage.getItem(INBOX_KEEP)||'[]'); }catch(e){}
+  const done=S.inboxDone||[], miss=keep.map(x=>x.it).filter(it=>!done.includes(it.id));
+  if(miss.length){ INBOX_QUIET=Date.now()+3000; socInbox(miss); toast('Restored '+miss.length+' gift'+(miss.length>1?'s':'')+' from your inbox','gold'); } };

@@ -170,7 +170,7 @@ const BACTS=[['butlerGo','slots','🎰 Slots','slots'],['butlerGo','blackjack','
 function butlerSection(){
   const have=butlersHave(), suit=butlerSuit(), trial=(S.lodge.butlerTrial||[]).length, ready=have.length&&(trial||have.some(b=>!butlerUsed(b.name)));
   const rows=BUTLERS.map(b=>{ const ok=b.need(), used=ok&&butlerUsed(b.name);
-    return `<div class="lg-home-row ${ok?(used?'done':'on'):''}"><span>🤵</span><b>${esc(b.name)}</b><small>${ok?(used?'Back tomorrow':'Ready'):esc(b.why)}</small></div>`; }).join('');
+    return `<div class="lg-home-row ${ok?(used?'done':'on'):''}"><span>🤵</span><b>${esc(b.name)}</b><small>${ok?(used?((S.lodge.butlerTrial||[]).length&&b===butlersHave()[0]?'★ Free trial jobs':'Back tomorrow'):'Ready'):esc(b.why)}</small></div>`; }).join('');
   const nextSuit=BSUITS.find(s=>s.lv>myLevel());
   return `<div class="lg-home-h">BUTLERS</div>
     <div class="lg-prev-desc">${have.length?`Each butler does one job a day. When he plays, he uses <b>${k$(butlerStake())}</b> of house money (5% of your net worth), his wins pay <b>×${suit.x}</b>, and his losses are on the house.<br>Suit: <b>${esc(suit.name)}</b>${nextSuit?` · ${esc(nextSuit.name)} (×${nextSuit.x}) at level ${nextSuit.lv}`:''}.<br>While you have a butler, your daily streak never breaks.${guardOn()?`<br>🛡 Standing guard until ${new Date(S.lodge.guardUntil).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}.`:''}`:'Your first butler comes with the Mansion. He plays for you with house money, guards the house, robs for you, runs errands and more.'}</div>
