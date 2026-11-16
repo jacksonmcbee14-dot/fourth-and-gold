@@ -250,3 +250,10 @@ body.vip-high .chip{box-shadow:0 3px 0 rgba(0,0,0,.4),inset 0 0 0 3px var(--vipc
 .rank[data-a=visitLodge]{cursor:pointer}
 .rank[data-a=visitLodge]:active{background:rgba(200,164,92,.08)}
 .pstar{font-size:12px;color:var(--gold2);font-weight:700}
+/* on a roll: heat */
+.heatp{margin-left:6px;padding-left:8px;border-left:1px solid var(--line2);color:var(--ember);letter-spacing:0}
+#heatChip{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 96px);left:max(12px,env(safe-area-inset-left,0px));z-index:40;display:none;align-items:center;gap:4px;padding:6px 10px;border-radius:999px;background:rgba(20,8,4,.85);border:1px solid var(--ember);box-shadow:0 0 18px rgba(232,150,60,.45);font-size:14px;pointer-events:none}
+#heatChip.on{display:flex;animation:heatpulse 1.2s ease-in-out infinite}
+#heatChip b{font-family:var(--mono);color:var(--gold2);font-size:13px}
+@keyframes heatpulse{50%{box-shadow:0 0 28px rgba(232,150,60,.75)}}
+@media (prefers-reduced-motion:reduce){#heatChip.on{animation:none}}

@@ -43,6 +43,8 @@ function vipTier(){
 // The badge shown next to a player's name (Diamond and up), from the best table they've sat at.
 const vipBadge=id=>{ const i=vipIndex(id); return i>=3?` <span title="${esc(vipAt(i).name)} table">${vipAt(i).icon}</span>`:''; };
 const tableMin=()=>vipTier().min;
+// Every table also has a maximum bet: 100× its minimum. To bet bigger, grow into the next table.
+const tableMax=()=>vipTier().min*100;
 const slotMin=()=>vipTier().min;
 function vipLook(){ const t=vipTier(); document.body.classList.remove('vip-silver','vip-gold','vip-diamond','vip-high');
   if(t.i===1) document.body.classList.add('vip-silver'); else if(t.i===2) document.body.classList.add('vip-gold'); else if(t.i===3) document.body.classList.add('vip-diamond');
@@ -53,7 +55,7 @@ function vipOpen(){
   modal(`<div class="fgm-k">Choose your table</div><p class="small muted" style="margin:-4px 0 12px">Your minimum bet stays put until you change it. Payouts are the same everywhere — higher tables earn XP faster and bring VIP perks. Past the top table, Prestige (⭐) keeps you climbing.</p>
     <div class="vipx">${list.slice().reverse().map(v=>{ const ok=worth()>=v.need, on=v.i===cur;
       return `<button class="vipx-t ${on?'on':''}" style="--vc:${v.color}" data-a="vipPick" data-v="${v.i}" ${ok?'':'disabled'}><span class="vipx-ic">${v.icon}</span>
-        <div><b>${esc(v.name)}</b><span>Min bet ${k$(v.min)}</span><small>${esc(v.perks)}</small></div>
+        <div><b>${esc(v.name)}</b><span>Bets ${k$(v.min)} – ${k$(v.min*100)}</span><small>${esc(v.perks)}</small></div>
         <i>${on?'Your table':ok?'Sit here':'Needs '+k$(v.need)}</i></button>`; }).join('')}</div>`);
   const on=document.querySelector('#fgModal .vipx-t.on'); if(on) on.scrollIntoView({block:'center'});
 }
@@ -105,27 +107,29 @@ const _drinkPriceE=drinkPrice;
 drinkPrice=function(d){ const base=_drinkPriceE(d); if(base===0) return 0; return Math.max(base,nice(worth()*(DRINK_PCT[d.id]||0))); };
 
 /* ---------- Enforcing the table minimum ---------- */
-const belowMin=amt=>{ const m=tableMin(); if(amt>=m) return false; toast(`${vipTier().name} table minimum: ${fmt$(m)}`,'loss'); return true; };
+const belowMin=amt=>{ const m=tableMin(), M=tableMax()*betX(); if(amt<m){ toast(`${vipTier().name} table minimum: ${fmt$(m)}`,'loss'); return true; }
+  if(amt>M){ toast(`${vipTier().name} table maximum: ${fmt$(M)} — move up a table to bet more`,'loss'); return true; } return false; };
 const _rSpinE=rSpin; rSpin=function(){ if(!RL.spinning&&rTotal()>0&&belowMin(rTotal())) return; return _rSpinE.apply(this,arguments); };
 const _bjDealE=bjDeal; bjDeal=function(){ if(BJ.bet>0&&belowMin(BJ.bet)) return; return _bjDealE.apply(this,arguments); };
 const _vpDealE=vpDeal; vpDeal=function(){ if(VP.phase==='bet'&&belowMin(VP.unit*VP.coins)) return; return _vpDealE.apply(this,arguments); };
 const _crbetE=ACT.crbet; ACT.crbet=el=>{ if(!CR.rolling&&belowMin(S.chip)) return; _crbetE(el); };
 const _slotSpinE=slotSpin;
-slotSpin=function(){ if(!SL.spinning&&!(SL.fs>0)&&S.slotBet<slotMin()){ S.slotBet=slotMin(); save(); slUI(); toast('Bet raised to the table minimum: '+fmt$(S.slotBet),'gold'); }
+slotSpin=function(){ if(!SL.spinning&&!(SL.fs>0)&&S.slotBet>tableMax()){ S.slotBet=tableMax(); save(); slUI(); toast('Bet lowered to the table maximum: '+fmt$(S.slotBet),'gold'); }
+  if(!SL.spinning&&!(SL.fs>0)&&S.slotBet<slotMin()){ S.slotBet=slotMin(); save(); slUI(); toast('Bet raised to the table minimum: '+fmt$(S.slotBet),'gold'); }
   return _slotSpinE.apply(this,arguments); };
 const _placeE=ACT.placeSlip; ACT.placeSlip=el=>{ const c=slipCalc(); if(c.legs.length&&c.stake>0&&belowMin(c.stake)) return; _placeE(el); };
 
 // Slots: the − / + buttons step through bets at or above the minimum, and a bet below it is raised.
-function slotLadder(){ const m=slotMin(), L=SLOT_BETS.filter(v=>v>=m); for(const k of [1,2.5,5,10,25,50,100]){ const v=nice(m*k); if(!L.includes(v)&&v>=m) L.push(v); } return L.sort((a,b)=>a-b).filter(v=>v<=Math.max(S.bank,m)).slice(0,10); }
+function slotLadder(){ const m=slotMin(), L=SLOT_BETS.filter(v=>v>=m&&v<=tableMax()); for(const k of [1,2.5,5,10,25,50,100]){ const v=nice(m*k); if(!L.includes(v)&&v>=m) L.push(v); } return L.sort((a,b)=>a-b).filter(v=>v<=Math.max(S.bank,m)&&v<=tableMax()).slice(0,10); }
 ACT.slBet=el=>{ if(SL.spinning||SL.fs>0) return; const L=slotLadder(), d=+el.dataset.v; let i=L.findIndex(v=>v>=S.slotBet);
   if(i<0) i=d>0?L.length-1:L.length-2; else if(L[i]===S.slotBet) i+=d; else if(d<0) i--;
   i=clamp(i,0,L.length-1); S.slotBet=L[i]; save(); slUI(); tone(500+i*60,.06,'square',.04); };
-const _slUIE=slUI; slUI=function(){ if(!SL.spinning&&!(SL.fs>0)&&S.slotBet<slotMin()){ S.slotBet=slotMin(); save(); } return _slUIE.apply(this,arguments); };
+const _slUIE=slUI; slUI=function(){ if(!SL.spinning&&!(SL.fs>0)&&S.slotBet<slotMin()){ S.slotBet=slotMin(); save(); } if(!SL.spinning&&!(SL.fs>0)&&S.slotBet>tableMax()){ S.slotBet=tableMax(); save(); } return _slUIE.apply(this,arguments); };
 
 /* ---------- Showing it ---------- */
 const _gameHeadE=gameHead;
 gameHead=function(key,title){ const t=vipTier(); vipLook();
-  return _gameHeadE(key,title)+`<button class="tblmin t-${t.id}" style="--vc:${t.color}" data-a="vipOpen" title="Choose your table"><i>${t.icon}</i>${t.name} table · min <b class="mono">${cmp$(t.min)}</b><span class="tblmin-c">Change ▾</span></button>`; };
+  return _gameHeadE(key,title)+`<button class="tblmin t-${t.id}" style="--vc:${t.color}" data-a="vipOpen" title="Choose your table"><i>${t.icon}</i>${t.name} · <b class="mono">${cmp$(t.min)}–${cmp$(t.min*100)}</b>${heatPill()}<span class="tblmin-c">Change ▾</span></button>`; };
 const _renderV=render; render=function(){ _renderV(); if(S.mode!=='casino') document.body.classList.remove('vip-silver','vip-gold','vip-diamond'); };
 const _renderSlipE=renderSlip;
 renderSlip=function(){ _renderSlipE(); const m=tableMin(); if(m>1000&&$('#sheet').classList.contains('on')){ const a=$('#sheet .amts'); if(a) a.insertAdjacentHTML('beforebegin',`<div class="small muted" style="margin:10px 0 -4px">${vipTier().name} table minimum: <b class="gold">${fmt$(m)}</b></div>`); } };
@@ -135,10 +139,10 @@ ACT.bankSheet=el=>{ _bankSheetE(el); const t=vipTier();
 
 
 /* ---------- The vault, Prestige and a sober old fashioned ---------- */
-// Cash tops out at $1 quadrillion (the vault). Past that, Prestige: start again at $1M with a ⭐ that's
+// Cash tops out at $1 trillion (the vault). Past that, Prestige: start again at $1M with a ⭐ that's
 // yours forever — +20% XP per star, a star next to your name, and stars rank first on the leaderboard.
 // Stars never run out, so the climb never ends, but the numbers always stay readable and exact.
-const VAULT=1e15;
+const VAULT=1e12;
 const vipMaxTier=()=>{ let i=0; while(vipAt(i+1).need<=VAULT) i++; return i; };
 let vaultNoted=0;
 const _saveV=save;
@@ -188,3 +192,44 @@ orderDrink=function(id){
   const before=S.bank; _orderDrinkV(id);
   if(id==='oldfash'&&S.lodge.drink&&S.lodge.drink.id==='oldfash'&&S.bank<before){ S.ofDay=dayKey(); S.lodge.drink.cap=(before-S.bank)*OF_CAP; S.lodge.drink.used=0; save(); toast(`🥃 Bonus winnings up to ${k$(S.lodge.drink.cap)} — then it wears off`,'gold'); }
 };
+
+
+/* ---------- On a roll: the heat meter ---------- */
+// Every casino win in a row heats you up 🔥: +10% on the winnings per win, up to +50%. Any round without a win
+// cools you back to zero. The table maximum keeps a hot streak exciting without letting it run away.
+const HEAT_MAX=5;
+let heatWonSince=true;
+const heatPill=()=>S.heat>0?`<span class="heatp">${'🔥'.repeat(Math.min(S.heat,5))} +${S.heat*10}%</span>`:'';
+function heatUI(){ let el=document.getElementById('heatChip');
+  if(!el){ el=document.createElement('div'); el.id='heatChip'; document.body.appendChild(el); }
+  const on=S.mode==='casino'&&S.heat>0&&!(typeof lodgeActive==='function'&&lodgeActive());
+  el.className=on?'on':''; el.innerHTML=on?`${'🔥'.repeat(Math.min(S.heat,5))}<b>+${S.heat*10}%</b>`:''; }
+function heatWager(){ if(!heatWonSince&&S.heat){ S.heat=0; heatUI(); } heatWonSince=false; }
+function heatWin(base,profit){
+  if(S.mode!=='casino'||!(profit>0)) return profit;
+  const boosted=Math.round(profit*(1+.1*(S.heat||0)));
+  if(!heatWonSince){ heatWonSince=true; const before=S.heat||0; S.heat=Math.min(HEAT_MAX,before+1);
+    if(S.heat>before) setTimeout(()=>toast(`${'🔥'.repeat(S.heat)} On a roll! Winnings +${S.heat*10}%`,'gold'),700); }
+  heatUI(); return boosted;
+}
+const _boostRetH=boostRet;
+boostRet=function(ret,stake,x){ const r=_boostRetH(ret,stake,x); if(S.mode!=='casino'||r<=stake) return r; return stake+heatWin(r,r-stake); };
+for(const fn of ['rSpin','bjDeal','vpDeal','crRoll']){ const f=window[fn]; window[fn]=function(){ heatWager(); return f.apply(this,arguments); }; }
+const _slotSpinH=slotSpin; slotSpin=function(){ if(!SL.spinning&&!(SL.fs>0)) heatWager(); return _slotSpinH.apply(this,arguments); };
+const _renderH=render; render=function(){ _renderH(); heatUI(); };
+
+/* ---------- Prestige rewards: a piece of gear for each of your first five stars ---------- */
+const PRESTIGE_ITEMS=[
+  {id:'hat_star1',  cat:'clothes',sub:'hat',  slot:'hat',  name:'⭐ Star circlet',      desc:'Prestige 1 reward.',grid:['............','.....y......','....yyy.....','...yyyyyy...','...yyyyyy...'],pal:{y:'#ffe066'}},
+  {id:'coat_star2', cat:'clothes',sub:'body', slot:'body', name:'⭐ Starlight coat',    desc:'Prestige 2 reward.',colors:{c:'#1a1a4a',C:'#ffe066',b:'#ffe066',w:'#ffe066'}},
+  {id:'watch_star3',cat:'clothes',sub:'watch',slot:'watch',name:'⭐ Shooting-star watch',desc:'Prestige 3 reward.',dot:'#ffe066'},
+  {id:'decor_star4',cat:'decor',sub:'treasure',name:'⭐ Star statue',desc:'Prestige 4 reward.',w:14,h:24},
+  {id:'decor_star5',cat:'decor',sub:'wall',name:'⭐ Five-star banner',desc:'Prestige 5 reward.',w:18,h:22,wall:1},
+];
+DECOR_ART.decor_star4=(c,x,y,t)=>{ rect(c,x+2,y+20,10,4,'#5a5a64'); rect(c,x+5,y+12,4,8,'#c8a45c'); for(let i=0;i<5;i++){ const a=-Math.PI/2+i*2*Math.PI/5; rect(c,x+6+Math.cos(a)*5,y+6+Math.sin(a)*5,3,3,'#ffe066'); } rect(c,x+5,y+5,4,4,'#ffe066'); if(Math.sin((t||0)*3)>.6) rect(c,x+11,y+2,1,1,'#ffffff'); };
+DECOR_ART.decor_star5=(c,x,y)=>{ rect(c,x,y,18,2,LP.brass0); rect(c,x+1,y+2,16,18,'#1a1a4a'); for(let i=0;i<5;i++) rect(c,x+3+i*3,y+8,2,2,'#ffe066'); ptext(c,'5',x+7,y+13,'#ffe066'); };
+for(const it of PRESTIGE_ITEMS){ Object.assign(it,{prestige:1,league:1,price:0,lvl:1}); if(!ITEM[it.id]){ ITEMS.push(it); ITEM[it.id]=it; } }
+function prestigeGear(){ let got=null; PRESTIGE_ITEMS.forEach((it,i)=>{ if((S.prestige||0)>i&&!owns(it.id)){ grantPrize(it.id); got=it; } }); return got; }
+const _prestigeGoH=ACT.prestigeGo;
+ACT.prestigeGo=el=>{ const p0=S.prestige||0; _prestigeGoH(el); if((S.prestige||0)>p0){ S.heat=0; const g=prestigeGear(); if(g) setTimeout(()=>toast('Prestige reward: '+g.name,'gold'),2500); } };
+setTimeout(prestigeGear,1500);
