@@ -91,10 +91,11 @@ function drawHomeBg(tier,room,wins,cams){
   return HOME_BG[key]=c;
 }
 drawRoomStatic=function(){ return drawHomeBg(homeTier(),curRoom(),home().windows,Math.min(home().windows,camsOwned())); };
-// Friends see your main room, in your home's style.
+// Visitors can look around every room of your home except the vault room, in your home's style.
 drawFriendRoom=function(cv,d){
-  const x=cv.getContext('2d'); x.imageSmoothingEnabled=false; x.drawImage(drawHomeBg(d.home||0,'main',d.windows||1,d.cams||0),0,0);
-  const room=(Array.isArray(d.room)?d.room:[]).filter(p=>ITEM[p.id]&&DECOR_ART[p.id]);
+  const r=d.viewRoom&&d.viewRoom!=='vault'?d.viewRoom:'main', deco=r==='main'?d.room:(d.rooms||{})[r];
+  const x=cv.getContext('2d'); x.imageSmoothingEnabled=false; x.clearRect(0,0,PW,PH); x.drawImage(drawHomeBg(d.home||0,r,d.windows||1,d.cams||0),0,0);
+  const room=(Array.isArray(deco)?deco:[]).filter(p=>ITEM[p.id]&&DECOR_ART[p.id]);
   room.sort((a,b)=>(ITEM[a.id].floor?0:1)-(ITEM[b.id].floor?0:1)||(ITEM[a.id].wall?0:1)-(ITEM[b.id].wall?0:1)||(a.y+ITEM[a.id].h)-(b.y+ITEM[b.id].h));
   for(const p of room) DECOR_ART[p.id](x,p.x,p.y,0);
   drawPerson(x,'player','idle0',typeof lookFor==='function'?lookFor(d.outfit):null,140,262,-1);
@@ -107,8 +108,8 @@ function goRoom(id){
   S.lodge.roomId=id; S.lodge.room=S.lodge.rooms[id]||[]; save(); closeShop(); openRoom();
   toast(typeof roomLabel==='function'?roomLabel(id):ROOM_NAMES[id],'gold');
 }
-// Your main room is what friends see when they visit, so keep a copy of it.
-const _saveHome=save; save=function(){ if(S.lodge&&curRoom()==='main'){ S.lodge.rooms=S.lodge.rooms||{}; S.lodge.rooms.main=S.lodge.room; } return _saveHome.apply(this,arguments); };
+// Visitors see your rooms, so keep a copy of the one you're in (the vault room is never shown: supabase/update-16).
+const _saveHome=save; save=function(){ if(S.lodge&&S.lodge.room){ S.lodge.rooms=S.lodge.rooms||{}; S.lodge.rooms[curRoom()]=S.lodge.room; } return _saveHome.apply(this,arguments); };
 
 /* ---------- The Home panel ---------- */
 function homeHud(mode){

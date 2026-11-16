@@ -52,13 +52,17 @@ async function visitLodge(name){
   if(!d||d.error){ modal(`<div class="fgm-k">${esc(name)}’s lodge</div><p>${{no_player:'No player by that name.'}[d&&d.error]||(SOC.err==='setup'||!d?'Visits need the latest server update (supabase/update-7-heists.sql).':'Couldn’t get there. Check your connection.')}</p>`); return; }
   HV.data=d; visitDraw();
 }
+// Tabs for every room of their home except the vault room.
+function visitRooms(d){ const H=typeof HOMES!=='undefined'&&HOMES[d.home||0]; return (H?H.rooms:['main']).filter(r=>r!=='vault'); }
+function visitTabs(d){ const rs=visitRooms(d); if(rs.length<2) return ''; const cur=d.viewRoom||'main';
+  return `<div class="hv-rooms">${rs.map(r=>`<button class="${r===cur?'on':''}" data-a="visitRoom" data-v="${r}">${esc((H=>(H&&H.names&&H.names[r])||ROOM_NAMES[r]||r)(HOMES[d.home||0]))}</button>`).join('')}</div>`; }
 function visitDraw(){
   const d=HV.data, tier=typeof vipAt==='function'?vipAt(d.vipIdx||0):null, def=d.defense||{items:[]};
   const shield=d.shield_until&&new Date(d.shield_until)>new Date();
   const left=shield?Math.ceil((new Date(d.shield_until)-Date.now())/36e5):0;
   modal(`<div class="hv">
     <div class="fgm-k">${esc(d.name)}’s lodge ${tier?tier.icon:''}</div>
-    <canvas class="px hv-room" width="${PW}" height="${PH}"></canvas>
+    <canvas class="px hv-room" width="${PW}" height="${PH}"></canvas>${visitTabs(d)}
     <div class="hv-stats"><span>Worth <b class="mono">${k$(d.bank||0)}</b></span><span>${tier?esc(tier.name)+' table':''}</span><span>Lv ${levelOf(d.xp||0).L}</span></div>
     <div class="hv-def">${def.items.length?def.items.map(id=>`<span>${esc(ITEM[id]?ITEM[id].name:id)}</span>`).join(''):'<span class="none">No security. Wide open.</span>'}</div>
     ${d.me?'<p class="small muted">This is how your lodge looks to friends.</p>':`
@@ -121,6 +125,8 @@ async function heistEnd(cracked,why){
 }
 Object.assign(ACT,{
   visitLodge:el=>visitLodge(el.dataset.v),
+  visitRoom:el=>{ const d=HV.data; if(!d||el.dataset.v==='vault') return; d.viewRoom=el.dataset.v; const cv=document.querySelector('#fgModal .hv-room'); if(cv) drawFriendRoom(cv,d);
+    document.querySelectorAll('#fgModal .hv-rooms button').forEach(b=>b.classList.toggle('on',b===el)); tone(700,.03,'square',.02); },
   heistStart:el=>heistStart(el&&el.dataset&&el.dataset.v!=null?+el.dataset.v:0),
   heistTap:()=>heistTapNow(),
   heistShare:()=>shareCard({game:'league',title:'Robbed '+HV.data.name,amount:null,big:'💰 HEIST',sub:'Cracked the safe at '+HV.data.name+'’s lodge'}),
