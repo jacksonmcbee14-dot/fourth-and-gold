@@ -54,10 +54,13 @@ async function socRefresh(force){
   SOC.busy=false; socBadge(); return SOC.me;
 }
 // Apply money and prizes waiting on the server, then tell the server they arrived.
+const INBOX_KINDS=['invite','champion','challenge_win','robbed','heist_fine','home_gift','pickem_champ','challenge_refund'];
 async function socInbox(items){
   if(!items.length) return;
   S.inboxDone=S.inboxDone||[]; const done=[];
   for(const it of items){
+    // Leave anything this version doesn't understand on the server, so a newer version can still deliver it.
+    if(!INBOX_KINDS.includes(it.kind)) continue;
     done.push(it.id); if(S.inboxDone.includes(it.id)) continue; S.inboxDone.push(it.id);
     if(it.kind==='invite'){ const d=S.debt||0; if(it.clear_debt) S.debt=0; addGift(it.amount); celebrate('Your friend joined!',`${it.label} signed up with your invite.`,(d?'Debt of '+fmt$(d)+' wiped + ':'')+fmt$(it.amount)); }
     else if(it.kind==='champion'){ grantPrize(it.item); celebrate('League champion!',`You finished #1 in ${it.label} last week.`,'You won: '+((ITEM[it.item]||{}).name||'a prize'),it.item); }
