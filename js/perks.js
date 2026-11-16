@@ -8,7 +8,17 @@
 /* ---------- Net worth includes what you own ---------- */
 const RESALE=.6;
 function paidFor(id){ const it=ITEM[id]; if(!it||it.free||it.league) return 0; const p=(S.lodge.paid||{})[id]; return p!=null?p:(it._base||0); }
-function assetValue(){ return Math.round((S.lodge&&S.lodge.owned||[]).reduce((s,id)=>s+paidFor(id)*RESALE,0)); }
+// Never worth more than one full vault ($1Qa), so items can't be used to dodge Prestige.
+function assetValue(){ return Math.min(1e15,Math.round((S.lodge&&S.lodge.owned||[]).reduce((s,id)=>s+paidFor(id)*RESALE,0))); }
+// After a Prestige, everything you own is valued at its normal shop price again (what you paid while rich
+// doesn't carry over). This also fixes anyone who prestiged before this rule existed.
+function prestigeRevalue(){ if(!S.lodge||!((S.prestige||0)>0)||S.paidReset===S.prestige) return;
+  const before=typeof leagueScoreRaw==='function'?leagueScoreRaw():0;
+  S.lodge.paid={}; S.paidReset=S.prestige;
+  if(typeof leagueScoreRaw==='function') S.ladj=(S.ladj||0)+before-leagueScoreRaw();   // revaluing isn't a loss in your league
+  save(); }
+prestigeRevalue();
+const _adoptStateP=adoptState; adoptState=function(st){ _adoptStateP(st); prestigeRevalue(); render(); };
 function notePaid(ids,prices){ S.lodge.paid=S.lodge.paid||{}; ids.forEach((id,i)=>S.lodge.paid[id]=prices[i]); }
 // Buying keeps 60% of the price as value, so only the other 40% counts as "spent" for league scores.
 const _buyItemP=buyItem;
