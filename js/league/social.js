@@ -63,6 +63,7 @@ async function socInbox(items){
     else if(it.kind==='champion'){ grantPrize(it.item); celebrate('League champion!',`You finished #1 in ${it.label} last week.`,'You won: '+((ITEM[it.item]||{}).name||'a prize'),it.item); }
     else if(it.kind==='challenge_win'){ setBank(it.amount); toast('Challenge won! +'+fmt$(it.amount),'win'); }
     else if((it.kind==='robbed'||it.kind==='heist_fine')&&typeof heistInbox==='function'){ heistInbox(it); }
+    else if(it.kind==='home_gift'&&typeof homeGiftInbox==='function'){ homeGiftInbox(it); }
     else if(it.kind==='pickem_champ'&&typeof pickemInbox==='function'){ pickemInbox(it); }
     else if(it.kind==='challenge_refund'){ S.bank=Math.round(S.bank+it.amount); save(); toast('Challenge stake returned · '+fmt$(it.amount),'gold'); }
   }

@@ -22,7 +22,8 @@ const HOME_PAL=[
   {w1:'#123a2a',w2:'#0f3324',wl:'#c8a45c',wain:'#0a2418',trim:'#ffd84a',f1:'#e8e2d6',f2:'#c8c0b0',fl:'#a8a090',floor:'marble'},
   {w1:'#16161c',w2:'#131318',wl:'#ffd84a',wain:'#0a0a0e',trim:'#ffd84a',f1:'#f3efe6',f2:'#1a1a20',fl:'#c8a45c',floor:'marble'},
 ];
-const homeTier=()=>{ const L=myLevel(); let i=0; HOMES.forEach((h,k)=>{ if(L>=h.lv) i=k; }); return i; };
+// A home can also be gifted by a friend (S.lodge.giftHome): you live in whichever is bigger.
+const homeTier=()=>{ const L=myLevel(); let i=0; HOMES.forEach((h,k)=>{ if(L>=h.lv) i=k; }); return Math.max(i,Math.min(HOMES.length-1,S.lodge.giftHome||0)); };
 const home=()=>HOMES[homeTier()];
 const curRoom=()=>{ const r=S.lodge.roomId||'main'; return home().rooms.includes(r)?r:'main'; };
 const roomPlain=()=>{ const r=curRoom(); return r==='vault'||r==='green'; };
@@ -34,6 +35,13 @@ function homeSync(){ const i=homeTier(), H=HOMES[i], cams=Math.min(H.windows,cam
   if(S.lodge.cams!==cams){ S.lodge.cams=cams; ch=true; }
   if(ch) save(); }
 setInterval(homeSync,5000); setTimeout(homeSync,800);
+// A friend gave you a home (arrives through the inbox, see socInbox in js/league/social.js).
+function homeGiftInbox(it){ const t=Math.max(0,Math.min(HOMES.length-1,+it.amount||0)), H=HOMES[t], from=it.label||'A friend';
+  if(t>(S.lodge.giftHome||0)) S.lodge.giftHome=t;
+  S.lodge.home=homeTier(); S.lodge.windows=home().windows; save();
+  setTimeout(()=>celebrate('Free upgrade!',`${from} gave you the ${H.name} — for free.`,`${H.rooms.length} rooms · ${H.windows} windows`),600); }
+// Check for gifts and robberies soon after opening the app, not only on the League tab.
+setTimeout(()=>{ if(typeof socRefresh==='function') socRefresh(true); },4000);
 
 /* ---------- Drawing the rooms ---------- */
 const HOME_BG={};
