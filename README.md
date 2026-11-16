@@ -47,6 +47,7 @@ The first time, macOS may ask whether Python can accept incoming network connect
 | `js/update.js` | Auto-update: when the app opens or comes back on screen it checks for a newer published version and reloads into it. |
 | `js/perks.js` · `js/lodge/extras-items.js` | Reasons to spend: your stuff counts toward net worth at 60% of what you paid (and Silas buys it back for that), perk items, collections (finish a set for +1,000 XP and +5% XP for good), and a weekly limited shelf. |
 | `js/league/sports.js` | Reasons to bet on sports: weekly league pick'em, Tail a friend's bet from the feed, a daily odds boost, win streaks that unlock the Sharp title and sportsbook-only gear, and game-day wins counting double in leagues. Needs `supabase/update-8-sports.sql`. |
+| `js/fire.js` | 🔥 On a roll: animated flames around the table or slot machine, and flickering fire on your chips, cards and bets, growing with your heat. |
 | `js/money.js` | Daily top-up to $1M, borrowing (any amount up to $250K a loan), and what a reset wipes. |
 | `supabase/` | Database setup script, plus numbered update scripts to run in order. |
 | `js/football/sportsbook.js` | Prices, bet slip and settling bets. |

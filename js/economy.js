@@ -199,7 +199,7 @@ orderDrink=function(id){
 // cools you back to zero. The table maximum keeps a hot streak exciting without letting it run away.
 const HEAT_MAX=5;
 let heatWonSince=true;
-const heatPill=()=>S.heat>0?`<span class="heatp">${'🔥'.repeat(Math.min(S.heat,5))} +${S.heat*10}%</span>`:'';
+const heatPill=()=>S.heat>0?`<span class="heatp">🔥+${S.heat*10}%</span>`:'';
 function heatUI(){ let el=document.getElementById('heatChip');
   if(!el){ el=document.createElement('div'); el.id='heatChip'; document.body.appendChild(el); }
   const on=S.mode==='casino'&&S.heat>0&&!(typeof lodgeActive==='function'&&lodgeActive());
