@@ -62,7 +62,7 @@ function visitDraw(){
     <div class="hv-stats"><span>Worth <b class="mono">${k$(d.bank||0)}</b></span><span>${tier?esc(tier.name)+' table':''}</span><span>Lv ${levelOf(d.xp||0).L}</span></div>
     <div class="hv-def">${def.items.length?def.items.map(id=>`<span>${esc(ITEM[id]?ITEM[id].name:id)}</span>`).join(''):'<span class="none">No security. Wide open.</span>'}</div>
     ${d.me?'<p class="small muted">This is how your lodge looks to friends.</p>':`
-    <button class="btn gold wide" data-a="heistStart" ${shield||!d.tries_left?'disabled':''}>${shield?`🛡️ Shielded for ${left}h after a robbery`:d.tries_left?`🕵️ Rob ${esc(d.name)} · ${d.tries_left} ${d.tries_left===1?'try':'tries'} left today`:'No tries left today'}</button>
+    ${typeof robChoices==='function'?robChoices(d,shield,left):''}
     <p class="small muted" style="text-align:center;margin:8px 0 0">Crack the safe to take up to 5% of what they’re worth (never more than you’re worth). Get caught and you pay them 2% of yours.</p>`}
     ${(d.recent||[]).length?`<div class="hv-recent">${d.recent.map(r=>`<div>${r.result==='stole'?'💰':'🚨'} <b>${esc(r.thief)}</b> ${r.result==='stole'?'stole '+k$(r.amount):r.result==='caught'?'got caught':'set off the alarm'} <small class="muted">· ${ago(r.at)}</small></div>`).join('')}</div>`:''}
   </div>`);
@@ -71,11 +71,14 @@ function visitDraw(){
 
 /* ---------- The safe-cracking game ---------- */
 const HG={};
-function heistStart(){
-  const d=HV.data; if(!d) return;
+function heistStart(entry){
+  const d=HV.data; if(!d) return; HG.entry=entry||0;
   const gap=Math.max(0,(d.vipIdx||0)-(d.myVipIdx||0)), items=(d.defense||{}).items||[];
-  const dials=Math.min(8,3+gap+(items.includes('decor_laser_grid')?1:0));
-  const zone=Math.max(14,42-6*gap-(items.includes('decor_cameras')?8:0));   // degrees of the gold zone
+  // The way in changes the safe: the front door is harder with a bouncer; a window with a camera on it is
+  // tighter and has an extra dial; an uncovered window is the easy way in.
+  const covered=HG.entry>0&&HG.entry<=(d.cams||0), open=HG.entry>0&&!covered;
+  const dials=Math.min(9,3+gap+(items.includes('decor_laser_grid')?1:0)+(covered?1:0)+(HG.entry===0&&items.includes('decor_bouncer')?1:0));
+  const zone=Math.max(14,42-6*gap-(covered?10:0)+(open?6:0));   // degrees of the gold zone
   Object.assign(HG,{dials,zone,i:0,spd:200+60*gap,ang:0,last:0,raf:0,targets:Array.from({length:dials},()=>Math.random()*360),done:false,timeLeft:6+dials*3,start:performance.now()});
   modal(`<div class="hg"><div class="fgm-k">Crack ${esc(d.name)}’s safe</div>
     <p class="small muted" style="margin:-4px 0 10px">Tap <b>Crack</b> when the needle is in the gold. ${dials} dials${gap?` · their table is ${gap} above yours, so it’s harder`:''}${items.includes('decor_cameras')?' · cameras tighten the zone':''}${items.includes('decor_laser_grid')?' · laser grid adds a dial':''}.</p>
@@ -105,7 +108,7 @@ async function heistEnd(cracked,why){
   HG.done=true; cancelAnimationFrame(HG.raf);
   if(!cracked){ tone(220,.4,'sawtooth',.06); tone(180,.4,'sawtooth',.06,.25); }
   modal(`<div class="hg"><div class="fgm-k">${cracked?'Cracked it…':'🚨 '+esc(why)}</div><div class="empty">${cracked?'Sneaking out with the cash…':'Security is on the way…'}</div></div>`,'stay');
-  let r=null; try{ r=await srpc('fg_heist',{p_name:HV.data.name,p_cracked:cracked}); }catch(e){}
+  let r=null; try{ r=await srpc('fg_heist2',{p_name:HV.data.name,p_cracked:cracked,p_entry:HG.entry||0}); }catch(e){ try{ r=await srpc('fg_heist',{p_name:HV.data.name,p_cracked:cracked}); }catch(e2){} }
   if(!r||r.error){ modal(`<div class="fgm-k">Heist called off</div><p>${{shielded:'They were just robbed — they’re shielded for 12 hours.',no_tries:'You’re out of tries for today.'}[r&&r.error]||'Couldn’t reach the server.'}</p>`); return; }
   HV.data.tries_left=r.tries_left;
   if(r.result==='stole'){ setBank(r.amount); try{ fx.coins(80,2200); fx.confetti(140); }catch(e){} [523,659,784,1047,1319].forEach((f,i)=>tone(f,.12,'square',.05,i*.08));
@@ -118,7 +121,7 @@ async function heistEnd(cracked,why){
 }
 Object.assign(ACT,{
   visitLodge:el=>visitLodge(el.dataset.v),
-  heistStart:()=>heistStart(),
+  heistStart:el=>heistStart(el&&el.dataset&&el.dataset.v!=null?+el.dataset.v:0),
   heistTap:()=>heistTapNow(),
   heistShare:()=>shareCard({game:'league',title:'Robbed '+HV.data.name,amount:null,big:'💰 HEIST',sub:'Cracked the safe at '+HV.data.name+'’s lodge'}),
   heistRevenge:el=>visitLodge(el.dataset.v),

@@ -97,6 +97,7 @@ function openRoom(){
 // The bottom buttons change with the room you're in.
 function setHud(mode){
   const L=document.getElementById('lgLeft'), R=document.getElementById('lgRight'); if(!L||!R) return;
+  if(typeof homeHud==='function') homeHud(mode);
   if(mode==='room'){ L.textContent='Great room'; L.dataset.lg='hub'; R.textContent=LODGE.room&&LODGE.room.ED.on?'Done':'Decorate'; R.dataset.lg='decorate'; R.classList.remove('lg-round'); }
   else { L.textContent='My Room'; L.dataset.lg='myroom'; R.textContent='?'; R.dataset.lg='labels'; R.classList.add('lg-round'); }
 }

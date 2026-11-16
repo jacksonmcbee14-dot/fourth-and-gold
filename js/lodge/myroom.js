@@ -84,10 +84,11 @@ function makeRoom(host){
   const ED={on:false,drag:null,sel:null,moved:false,min:false};
   const loop=makeLoop((t,dt)=>{
     ctx.drawImage(drawRoomStatic(),0,0);
-    rect(ctx,68,32,32,48,LP.night1); for(let yy=-3;yy<=3;yy++)for(let xx=-3;xx<=3;xx++) if(xx*xx+yy*yy<=9) rect(ctx,90+xx,40+yy,1,1,LP.moon);
-    snow.draw(ctx,dt,LP.snow2); rect(ctx,68,74,32,6,LP.snow1); rect(ctx,83,32,2,48,LP.wal4); rect(ctx,68,54,32,2,LP.wal4);
+    const plain=typeof roomPlain==='function'&&roomPlain();   // vault room and putting green: no window, no trophy shelf (js/lodge/home.js)
+    if(!plain){ rect(ctx,68,32,32,48,LP.night1); for(let yy=-3;yy<=3;yy++)for(let xx=-3;xx<=3;xx++) if(xx*xx+yy*yy<=9) rect(ctx,90+xx,40+yy,1,1,LP.moon);
+    snow.draw(ctx,dt,LP.snow2); rect(ctx,68,74,32,6,LP.snow1); rect(ctx,83,32,2,48,LP.wal4); rect(ctx,68,54,32,2,LP.wal4); }
     // trophies on the shelf
-    TROPHIES.forEach((tr,i)=>{ const row=i<5?0:1, col=row?i-5:i, sx=ROOM_SHELF.x+4+col*13+(row?6:0), sy=ROOM_SHELF.y+18+row*30;
+    if(!plain) TROPHIES.forEach((tr,i)=>{ const row=i<5?0:1, col=row?i-5:i, sx=ROOM_SHELF.x+4+col*13+(row?6:0), sy=ROOM_SHELF.y+18+row*30;
       trophyIcon(ctx,tr.icon,sx,sy,hasTrophy(tr.id)); if(hasTrophy(tr.id)&&Math.sin(t*2+i)>.93) rect(ctx,sx+8,sy,1,1,LP.brass3); });
     // decor: rugs first, then everything else from back to front
     const list=drawOrder();

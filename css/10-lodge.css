@@ -127,3 +127,9 @@ body.in-lodge .xppop{top:auto;bottom:80px;right:50%;transform:translateX(50%)}
 .lg-set-it.own{opacity:1;box-shadow:0 0 0 1px #c8a45c}
 .lg-item.perk .lg-in::after{content:' ✨'}
 .lg-tabs{flex-wrap:wrap}
+/* the Home panel */
+.lg-home-h{margin:12px 0 4px;font-size:8px;color:#c8a45c;letter-spacing:.1em}
+.lg-rooms{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0}
+.lg-rooms .lg-btn{font-size:7px;padding:8px}
+.lg-home-row{display:flex;gap:8px;align-items:baseline;padding:4px 0;font-size:7px;color:#a89a80}
+.lg-home-row b{color:#f6ebcb;flex:1}.lg-home-row.on b{color:#ffd84a}.lg-home-row.done{opacity:.6}
