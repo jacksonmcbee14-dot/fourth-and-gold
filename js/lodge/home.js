@@ -105,7 +105,7 @@ function goRoom(id){
   if(!home().rooms.includes(id)) return;
   S.lodge.rooms=S.lodge.rooms||{}; S.lodge.rooms[curRoom()]=S.lodge.room||[];
   S.lodge.roomId=id; S.lodge.room=S.lodge.rooms[id]||[]; save(); closeShop(); openRoom();
-  toast(ROOM_NAMES[id],'gold');
+  toast(typeof roomLabel==='function'?roomLabel(id):ROOM_NAMES[id],'gold');
 }
 // Your main room is what friends see when they visit, so keep a copy of it.
 const _saveHome=save; save=function(){ if(S.lodge&&curRoom()==='main'){ S.lodge.rooms=S.lodge.rooms||{}; S.lodge.rooms.main=S.lodge.room; } return _saveHome.apply(this,arguments); };
@@ -118,12 +118,12 @@ function homeHud(mode){
 }
 const camPrice=()=>nice(Math.max(100000,worth()*.01));
 function homeOpen(){
-  closeShop(); homeSync(); const i=homeTier(), H=HOMES[i], next=HOMES[i+1], cams=Math.min(H.windows,camsOwned()), box=document.createElement('div'); box.className='lg-shop lg-home';
+  closeShop(); homeSync(); const i=homeTier(), H=HOMES[i], next=HOMES[i+1]&&!HOMES[i+1].owner?HOMES[i+1]:null, cams=Math.min(H.windows,camsOwned()), box=document.createElement('div'); box.className='lg-shop lg-home';
   const safeCap=H.safe;
   box.innerHTML=`<div class="lg-shop-head"><span class="lg-dlg-who">${esc(H.name.toUpperCase())}</span><span class="lg-bank-s">LV ${myLevel()}</span><button class="lg-btn lg-round" data-lg="shopClose" aria-label="Close">X</button></div>
     <div class="lg-shop-body">
       <div class="lg-prev-desc">${next?`Next home: <b>${esc(next.name)}</b> at level ${next.lv} — ${next.rooms.length} rooms, ${next.windows} windows.`:'You own the finest home in the lodge.'}</div>
-      <div class="lg-home-h">ROOMS</div><div class="lg-rooms">${H.rooms.map(r=>`<button class="lg-btn ${r===curRoom()?'lg-gold':''}" data-lg="homeRoom" data-v="${r}">${esc(ROOM_NAMES[r])}</button>`).join('')}</div>
+      <div class="lg-home-h">ROOMS</div><div class="lg-rooms">${H.rooms.map(r=>`<button class="lg-btn ${r===curRoom()?'lg-gold':''}" data-lg="homeRoom" data-v="${r}">${esc(typeof roomLabel==='function'?roomLabel(r):ROOM_NAMES[r])}</button>`).join('')}</div>
       <div class="lg-home-h">SECURITY</div>
       <div class="lg-prev-desc">${H.windows} window${H.windows>1?'s':''} · ${cams} covered by cameras${cams<H.windows?` · <b>${H.windows-cams} open</b> — the easy way in for thieves`:' · all covered'}</div>
       ${cams<H.windows?`<button class="lg-btn lg-gold" data-lg="homeCam">Add a camera · ${k$(camPrice())}</button>`:''}
@@ -131,7 +131,7 @@ function homeOpen(){
         <div class="lg-rooms"><button class="lg-btn" data-lg="homeDeposit">Put cash in</button><button class="lg-btn" data-lg="homeWithdraw" ${(S.safe||0)>0?'':'disabled'}>Take cash out</button></div>`
         :`<div class="lg-home-h">VAULT ROOM</div><div class="lg-prev-desc">Comes with the Lodge house at level 35: a windowless room where your savings can’t be stolen.</div>`}
       ${H.rooms.includes('green')?`<div class="lg-home-h">PUTTING GREEN</div><button class="lg-btn lg-gold" data-lg="homeGolf">⛳ Play your green</button>`:''}
-      <div class="lg-home-h">ALL HOMES</div>${HOMES.map((h,k)=>`<div class="lg-home-row ${k===i?'on':k<i?'done':''}"><span>Lv ${h.lv}</span><b>${esc(h.name)}</b><small>${h.rooms.length} room${h.rooms.length>1?'s':''} · ${h.windows} win.</small></div>`).join('')}
+      <div class="lg-home-h">ALL HOMES</div>${HOMES.map((h,k)=>`<div class="lg-home-row ${k===i?'on':k<i?'done':''}"><span>${h.owner?'👑':'Lv '+h.lv}</span><b>${esc(h.name)}</b><small>${h.rooms.length} room${h.rooms.length>1?'s':''} · ${h.windows} win.</small></div>`).join('')}
     </div>`;
   LODGE.el.querySelector('.lg-stage').appendChild(box);
 }
