@@ -1,5 +1,5 @@
 // 👑 The Palace: an owner-only home above the Estate (no level reaches it; it is gifted through the inbox, kind
-// home_gift with amount 6). Eight rooms: throne room, royal suite, ballroom, grand pool, supercar garage, treasury,
+// palace — older versions leave that kind alone). Eight rooms: throne room, royal suite, ballroom, grand pool, supercar garage, treasury,
 // game room and putting green. Royal purple and gold-lattice walls, marble columns, a crown chandelier, a throne on a
 // gold dais, a red carpet, and things that move: twinkling sparkles, a disco floor, pool shimmer, blinking headlights.
 // It comes with 12 cameras (one per window) and both butlers in diamond tuxedos.
