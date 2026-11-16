@@ -257,3 +257,14 @@ body.vip-high .chip{box-shadow:0 3px 0 rgba(0,0,0,.4),inset 0 0 0 3px var(--vipc
 #heatChip b{font-family:var(--mono);color:var(--gold2);font-size:13px}
 @keyframes heatpulse{50%{box-shadow:0 0 28px rgba(232,150,60,.75)}}
 @media (prefers-reduced-motion:reduce){#heatChip.on{animation:none}}
+/* 🔥 fire around the game and on your chips, cards and bets (js/fire.js) */
+.firering{position:absolute;z-index:30;pointer-events:none}
+body[data-heat] .felt,body[data-heat] .cab{box-shadow:0 0 0 2px #ff8a2a,0 0 calc(18px + var(--h,1)*8px) rgba(255,110,30,.55)}
+body[data-heat="1"]{--h:1} body[data-heat="2"]{--h:2} body[data-heat="3"]{--h:3} body[data-heat="4"]{--h:4} body[data-heat="5"]{--h:5}
+body[data-heat] .chip.on,body[data-heat] .stack,body[data-heat] .pcard:not(.back),body[data-heat] .rboard button:has(.stack),body[data-heat] .zone:has(.stack),body[data-heat] .betc .betcust,body[data-heat] .reel{animation:onfire .5s ease-in-out infinite alternate}
+@keyframes onfire{
+  from{box-shadow:0 0 0 2px rgba(255,140,40,.9),0 -2px calc(6px + var(--h)*2px) rgba(255,200,80,.8),0 0 calc(10px + var(--h)*3px) rgba(255,90,20,.6)}
+  to{box-shadow:0 0 0 2px rgba(255,90,30,.9),0 -4px calc(10px + var(--h)*3px) rgba(255,230,120,.9),0 0 calc(16px + var(--h)*4px) rgba(220,40,10,.7)}}
+@media (prefers-reduced-motion:reduce){body[data-heat] .chip.on,body[data-heat] .stack,body[data-heat] .pcard:not(.back),body[data-heat] .reel{animation:none;box-shadow:0 0 0 2px #ff8a2a,0 0 14px rgba(255,110,30,.6)}}
+.tblmin{white-space:nowrap;max-width:100%}
+.tblmin b{white-space:nowrap}
