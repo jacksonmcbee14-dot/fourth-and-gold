@@ -163,7 +163,11 @@ async function slotSpin(){
   ac();
   SL.spinning=true;SL.quick=false;clearLines();SL.lastWin=0;setText('#slWin','—');setText('#slMsg',free?`Free game · ${SL.fs} left after this`:'Spinning…');slUI();
   // Every outcome is decided here, before any animation: one secure random stop per reel, plus the star roll.
-  const stops=STRIPS.map(s=>rint(s.length)), grid=windowAt(stops), res=evalGrid(grid), starHit=!free&&rng()<JP_ODDS;
+  let stops=STRIPS.map(s=>rint(s.length)), grid=windowAt(stops), res=evalGrid(grid);
+  // 🔥 Hot reels: while you're on a roll, a losing spin gets extra chances to land a win — one 10% chance per
+  // flame of heat (js/economy.js), so the hotter you are, the more often the reels hit.
+  for(let k=0,hot=Math.min(5,S.heat||0);k<hot&&!(res.wins.length||res.scat);k++){ if(rng()<.1){ stops=STRIPS.map(s=>rint(s.length)); grid=windowAt(stops); res=evalGrid(grid); } }
+  const starHit=!free&&rng()<JP_ODDS;
   const scR=grid.map(c=>c.filter(x=>x==='BONUS').length), antic=[];let acc=0;
   for(let r=0;r<5;r++){antic[r]=acc>=2&&r<4;acc+=scR[r];}
   const reels=[...document.querySelectorAll('#reels .reel')], h=reels[0]?reels[0].clientWidth:60, T=S.turbo?.5:1;
