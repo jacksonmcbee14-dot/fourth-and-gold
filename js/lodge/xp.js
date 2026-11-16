@@ -1,7 +1,7 @@
 // XP and levels: you earn XP for playing (a bonus for winning), and level up through lodge titles.
 // This only watches what happens in the games; it never changes odds, payouts or outcomes.
 
-const XP_CAP=800;   // play XP per day (daily visits and won bets don't count toward it)
+const XP_CAP=Infinity;   // no daily XP limit any more
 const TITLES=[[1,'Guest'],[5,'Regular'],[10,'Member'],[20,'High Roller'],[35,'Legend of the Lodge']];
 const xpNeed=L=>100+40*(L-1);
 function levelOf(xp){ let L=1,left=xp||0; while(left>=xpNeed(L)){ left-=xpNeed(L); L++; } return {L,into:left,need:xpNeed(L)}; }
