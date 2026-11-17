@@ -101,3 +101,4 @@
 .lg-sub{font-family:var(--sans);font-size:11px;font-weight:700;text-transform:none;padding:7px 12px;border-radius:999px;color:#c8b896;background:rgba(255,255,255,.05);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
 .lg-sub.on{color:#2a1606;background:var(--lg-gold);box-shadow:0 4px 12px rgba(232,150,60,.3)}
 .lg-bank{font-family:"Press Start 2P",monospace;font-size:9px;color:#ffd84a;padding:9px 12px;border-radius:999px;background:rgba(14,9,6,.72);backdrop-filter:blur(10px);box-shadow:inset 0 0 0 1px var(--lg-edge),0 6px 16px rgba(0,0,0,.35)}
+.lg-noscarf{display:grid;place-items:center;font-size:22px}
