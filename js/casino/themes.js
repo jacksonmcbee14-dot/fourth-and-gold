@@ -182,7 +182,7 @@ const bonusTxt=it=>it&&it.bonus?`+${it.bonus.p}% ${TH_GAMES[it.bonus.g]}`:'';
 function themeChipHTML(){ const T=TTHEMES[curTheme()], D=DECKS[curDeck()], slots=S.ctab==='slots';
   return `🎨 ${T.icon} ${esc(T.name)}${slots?'':` · ${D.icon} ${esc(D.name)}`}${T.bonus?` <b class="th-bonus-tag">${bonusTxt(T)}</b>`:''}`; }
 function themeChip(){ if(S.mode!=='casino'||S.ctab==='ranks') return; const old=document.getElementById('themeChip'); if(old){ old.innerHTML=themeChipHTML(); return; }
-  const tbl=S.ctab==='slots'?document.querySelector('#view .cab'):document.querySelector('#view .tblmin'); if(!tbl) return;
+  const tbl=S.ctab==='slots'?document.querySelector('#view .cab'):(document.getElementById('hotRow')||document.querySelector('#view .tblmin')); if(!tbl) return;   // after the hot row, so that row never has to move
   tbl.insertAdjacentHTML(S.ctab==='slots'?'beforebegin':'afterend',`<button id="themeChip" data-a="themePick">${themeChipHTML()}</button>`); }
 // Slots: the falling flakes become the theme's particles.
 function thSlots(){ const sn=document.querySelector('#view .cab .snow'); if(!sn) return; const T=TTHEMES[curTheme()], fx=curTheme()==='lodge'?null:T.fx;
