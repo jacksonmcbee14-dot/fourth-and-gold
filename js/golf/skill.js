@@ -51,9 +51,9 @@ function golfSkillCard(){
 // Walking out to the course from the lodge: a round, the range, or your own green.
 function golfChooser(){
   const green=typeof home==='function'&&home().rooms.includes('green');
-  modal(`<div class="fgm-k">⛳ Lodge Links · golf level ${golfLv()}</div>${golfSkillCard()}
+  modal(`<div class="fgm-k">🌲 Out the back</div>
     <div class="fgm-row" style="flex-direction:column;gap:8px;margin-top:12px"><button class="btn gold wide" data-a="golfPlayM">Play a round</button><button class="btn wide" data-a="rangeOpen">🎯 Driving range</button>
-    ${green?'<button class="btn wide" data-a="golfHomeM">⛳ Practise on your green (2× XP)</button>':''}</div>`);
+    ${green?'<button class="btn wide" data-a="golfHomeM">⛳ Practise on your green (2× XP)</button>':''}<button class="btn wide" data-a="walksOpen">🐾 Walk your pet</button><button class="btn wide" data-a="horsesOpen">🐎 Horse stables</button></div>`);
 }
 Object.assign(ACT,{ golfPlayM:()=>{ closeModal(); openGolf({}); }, golfHomeM:()=>{ closeModal(); openGolf({course:'home',holes:3}); } });
 
