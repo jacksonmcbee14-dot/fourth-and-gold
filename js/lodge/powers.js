@@ -10,7 +10,7 @@ const POWERS={
   cocoa:  '1.5× winnings on every game',
   cider:  'Half price at Silas’s shop',
   eggnog: 'Santa suit for 5 minutes',
-  oldfash:'Bets doubled · wins ×10 slots, ×3 roulette & craps, ×2.5 poker, ×2 sports, ×1.75 blackjack',
+  oldfash:'Bets doubled · wins ×10 slots, ×3 roulette, craps & pinball, ×2.5 poker, ×2 sports, ×1.75 blackjack',
 };
 const SANTA_MS=5*60e3;
 const drinkOn=id=>{ const d=heldDrink(); return !!d&&d.id===id; };
@@ -18,7 +18,7 @@ const drinkOn=id=>{ const d=heldDrink(); return !!d&&d.id===id; };
 const betX=()=>drinkOn('oldfash')?2:1;
 // How much the winnings (profit) of a bet are multiplied.
 // Old fashioned: how much the winnings are multiplied depends on the game you're playing.
-const OLDFASH_X={slots:10,roulette:3,craps:3,poker:2.5,blackjack:1.75,sports:2};
+const OLDFASH_X={slots:10,roulette:3,craps:3,pinball:3,poker:2.5,blackjack:1.75,sports:2};
 const oldfashX=()=>S.mode==='casino'?(OLDFASH_X[S.ctab]||2):OLDFASH_X.sports;
 const winX=()=>drinkOn('oldfash')?oldfashX():drinkOn('cocoa')?1.5:1;
 // ret = the total paid back; stake = the part of that which is your own bet coming back.
