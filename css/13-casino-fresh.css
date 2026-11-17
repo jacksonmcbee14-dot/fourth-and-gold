@@ -63,3 +63,7 @@
 .pb-stage{width:fit-content;max-width:100%;margin:0 auto}
 .pb-stage canvas{width:auto;max-width:100%;height:min(640px,max(380px,calc(100dvh - 330px)))}
 .pbx{padding-bottom:84px}
+.pb-machs{max-height:52vh;overflow:auto}
+.pb-m{background:linear-gradient(120deg,color-mix(in srgb,var(--p1,#1f6a4a) 55%,transparent),rgba(255,255,255,.03))}
+.pb-m small{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}.pb-m small i{font-style:normal;font-size:10px;padding:2px 6px;border-radius:999px;background:rgba(0,0,0,.35);color:#f3ead8;opacity:1}
+.pb-m.lock{opacity:.75}.pb-m em{font-size:12px;text-align:right}

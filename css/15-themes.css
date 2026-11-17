@@ -8,64 +8,6 @@
 .th-tile.on{box-shadow:inset 0 0 0 2px #ffd84a,0 0 14px rgba(255,216,74,.35)}.th-tile.lock{opacity:.45}
 .th-card{display:block;width:30px;height:42px;border-radius:5px;background:var(--bk,radial-gradient(circle at 50% 40%,#24533e,#0f2a1e 75%));box-shadow:0 0 0 2px var(--bl,#c8a45c);position:relative}
 .th-card::after{content:var(--mk,'4&G');position:absolute;inset:0;display:grid;place-items:center;font-size:12px;color:var(--bl,#c8a45c)}
-body[data-ttheme] .felt{background:radial-gradient(130% 90% at 50% 0%,var(--t1),var(--t2) 55%,var(--t3)) padding-box,linear-gradient(135deg,var(--r1),var(--r2) 35%,var(--r1) 60%,var(--r2)) border-box!important}
-body[data-ttheme] .rboard .R{background:linear-gradient(180deg,var(--re1),var(--re2))}body[data-ttheme] .rboard .B{background:linear-gradient(180deg,var(--bk1),var(--bk2))}body[data-ttheme] .rboard .Z{background:linear-gradient(180deg,var(--z1),var(--z2))}
-body[data-ttheme] .wheel{filter:hue-rotate(var(--wh)) saturate(1.2)}
-body[data-ttheme] .felt .label{color:var(--r1)}
-body[data-ttheme=golf]{--t1:#3aa860;--t2:#1c6a3a;--t3:#0c3a1e;--r1:#ffffff;--r2:#c8a45c;--re1:#d84040;--re2:#8a1a1a;--bk1:#2a3a2a;--bk2:#101810;--z1:#3ad08a;--z2:#127040;--wh:0deg}
-.tt-golf{--a:#3aa860;--b:#0c3a1e;--c:#ffffff}
-body[data-ttheme=neon]{--t1:#4a1a7a;--t2:#240c44;--t3:#10041e;--r1:#ff3ad0;--r2:#3affd0;--re1:#ff3ad0;--re2:#8a0a6a;--bk1:#2a2a6a;--bk2:#0c0c2a;--z1:#3affd0;--z2:#0a6a5a;--wh:260deg}
-.tt-neon{--a:#4a1a7a;--b:#10041e;--c:#ff3ad0}
-body[data-ttheme=security]{--t1:#4a5664;--t2:#2a323c;--t3:#14181e;--r1:#7fd0ff;--r2:#8a929e;--re1:#3a7aff;--re2:#12285a;--bk1:#3a3a44;--bk2:#141418;--z1:#3ad08a;--z2:#0e5a38;--wh:190deg}
-.tt-security{--a:#4a5664;--b:#14181e;--c:#7fd0ff}
-body[data-ttheme=pennants]{--t1:#1e3a7a;--t2:#12244a;--t3:#08122a;--r1:#ffffff;--r2:#e0203a;--re1:#e0203a;--re2:#7a0a14;--bk1:#1a2a5a;--bk2:#08102a;--z1:#ffd84a;--z2:#8a6a10;--wh:200deg}
-.tt-pennants{--a:#1e3a7a;--b:#08122a;--c:#ffffff}
-body[data-ttheme=cabin]{--t1:#6a3a1a;--t2:#4a2410;--t3:#2a1408;--r1:#c06a2a;--r2:#f3ead8;--re1:#c0302a;--re2:#6a1410;--bk1:#3a2a1a;--bk2:#1a120a;--z1:#5a8a3a;--z2:#2a4a1a;--wh:20deg}
-.tt-cabin{--a:#6a3a1a;--b:#2a1408;--c:#c06a2a}
-body[data-ttheme=holiday]{--t1:#a81a2a;--t2:#6a0e18;--t3:#3a060c;--r1:#3ad08a;--r2:#ffd84a;--re1:#e0203a;--re2:#7a0a14;--bk1:#1a5a2a;--bk2:#0a2a12;--z1:#ffd84a;--z2:#8a6a10;--wh:330deg}
-.tt-holiday{--a:#a81a2a;--b:#3a060c;--c:#3ad08a}
-body[data-ttheme=arcade]{--t1:#0e5a6a;--t2:#08343e;--t3:#041a20;--r1:#ff3ad0;--r2:#ffd84a;--re1:#ff8a3a;--re2:#8a3a0a;--bk1:#3a2a7a;--bk2:#140c3a;--z1:#3affd0;--z2:#0a6a5a;--wh:150deg}
-.tt-arcade{--a:#0e5a6a;--b:#041a20;--c:#ff3ad0}
-body[data-ttheme=art]{--t1:#6a1a3a;--t2:#3a0e22;--t3:#1e0610;--r1:#ffd84a;--r2:#c8962a;--re1:#c0303a;--re2:#6a0e18;--bk1:#2a2030;--bk2:#100a14;--z1:#3a8a5a;--z2:#123a24;--wh:320deg}
-.tt-art{--a:#6a1a3a;--b:#1e0610;--c:#ffd84a}
-body[data-ttheme=crowns]{--t1:#4a1a8a;--t2:#2a0e52;--t3:#14062a;--r1:#ffd84a;--r2:#fff3b0;--re1:#d83a5a;--re2:#7a0e2a;--bk1:#2a1a4a;--bk2:#0e081e;--z1:#ffd84a;--z2:#8a6a10;--wh:270deg}
-.tt-crowns{--a:#4a1a8a;--b:#14062a;--c:#ffd84a}
-body[data-ttheme=watches]{--t1:#1a2a4a;--t2:#0e182e;--t3:#060c18;--r1:#cfd9e0;--r2:#8a929e;--re1:#5a7aaa;--re2:#22344a;--bk1:#2a2a34;--bk2:#0e0e14;--z1:#9ad0c0;--z2:#2a5a4a;--wh:210deg}
-.tt-watches{--a:#1a2a4a;--b:#060c18;--c:#cfd9e0}
-body[data-cdeck] .pcard:not(.back){background:linear-gradient(180deg,var(--cf1),var(--cf2));color:var(--ci)}body[data-cdeck] .pcard.red:not(.back){color:var(--cr)}
-body[data-cdeck] .pcard.back{background:var(--cb);border-color:var(--cl);box-shadow:inset 0 0 0 3px rgba(0,0,0,.25),inset 0 0 0 4px var(--cl),0 6px 16px rgba(0,0,0,.4)}body[data-cdeck] .pcard.back::after{content:var(--cm);color:var(--cl);font-family:var(--sans);font-style:normal;font-weight:800}
-body[data-cdeck=glow] .pcard:not(.back),body[data-cdeck=neon] .pcard:not(.back){box-shadow:0 0 12px var(--ci),0 6px 16px rgba(0,0,0,.4)}
-body[data-cdeck=pixel] .pcard{border-radius:2px;image-rendering:pixelated;font-family:'Press Start 2P',monospace}
-body[data-cdeck=golf]{--cf1:#f6fbf2;--cf2:#dcebd2;--ci:#1a3a1e;--cr:#b02a2a;--cb:repeating-linear-gradient(45deg,#1c6a3a 0 6px,#2a8a4a 6px 12px);--cl:#ffffff;--cm:'⛳'}
-.dk-golf{--bk:repeating-linear-gradient(45deg,#1c6a3a 0 6px,#2a8a4a 6px 12px);--bl:#ffffff;--mk:'⛳'}
-body[data-cdeck=neon]{--cf1:#1a0c2a;--cf2:#2a124a;--ci:#3affd0;--cr:#ff3ad0;--cb:radial-gradient(circle,#4a1a7a,#10041e);--cl:#ff3ad0;--cm:'777'}
-.dk-neon{--bk:radial-gradient(circle,#4a1a7a,#10041e);--bl:#ff3ad0;--mk:'777'}
-body[data-cdeck=security]{--cf1:#eef2f6;--cf2:#cfd9e0;--ci:#1a2a3a;--cr:#3a5aaa;--cb:repeating-linear-gradient(90deg,#4a5664 0 4px,#3a444e 4px 8px);--cl:#7fd0ff;--cm:'🛡️'}
-.dk-security{--bk:repeating-linear-gradient(90deg,#4a5664 0 4px,#3a444e 4px 8px);--bl:#7fd0ff;--mk:'🛡️'}
-body[data-cdeck=pennants]{--cf1:#fbf6ee;--cf2:#ece0cc;--ci:#12244a;--cr:#e0203a;--cb:repeating-linear-gradient(0deg,#e0203a 0 6px,#ffffff 6px 12px);--cl:#12244a;--cm:'🚩'}
-.dk-pennants{--bk:repeating-linear-gradient(0deg,#e0203a 0 6px,#ffffff 6px 12px);--bl:#12244a;--mk:'🚩'}
-body[data-cdeck=cabin]{--cf1:#f3e6cc;--cf2:#e0c8a0;--ci:#3a2010;--cr:#a02a1a;--cb:repeating-linear-gradient(0deg,#a0302a 0 5px,#3a1a10 5px 7px,#a0302a 7px 12px);--cl:#f3ead8;--cm:'🦌'}
-.dk-cabin{--bk:repeating-linear-gradient(0deg,#a0302a 0 5px,#3a1a10 5px 7px,#a0302a 7px 12px);--bl:#f3ead8;--mk:'🦌'}
-body[data-cdeck=holiday]{--cf1:#fff8f0;--cf2:#f3e2d0;--ci:#1a4a22;--cr:#c81a2a;--cb:repeating-linear-gradient(45deg,#c81a2a 0 6px,#ffffff 6px 12px);--cl:#1a7a3a;--cm:'🎄'}
-.dk-holiday{--bk:repeating-linear-gradient(45deg,#c81a2a 0 6px,#ffffff 6px 12px);--bl:#1a7a3a;--mk:'🎄'}
-body[data-cdeck=arcade]{--cf1:#101820;--cf2:#1a2a3a;--ci:#3affd0;--cr:#ff8a3a;--cb:repeating-linear-gradient(90deg,#ff3ad0 0 4px,#ffd84a 4px 8px,#3affd0 8px 12px);--cl:#ffffff;--cm:'🕹️'}
-.dk-arcade{--bk:repeating-linear-gradient(90deg,#ff3ad0 0 4px,#ffd84a 4px 8px,#3affd0 8px 12px);--bl:#ffffff;--mk:'🕹️'}
-body[data-cdeck=art]{--cf1:#fbf3e6;--cf2:#ecdcc0;--ci:#2a1a24;--cr:#8a1a3a;--cb:radial-gradient(circle,#6a1a3a,#1e0610);--cl:#ffd84a;--cm:'🖼️'}
-.dk-art{--bk:radial-gradient(circle,#6a1a3a,#1e0610);--bl:#ffd84a;--mk:'🖼️'}
-body[data-cdeck=crowns]{--cf1:#fff8e6;--cf2:#f0dfb0;--ci:#2a0e52;--cr:#a01a4a;--cb:radial-gradient(circle,#4a1a8a,#14062a);--cl:#ffd84a;--cm:'👑'}
-.dk-crowns{--bk:radial-gradient(circle,#4a1a8a,#14062a);--bl:#ffd84a;--mk:'👑'}
-body[data-cdeck=watches]{--cf1:#eef2f8;--cf2:#cfd6e0;--ci:#0e182e;--cr:#5a3a8a;--cb:conic-gradient(from 0deg,#1a2a4a,#3a4a6a,#1a2a4a);--cl:#cfd9e0;--cm:'⌚'}
-.dk-watches{--bk:conic-gradient(from 0deg,#1a2a4a,#3a4a6a,#1a2a4a);--bl:#cfd9e0;--mk:'⌚'}
-body[data-cdeck=midnight]{--cf1:#16161c;--cf2:#24242e;--ci:#f3ead8;--cr:#ff6a7a;--cb:radial-gradient(circle,#2a2a3a,#0a0a10);--cl:#cfd9e0;--cm:'☾'}
-.dk-midnight{--bk:radial-gradient(circle,#2a2a3a,#0a0a10);--bl:#cfd9e0;--mk:'☾'}
-body[data-cdeck=goldfoil]{--cf1:#fff3c0;--cf2:#e8c060;--ci:#3a2a06;--cr:#9a1a1a;--cb:linear-gradient(135deg,#ffe08a,#c8962a,#fff3b0,#a8742a);--cl:#3a2a06;--cm:'4&G'}
-.dk-goldfoil{--bk:linear-gradient(135deg,#ffe08a,#c8962a,#fff3b0,#a8742a);--bl:#3a2a06;--mk:'4&G'}
-body[data-cdeck=diamond]{--cf1:#f0fbff;--cf2:#c8eef8;--ci:#0e3a5a;--cr:#3a6aaa;--cb:linear-gradient(135deg,#bff6ff,#ffffff,#9ad8f0,#ffffff);--cl:#3a7aaa;--cm:'💎'}
-.dk-diamond{--bk:linear-gradient(135deg,#bff6ff,#ffffff,#9ad8f0,#ffffff);--bl:#3a7aaa;--mk:'💎'}
-body[data-cdeck=glow]{--cf1:#0a140a;--cf2:#122a12;--ci:#5aff8a;--cr:#ff5aff;--cb:radial-gradient(circle,#1a4a1a,#040a04);--cl:#5aff8a;--cm:'✦'}
-.dk-glow{--bk:radial-gradient(circle,#1a4a1a,#040a04);--bl:#5aff8a;--mk:'✦'}
-body[data-cdeck=pixel]{--cf1:#f3ead8;--cf2:#e0d0b0;--ci:#16161c;--cr:#c0302a;--cb:repeating-conic-gradient(#2a6a3a 0 25%,#3a8a4a 0 50%) 0 0/8px 8px;--cl:#ffd84a;--cm:'👾'}
-.dk-pixel{--bk:repeating-conic-gradient(#2a6a3a 0 25%,#3a8a4a 0 50%) 0 0/8px 8px;--bl:#ffd84a;--mk:'👾'}
 /* Decks also theme the chips, the deal animation and a win burst (js/casino/themes.js → deckWinFx). */
 @keyframes dkArc{0%{opacity:0;transform:translate(-90px,-120px) rotate(-40deg)}60%{opacity:1;transform:translate(0,8px) rotate(4deg)}80%{transform:translateY(-6px)}100%{transform:none}}
 @keyframes dkFlicker{0%{opacity:0;filter:brightness(3) blur(3px)}20%{opacity:1}30%{opacity:.2}45%{opacity:1}55%{opacity:.4}70%,100%{opacity:1;filter:none}}
@@ -80,112 +22,23 @@ body[data-cdeck=pixel]{--cf1:#f3ead8;--cf2:#e0d0b0;--ci:#16161c;--cr:#c0302a;--c
 @keyframes dkFade{from{opacity:0;filter:brightness(.1)}to{opacity:1;filter:none}}
 @keyframes dkPop{0%{opacity:0;transform:translate(0,0) scale(.3)}15%{opacity:1;transform:translate(calc(var(--dx)*.2),-30px) scale(1.2)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.8) rotate(var(--rot))}}
 .dk-burst{position:fixed;z-index:60;pointer-events:none;font-size:26px;animation:dkPop 1.4s cubic-bezier(.2,.7,.3,1) both;filter:drop-shadow(0 4px 8px rgba(0,0,0,.4))}
-body[data-cdeck] .chips .chip::before{border-color:var(--chd)}
-body[data-cdeck] .stack{background:var(--chs);color:var(--cht);box-shadow:0 0 10px var(--chs)}
-body[data-cdeck=neon] .chips .chip,body[data-cdeck=glow] .chips .chip{box-shadow:0 0 12px var(--cc),0 3px 0 rgba(0,0,0,.4)}
-body[data-cdeck=pixel] .chips .chip{border-radius:6px}body[data-cdeck=pixel] .chips .chip::before{border-radius:3px;border-style:solid}
-body[data-cdeck=golf]{--chd:#1c6a3a;--chs:#2a8a4a;--cht:#ffffff}
-body[data-cdeck=golf] .chips .chip:nth-child(1):not(.custom){--cc:#ffffff!important;--ct:#1a1006!important}
-body[data-cdeck=golf] .chips .chip:nth-child(2):not(.custom){--cc:#2a8a4a!important;--ct:#1a3a1e!important}
-body[data-cdeck=golf] .chips .chip:nth-child(3):not(.custom){--cc:#c8a45c!important;--ct:#1a3a1e!important}
-body[data-cdeck=golf] .chips .chip:nth-child(4):not(.custom){--cc:#1c6a3a!important;--ct:#1a3a1e!important}
-body[data-cdeck=golf] .chips .chip:nth-child(5):not(.custom){--cc:#f3ead8!important;--ct:#1a1006!important}
-body[data-cdeck=golf] .pcard{animation-name:dkArc}
-body[data-cdeck=neon]{--chd:#ffffff;--chs:#ff3ad0;--cht:#ffffff}
-body[data-cdeck=neon] .chips .chip:nth-child(1):not(.custom){--cc:#ff3ad0!important;--ct:#ffffff!important}
-body[data-cdeck=neon] .chips .chip:nth-child(2):not(.custom){--cc:#3affd0!important;--ct:#1a1006!important}
-body[data-cdeck=neon] .chips .chip:nth-child(3):not(.custom){--cc:#b03aff!important;--ct:#ffffff!important}
-body[data-cdeck=neon] .chips .chip:nth-child(4):not(.custom){--cc:#3a7aff!important;--ct:#ffffff!important}
-body[data-cdeck=neon] .chips .chip:nth-child(5):not(.custom){--cc:#ffd84a!important;--ct:#1a1006!important}
-body[data-cdeck=neon] .pcard{animation-name:dkFlicker}
-body[data-cdeck=security]{--chd:#7fd0ff;--chs:#3a7aff;--cht:#ffffff}
-body[data-cdeck=security] .chips .chip:nth-child(1):not(.custom){--cc:#4a5664!important;--ct:#ffffff!important}
-body[data-cdeck=security] .chips .chip:nth-child(2):not(.custom){--cc:#3a7aff!important;--ct:#ffffff!important}
-body[data-cdeck=security] .chips .chip:nth-child(3):not(.custom){--cc:#8a929e!important;--ct:#ffffff!important}
-body[data-cdeck=security] .chips .chip:nth-child(4):not(.custom){--cc:#16304a!important;--ct:#ffffff!important}
-body[data-cdeck=security] .chips .chip:nth-child(5):not(.custom){--cc:#cfd9e0!important;--ct:#1a1006!important}
-body[data-cdeck=security] .pcard{animation-name:dkSlide}
-body[data-cdeck=pennants]{--chd:#ffffff;--chs:#e0203a;--cht:#ffffff}
-body[data-cdeck=pennants] .chips .chip:nth-child(1):not(.custom){--cc:#e0203a!important;--ct:#ffffff!important}
-body[data-cdeck=pennants] .chips .chip:nth-child(2):not(.custom){--cc:#12244a!important;--ct:#ffffff!important}
-body[data-cdeck=pennants] .chips .chip:nth-child(3):not(.custom){--cc:#ffffff!important;--ct:#1a1006!important}
-body[data-cdeck=pennants] .chips .chip:nth-child(4):not(.custom){--cc:#ffd84a!important;--ct:#1a1006!important}
-body[data-cdeck=pennants] .chips .chip:nth-child(5):not(.custom){--cc:#1e3a7a!important;--ct:#ffffff!important}
-body[data-cdeck=pennants] .pcard{animation-name:dkFlip}
-body[data-cdeck=cabin]{--chd:#f3ead8;--chs:#c06a2a;--cht:#ffffff}
-body[data-cdeck=cabin] .chips .chip:nth-child(1):not(.custom){--cc:#a0302a!important;--ct:#ffffff!important}
-body[data-cdeck=cabin] .chips .chip:nth-child(2):not(.custom){--cc:#3a2010!important;--ct:#ffffff!important}
-body[data-cdeck=cabin] .chips .chip:nth-child(3):not(.custom){--cc:#c06a2a!important;--ct:#ffffff!important}
-body[data-cdeck=cabin] .chips .chip:nth-child(4):not(.custom){--cc:#5a8a3a!important;--ct:#ffffff!important}
-body[data-cdeck=cabin] .chips .chip:nth-child(5):not(.custom){--cc:#f3e6cc!important;--ct:#1a1006!important}
-body[data-cdeck=cabin] .pcard{animation-name:dkDrop}
-body[data-cdeck=holiday]{--chd:#ffffff;--chs:#c81a2a;--cht:#ffffff}
-body[data-cdeck=holiday] .chips .chip:nth-child(1):not(.custom){--cc:#c81a2a!important;--ct:#ffffff!important}
-body[data-cdeck=holiday] .chips .chip:nth-child(2):not(.custom){--cc:#1a7a3a!important;--ct:#ffffff!important}
-body[data-cdeck=holiday] .chips .chip:nth-child(3):not(.custom){--cc:#ffffff!important;--ct:#1a1006!important}
-body[data-cdeck=holiday] .chips .chip:nth-child(4):not(.custom){--cc:#ffd84a!important;--ct:#1a1006!important}
-body[data-cdeck=holiday] .chips .chip:nth-child(5):not(.custom){--cc:#c81a2a!important;--ct:#ffffff!important}
-body[data-cdeck=holiday] .pcard{animation-name:dkSpin}
-body[data-cdeck=arcade]{--chd:#ffffff;--chs:#ff8a3a;--cht:#ffffff}
-body[data-cdeck=arcade] .chips .chip:nth-child(1):not(.custom){--cc:#ff3ad0!important;--ct:#ffffff!important}
-body[data-cdeck=arcade] .chips .chip:nth-child(2):not(.custom){--cc:#ffd84a!important;--ct:#1a1006!important}
-body[data-cdeck=arcade] .chips .chip:nth-child(3):not(.custom){--cc:#3affd0!important;--ct:#1a1006!important}
-body[data-cdeck=arcade] .chips .chip:nth-child(4):not(.custom){--cc:#ff8a3a!important;--ct:#ffffff!important}
-body[data-cdeck=arcade] .chips .chip:nth-child(5):not(.custom){--cc:#3a2a7a!important;--ct:#ffffff!important}
-body[data-cdeck=arcade] .pcard{animation-name:dkPixel}
-body[data-cdeck=art]{--chd:#ffd84a;--chs:#ffd84a;--cht:#1a1006}
-body[data-cdeck=art] .chips .chip:nth-child(1):not(.custom){--cc:#6a1a3a!important;--ct:#ffffff!important}
-body[data-cdeck=art] .chips .chip:nth-child(2):not(.custom){--cc:#ffd84a!important;--ct:#1a1006!important}
-body[data-cdeck=art] .chips .chip:nth-child(3):not(.custom){--cc:#2a2030!important;--ct:#ffffff!important}
-body[data-cdeck=art] .chips .chip:nth-child(4):not(.custom){--cc:#c0303a!important;--ct:#ffffff!important}
-body[data-cdeck=art] .chips .chip:nth-child(5):not(.custom){--cc:#fbf3e6!important;--ct:#1a1006!important}
-body[data-cdeck=art] .pcard{animation-name:dkPaint}
-body[data-cdeck=crowns]{--chd:#ffd84a;--chs:#ffd84a;--cht:#1a1006}
-body[data-cdeck=crowns] .chips .chip:nth-child(1):not(.custom){--cc:#4a1a8a!important;--ct:#ffffff!important}
-body[data-cdeck=crowns] .chips .chip:nth-child(2):not(.custom){--cc:#ffd84a!important;--ct:#1a1006!important}
-body[data-cdeck=crowns] .chips .chip:nth-child(3):not(.custom){--cc:#d83a5a!important;--ct:#ffffff!important}
-body[data-cdeck=crowns] .chips .chip:nth-child(4):not(.custom){--cc:#fff3b0!important;--ct:#1a1006!important}
-body[data-cdeck=crowns] .chips .chip:nth-child(5):not(.custom){--cc:#2a0e52!important;--ct:#ffffff!important}
-body[data-cdeck=crowns] .pcard{animation-name:dkShine}
-body[data-cdeck=watches]{--chd:#cfd9e0;--chs:#cfd9e0;--cht:#1a1006}
-body[data-cdeck=watches] .chips .chip:nth-child(1):not(.custom){--cc:#1a2a4a!important;--ct:#ffffff!important}
-body[data-cdeck=watches] .chips .chip:nth-child(2):not(.custom){--cc:#cfd9e0!important;--ct:#1a1006!important}
-body[data-cdeck=watches] .chips .chip:nth-child(3):not(.custom){--cc:#5a7aaa!important;--ct:#ffffff!important}
-body[data-cdeck=watches] .chips .chip:nth-child(4):not(.custom){--cc:#8a929e!important;--ct:#ffffff!important}
-body[data-cdeck=watches] .chips .chip:nth-child(5):not(.custom){--cc:#0e182e!important;--ct:#ffffff!important}
-body[data-cdeck=watches] .pcard{animation-name:dkTick}
-body[data-cdeck=midnight]{--chd:#cfd9e0;--chs:#cfd9e0;--cht:#1a1006}
-body[data-cdeck=midnight] .chips .chip:nth-child(1):not(.custom){--cc:#2a2a3a!important;--ct:#ffffff!important}
-body[data-cdeck=midnight] .chips .chip:nth-child(2):not(.custom){--cc:#16161c!important;--ct:#ffffff!important}
-body[data-cdeck=midnight] .chips .chip:nth-child(3):not(.custom){--cc:#cfd9e0!important;--ct:#1a1006!important}
-body[data-cdeck=midnight] .chips .chip:nth-child(4):not(.custom){--cc:#ff6a7a!important;--ct:#ffffff!important}
-body[data-cdeck=midnight] .chips .chip:nth-child(5):not(.custom){--cc:#3a3a4a!important;--ct:#ffffff!important}
-body[data-cdeck=midnight] .pcard{animation-name:dkFade}
-body[data-cdeck=goldfoil]{--chd:#3a2a06;--chs:#ffd84a;--cht:#1a1006}
-body[data-cdeck=goldfoil] .chips .chip:nth-child(1):not(.custom){--cc:#ffe08a!important;--ct:#1a1006!important}
-body[data-cdeck=goldfoil] .chips .chip:nth-child(2):not(.custom){--cc:#c8962a!important;--ct:#2a1606!important}
-body[data-cdeck=goldfoil] .chips .chip:nth-child(3):not(.custom){--cc:#fff3b0!important;--ct:#1a1006!important}
-body[data-cdeck=goldfoil] .chips .chip:nth-child(4):not(.custom){--cc:#a8742a!important;--ct:#2a1606!important}
-body[data-cdeck=goldfoil] .chips .chip:nth-child(5):not(.custom){--cc:#3a2a06!important;--ct:#2a1606!important}
-body[data-cdeck=goldfoil] .pcard{animation-name:dkShine}
-body[data-cdeck=diamond]{--chd:#3a7aaa;--chs:#bff6ff;--cht:#1a1006}
-body[data-cdeck=diamond] .chips .chip:nth-child(1):not(.custom){--cc:#bff6ff!important;--ct:#1a1006!important}
-body[data-cdeck=diamond] .chips .chip:nth-child(2):not(.custom){--cc:#ffffff!important;--ct:#1a1006!important}
-body[data-cdeck=diamond] .chips .chip:nth-child(3):not(.custom){--cc:#9ad8f0!important;--ct:#1a1006!important}
-body[data-cdeck=diamond] .chips .chip:nth-child(4):not(.custom){--cc:#3a7aaa!important;--ct:#0e3a5a!important}
-body[data-cdeck=diamond] .chips .chip:nth-child(5):not(.custom){--cc:#e6fbff!important;--ct:#1a1006!important}
-body[data-cdeck=diamond] .pcard{animation-name:dkTick}
-body[data-cdeck=glow]{--chd:#5aff8a;--chs:#5aff8a;--cht:#1a1006}
-body[data-cdeck=glow] .chips .chip:nth-child(1):not(.custom){--cc:#5aff8a!important;--ct:#1a1006!important}
-body[data-cdeck=glow] .chips .chip:nth-child(2):not(.custom){--cc:#ff5aff!important;--ct:#0a140a!important}
-body[data-cdeck=glow] .chips .chip:nth-child(3):not(.custom){--cc:#1a4a1a!important;--ct:#0a140a!important}
-body[data-cdeck=glow] .chips .chip:nth-child(4):not(.custom){--cc:#ffff5a!important;--ct:#1a1006!important}
-body[data-cdeck=glow] .chips .chip:nth-child(5):not(.custom){--cc:#0a140a!important;--ct:#0a140a!important}
-body[data-cdeck=glow] .pcard{animation-name:dkFlicker}
-body[data-cdeck=pixel]{--chd:#16161c;--chs:#ffd84a;--cht:#1a1006}
-body[data-cdeck=pixel] .chips .chip:nth-child(1):not(.custom){--cc:#3a8a4a!important;--ct:#ffffff!important}
-body[data-cdeck=pixel] .chips .chip:nth-child(2):not(.custom){--cc:#c0302a!important;--ct:#ffffff!important}
-body[data-cdeck=pixel] .chips .chip:nth-child(3):not(.custom){--cc:#ffd84a!important;--ct:#1a1006!important}
-body[data-cdeck=pixel] .chips .chip:nth-child(4):not(.custom){--cc:#3a7aff!important;--ct:#ffffff!important}
-body[data-cdeck=pixel] .chips .chip:nth-child(5):not(.custom){--cc:#f3ead8!important;--ct:#1a1006!important}
-body[data-cdeck=pixel] .pcard{animation-name:dkPixel}
+/* Generic theme/deck rules: values come from CSS variables set on <body> by js/casino/themes.js */
+body[data-ttheme] .felt{background:radial-gradient(130% 90% at 50% 0%,var(--t1),var(--t2) 55%,var(--t3)) padding-box,linear-gradient(135deg,var(--r1),var(--r2) 35%,var(--r1) 60%,var(--r2)) border-box!important}
+body[data-ttheme] .rboard .R{background:linear-gradient(180deg,var(--re1),var(--re2))}body[data-ttheme] .rboard .B{background:linear-gradient(180deg,var(--bk1),var(--bk2))}body[data-ttheme] .rboard .Z{background:linear-gradient(180deg,var(--z1),var(--z2))}
+body[data-ttheme] .wheel{filter:hue-rotate(var(--wh)) saturate(1.2)}
+body[data-ttheme] .felt .label{color:var(--r1)}
+body[data-cdeck] .pcard:not(.back){background:linear-gradient(180deg,var(--cf1),var(--cf2));color:var(--ci)}body[data-cdeck] .pcard.red:not(.back){color:var(--cr)}
+body[data-cdeck] .pcard.back{background:var(--cb);border-color:var(--cl);box-shadow:inset 0 0 0 3px rgba(0,0,0,.25),inset 0 0 0 4px var(--cl),0 6px 16px rgba(0,0,0,.4)}
+body[data-cdeck] .pcard.back::after{content:var(--cm);color:var(--cl);font-family:var(--sans);font-style:normal;font-weight:800}
+body[data-cdeck] .pcard{animation-name:var(--da,deal)}
+body[data-chips] .chips .chip:nth-child(1):not(.custom){--cc:var(--k1)!important;--ct:#fff!important}
+body[data-chips] .chips .chip:nth-child(2):not(.custom){--cc:var(--k2)!important;--ct:#fff!important}
+body[data-chips] .chips .chip:nth-child(3):not(.custom){--cc:var(--k3)!important;--ct:#fff!important}
+body[data-chips] .chips .chip:nth-child(4):not(.custom){--cc:var(--k4)!important;--ct:#fff!important}
+body[data-chips] .chips .chip:nth-child(5):not(.custom){--cc:var(--k5)!important;--ct:#1a1006!important}
+body[data-chips] .chips .chip::before{border-color:rgba(255,255,255,.65)}
+body[data-chips] .stack{background:var(--k5);color:#1a1006;box-shadow:0 0 10px var(--k5)}
+.th-tabs,.th-cats{display:flex;gap:6px;margin:8px 0}.th-tabs button,.th-cats button{flex:1;padding:8px 4px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:inherit;font-weight:700;font-size:12px}
+.th-tabs button.on,.th-cats button.on{background:linear-gradient(90deg,#ffd84a,#ff8a3a);color:#1a1006;border-color:transparent}
+.th-cats{overflow-x:auto}.th-cats button{flex:0 0 auto;padding:7px 10px}
+.th-grid{max-height:46vh}
