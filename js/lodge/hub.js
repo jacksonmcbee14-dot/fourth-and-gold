@@ -2,7 +2,7 @@
 
 const SPOTS=[ // [id, x, y, w, h, label, where it goes, where you stand]   (TV is checked before the fireplace it hangs on)
   ['league', 27, 24, 30, 82,'Trophy Board · League',  {league:true},[42,198]],
-  ['links', 138, 24, 28, 82,'Out the Back · Golf',    {golf:true},[150,198]],
+  ['links', 138, 24, 28, 82,'Out the Back · The Grounds',    {golf:true},[150,198]],
   ['tv',      74, 58, 44, 36,'The TV · Scores & Today', {mode:'football',ftab:'today'},[92,212]],
   ['fireside',54, 50, 86,158,'The Fireside · Blackjack', {mode:'casino',ctab:'blackjack'},[92,212]],
   ['library',  2,106, 26, 78,'The Library · Video Poker',{mode:'casino',ctab:'poker'},[30,198]],

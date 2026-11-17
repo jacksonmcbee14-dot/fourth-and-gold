@@ -11,6 +11,9 @@ const golfLv=()=>golfLvOf(S.golf&&S.golf.xp).L;
 function golfK(L){ const s=((L||golfLv())-1)/(GOLF_LV_MAX-1);
   return {perfect:.07+.08*s, good:.35+.17*s, err:1-.45*s, wind:1-.4*s, speed:1+.4*s, brk:1-.35*s}; }
 const golfPayX=()=>(1+.08*(golfLv()-1))*Math.max(1,Math.sqrt(Math.max(0,worth())/1e6));
+// Pay to play: a green fee per hole (scaled to your cash); eagles and holes in one pay a multiple of it, plus 8% per golf level.
+const golfHoleFee=()=>nice(Math.max(5000,cashNow()*.0005));
+const golfLvX=()=>1+.08*(golfLv()-1);
 
 // Earning golf XP. Your own green counts double.
 function golfXP(n,why){
@@ -44,7 +47,7 @@ function golfSkillCard(){
   const {L,into,need}=golfLvOf(S.golf&&S.golf.xp), K=golfK(L);
   return `<div class="gk-card"><div class="gk-top"><b>Golf level ${L}</b><span>${L<GOLF_LV_MAX?into+' / '+need+' XP':'MAX'}</span></div>
     <div class="gk-bar"><i style="width:${L<GOLF_LV_MAX?Math.round(into/need*100):100}%"></i></div>
-    <div class="gk-perks"><span>🎯 Sweet spot ${Math.round(K.perfect*100)}%</span><span>💨 Wind ${Math.round(K.wind*100)}%</span><span>🐢 Meter ${Math.round(100/K.speed)}% speed</span><span>💰 Prizes ×${golfPayX()<10?golfPayX().toFixed(1):Math.round(golfPayX())}</span></div>
+    <div class="gk-perks"><span>🎯 Sweet spot ${Math.round(K.perfect*100)}%</span><span>💨 Wind ${Math.round(K.wind*100)}%</span><span>🐢 Meter ${Math.round(100/K.speed)}% speed</span><span>💰 Eagle ${k$(Math.round(golfHoleFee()*20*golfLvX()))} · Ace ${k$(Math.round(golfHoleFee()*100*golfLvX()))}</span></div>
     <div class="gk-note">Every shot, hole, round and range ball makes you better.${typeof homeTier==='function'&&homeTier()>=5?' Your own green earns 2× golf XP.':' Your own putting green (level 100) earns 2× golf XP.'}</div></div>`;
 }
 
@@ -52,7 +55,7 @@ function golfSkillCard(){
 function golfChooser(){
   const green=typeof home==='function'&&home().rooms.includes('green');
   modal(`<div class="fgm-k">🌲 Out the back</div>
-    <div class="fgm-row" style="flex-direction:column;gap:8px;margin-top:12px"><button class="btn gold wide" data-a="golfPlayM">Play a round</button><button class="btn wide" data-a="rangeOpen">🎯 Driving range</button>
+    <div class="fgm-row" style="flex-direction:column;gap:8px;margin-top:12px"><button class="btn gold wide" data-a="golfPlayM">Play a round · ${k$(golfHoleFee()*(S.golfHoles||6))} green fee</button><div class="small muted" style="text-align:center">Pays only for an eagle (20× the hole fee) or a hole in one (100×)</div><button class="btn wide" data-a="rangeOpen">🎯 Driving range</button>
     ${green?'<button class="btn wide" data-a="golfHomeM">⛳ Practise on your green (2× XP)</button>':''}<button class="btn wide" data-a="walksOpen">🐾 Walk your pet</button><button class="btn wide" data-a="horsesOpen">🐎 Horse stables</button></div>`);
 }
 Object.assign(ACT,{ golfPlayM:()=>{ closeModal(); openGolf({}); }, golfHomeM:()=>{ closeModal(); openGolf({course:'home',holes:3}); } });
