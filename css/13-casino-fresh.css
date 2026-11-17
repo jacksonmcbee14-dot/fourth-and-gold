@@ -1,0 +1,43 @@
+/* Casino refresh: same high-class felt and gold, but softer, rounder and a little more colourful.
+   Pure styling — no game logic changes. */
+.ghead h2.serif{background:linear-gradient(90deg,#f6ebcb,#ffd84a 45%,#e8963c);-webkit-background-clip:text;background-clip:text;color:transparent}
+.ghead .seg{border-radius:999px;padding:3px}.ghead .seg button{border-radius:999px}
+.felt{border-radius:28px;border-width:5px;outline:0;
+  background:radial-gradient(130% 90% at 50% 0%,#23744f,#11432f 55%,#08241a) padding-box,linear-gradient(135deg,#e6c47a,#7a5a2a 35%,#f0d08a 60%,#7a5a2a) border-box;
+  box-shadow:0 18px 40px rgba(0,0,0,.45),0 0 0 1px rgba(255,216,74,.18),inset 0 0 50px rgba(0,0,0,.35)}
+.felt .label{width:fit-content;margin:0 auto 10px;padding:5px 14px;border-radius:999px;background:rgba(0,0,0,.28);font-size:13px;color:#f3e2b0}
+.felt .cmsg{font-weight:600;letter-spacing:.01em}
+.cactions{gap:10px}
+.cactions .btn{border-radius:999px;padding:12px 20px;font-weight:700;border:0;box-shadow:0 4px 0 rgba(0,0,0,.35);transition:transform .08s}
+.cactions .btn:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.35)}
+.cactions .btn.ghost{background:rgba(255,255,255,.1);color:#f3ead8}
+.cactions .btn.gold{min-width:120px;background:linear-gradient(90deg,#ffd84a,#ff9a3a);color:#1a1006;box-shadow:0 4px 0 #8a5a1a,0 10px 26px rgba(255,170,60,.35)}
+.cactions .btn.gold:disabled{filter:saturate(.3);opacity:.6;box-shadow:none}
+.betinfo{width:fit-content;margin:8px auto 0;padding:4px 12px;border-radius:999px;background:rgba(0,0,0,.3);font-weight:600}
+.chips .chip{transition:transform .12s,box-shadow .12s}.chips .chip:active{transform:scale(.92)}
+.chips .chip.on,.chips .chip[aria-pressed=true]{box-shadow:0 0 0 3px #ffd84a,0 0 18px rgba(255,216,74,.6);transform:translateY(-3px)}
+/* roulette board */
+.rboard{gap:4px}
+.rboard button{border:0;border-radius:8px;box-shadow:inset 0 -3px 0 rgba(0,0,0,.25)}
+.rboard .R{background:linear-gradient(180deg,#c8343f,#7a1a22)}.rboard .B{background:linear-gradient(180deg,#3a3a44,#141418)}.rboard .Z{background:linear-gradient(180deg,#2aa06a,#0e5a38)}
+.rboard .o{background:rgba(255,255,255,.08);color:#f3e2b0}
+/* video poker */
+.paytable{border:0;border-radius:16px;background:rgba(0,0,0,.32);color:rgba(243,234,216,.75);box-shadow:inset 0 0 0 1px rgba(255,216,74,.15)}
+.paytable .hn{color:#f6ebcb}.paytable .col{color:#ffd84a;background:rgba(255,216,74,.12);border-radius:4px}
+.pcard{border-radius:10px}
+/* craps */
+.cboard{gap:10px}
+.zone{border:0;border-radius:18px;padding:16px 10px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12),0 6px 14px rgba(0,0,0,.25);transition:transform .1s}
+.zone:active{transform:scale(.97)}
+.zone b{font-family:var(--sans);font-weight:800;font-size:18px;color:#fff;letter-spacing:.01em}
+.zone span{color:rgba(255,255,255,.7)}
+.cboard .zone:nth-child(1){background:linear-gradient(160deg,#2aa06a,#0e4a30)}
+.cboard .zone:nth-child(2){background:linear-gradient(160deg,#b0303a,#4a0e14)}
+.cboard .zone:nth-child(3){background:linear-gradient(160deg,#3a7aff,#12285a)}
+.cboard .zone:nth-child(4){background:linear-gradient(160deg,#8a3aff,#2a1050)}
+.cboard .zone:nth-child(5){background:linear-gradient(160deg,#ff8a3a,#5a2a0a)}
+.puck{box-shadow:0 0 0 3px rgba(255,255,255,.2),0 4px 10px rgba(0,0,0,.4)}
+.die{border-radius:12px;box-shadow:0 6px 14px rgba(0,0,0,.35)}
+/* slots cabinet */
+.cab{border-radius:26px}
+.tblmin{border-radius:999px}
