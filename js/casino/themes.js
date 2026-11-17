@@ -200,7 +200,7 @@ function themePick(){ const isT=TP.kind==='theme', LIST=isT?TTHEMES:DECKS, ok=is
   modal(`<div class="fgm-k">🎨 Your table</div>
     <div class="th-tabs"><button class="${isT?'on':''}" data-a="tpKind" data-v="theme">🟩 Tables</button><button class="${isT?'':'on'}" data-a="tpKind" data-v="deck">🃏 Cards</button></div>
     <div class="th-cats">${TP_CATS.map(([k,l])=>`<button class="${TP.cat===k?'on':''}" data-a="tpCat" data-v="${k}">${l}</button>`).join('')}</div>
-    ${(()=>{ const it=LIST[cur]; return isT?`<div class="th-now"><b>${it.icon} ${esc(it.name)}</b><span>${(it.fx||[]).join(' ')} ${TH_ANIM[it.anim]||''}</span><em>${it.bonus?bonusTxt(it)+' wins':'No bonus'}</em></div>`
+    ${(()=>{ const it=LIST[cur]; return isT?`<div class="th-now"><b>${it.icon} ${esc(it.name)}</b><span>${(it.fx||[]).join(' ')} ${TH_ANIM[it.anim]||''}${it.sym?`<br>🎰 ${it.sym.join(' ')}`:''}</span><em>${it.bonus?bonusTxt(it)+' wins':'No bonus'}</em></div>`
       :`<div class="th-now"><b>${it.icon} ${esc(it.name)}</b><span>${it.v?DANIM_N[it.v.da]||'':'Classic deal'}</span><em>Chips follow your table</em></div>`; })()}
     <div class="tchips"><span>${own} / ${Object.keys(LIST).length} unlocked</span><span>🎟️ ${esc(tierName(myTier()))}</span><span>⭐ ${myStars()}</span></div>
     <div class="th-grid">${items.map(([k,it],i)=>{ const have=ok(k), buy=!have&&it.price; return `<button class="th-tile ${cur===k?'on':''} ${have?'':'lock'}" style="--d:${Math.min(i,24)*20}ms;${isT&&it.v?`--a:${it.v.t1};--b:${it.v.t3};--c:${it.v.r1}`:''}${!isT&&it.v?`--bk:${it.v.cb};--bl:${it.v.cl};--mk:${it.v.cm}`:''}" data-a="${have?(isT?'themeSet':'deckSet'):buy?(isT?'themeBuy':'deckBuy'):'themeLocked'}" data-v="${k}">
@@ -241,3 +241,40 @@ setBank=function(delta){ const r=_setBankDk.apply(this,arguments); if(TB.busy) r
     const profit=g==='craps'?delta/2:delta-TB.stk; TB.stk=0; TB.open=false;
     const B=TTHEMES[curTheme()].bonus; if(B&&profit>0&&(B.g==='all'||B.g===g)){ const add=Math.round(profit*B.p/100); if(add>0){ TB.busy=true; try{ _setBankDk(add); }finally{ TB.busy=false; } S.thBonus=(S.thBonus||0)+add; thBonusPop(add); } } }
   return r; };
+
+/* ---------- Slots: every theme has its own 7 reel symbols ---------- */
+// Order: Wild, Bonus (scatter), then the five picture symbols from highest to lowest pay. A K Q J stay as letters.
+const SLOT_SYM={golf:'🏆 ⛳ 🦅 🏌️ 🧢 🐦 🟢',neon:'🌈 🎁 💜 ⚡ 🔮 💡 🎶',security:'🛡️ 🗝️ 💰 🔒 🚨 📹 🔑',pennants:'🏆 🎟️ 🚩 🏈 ⚾ 🏀 📣',cabin:'🦌 🎁 🔥 🪵 🌲 🍄 🦉',
+  holiday:'🎄 🎁 ⭐ 🔔 🎅 ❄️ 🍪',arcade:'🕹️ 🪙 👾 🍒 👻 🍄 💥',art:'🖼️ 🎟️ 🎨 🗿 🖌️ 🏺 ✏️',crowns:'👑 💎 💍 🏰 ⚜️ 🗡️ 🛡️',watches:'⌚ ⏳ 💎 ⏱️ ⏰ 🕰️ 🔩',
+  t0:'🌲 🪵 🐻 🦌 🍂 🍄 🌰',t1:'🔥 🧺 🥩 🌭 🍔 🌽 🧂',t2:'🍔 🎟️ 🥧 🍟 🥤 🍳 🥞',t3:'🎳 🎟️ 🏆 👟 🥤 🍕 🧦',t4:'👖 🧵 🧢 👢 🧥 ✂️ 🪡',
+  t5:'🍋 💵 🥤 🧊 🍓 🍉 🌞',t6:'🫧 🎁 🍬 💗 🦄 🧁 🎀',t7:'🍨 🍒 🍫 🍦 🥄 🍃 🧇',t8:'🌈 ☔ ⛈️ 🐸 👢 🌂 💧',t9:'🔥 🏕️ 🍢 🔦 🎸 🪵 ⭐',
+  t10:'🌻 🐝 🌞 🍯 🐞 🌼 🌱',t11:'🪻 🧺 🦋 🐝 🫖 🌿 💜',t12:'🌸 🎐 🏯 🍡 🐦 🍃 🌙',t13:'🎃 🌽 🍎 🥧 🧺 🍂 🌾',t14:'☀️ 🐚 🏄 🦀 🍹 🌴 🏐',
+  t15:'🌺 🐚 🐬 🐠 🥥 🍍 🌴',t16:'🪸 🐚 🐢 🐠 🦞 🐡 🫧',t17:'🐋 🐚 🦈 🐙 🦑 🐟 🫧',t18:'🧊 🐧 🐻‍❄️ 🦭 🐋 ❄️ 🐟',t19:'🌌 🔭 🦌 🐺 🏔️ ❄️ ✨',
+  t20:'🌵 🏜️ 🐍 🦂 🦅 🌄 🪨',t21:'🦅 🗺️ 🐎 🌵 🦎 🪨 🥾',t22:'🦜 🌿 🐆 🐒 🐸 🦋 🍌',t23:'🐼 🎋 🏮 🍵 🦗 🍃 🎍',t24:'☯️ 🔔 🪷 🪨 🍵 🎍 🐟',
+  t25:'🍵 🧧 🫖 🍘 🥟 🍙 🍡',t26:'🏮 🧧 🐉 🎆 🥮 🎐 🍊',t27:'☕ 🧾 🥐 🍩 🧁 🥯 🫘',t28:'🍫 🎁 💝 🍓 🍪 🍰 🥜',t29:'🍭 🎁 🍬 🧁 🍩 🍫 🍡',
+  t30:'🔦 🎯 💥 ⚡ 🛡️ 🔴 🟢',t31:'🎸 🎟️ 🤘 🥁 🎤 🔊 ⚡',t32:'🎷 🎟️ 🎺 🎹 🎻 🍸 🎶',t33:'🪩 🎟️ 🕺 💃 🎶 👠 ✨',t34:'🎨 📻 🛹 🎤 🧢 👟 💥',
+  t35:'🎬 🎟️ 🏆 ⭐ 🍿 📸 🎥',t36:'🎪 🎟️ 🦁 🤡 🐘 🎈 🍿',t37:'🎡 🎟️ 🎠 🎢 🧸 🎈 🍭',t38:'🎆 🧨 🎇 💥 ✨ 🌟 🎉',t39:'👻 🗝️ 💀 🦇 🕸️ 🕯️ 🎃',
+  t40:'🧙 📜 🔮 🐈‍⬛ 🧹 🌙 🍄',t41:'🧛 ⚰️ 🩸 🦇 🏰 🕯️ 🌙',t42:'🐉 🥚 💎 🔥 🗡️ 🛡️ 🪙',t43:'🧙‍♂️ 📜 🔮 ⚡ 🪄 🧪 ⭐',t44:'🏴‍☠️ 🗺️ 💰 🦜 ⚓ 🗡️ 🪙',
+  t45:'💰 🗝️ 👑 💎 🏺 🪙 💍',t46:'🤠 🌵 💰 🐎 🥃 🎲 🪙',t47:'⛏️ 🧨 💎 🪙 🪨 🔦 🚂',t48:'🏁 🏆 🏎️ 🛞 ⛽ 🔧 💨',t49:'🏟️ 🎟️ 🏆 🏈 📣 🌭 🥤',
+  t50:'⛷️ 🎿 🏂 ☕ 🧣 🧤 ❄️',t51:'🦁 🗺️ 🐘 🦒 🦓 🦏 🌾',t52:'⚙️ 🗝️ 🎩 🔭 ⏱️ 🔩 💨',t53:'🍸 🎟️ 💎 🎷 🪶 🥂 ✨',t54:'🛥️ 🍾 ☀️ 🕶️ 🌊 🍋 🐚',
+  t55:'🗼 🎟️ 🌹 🥐 🍷 🧀 🥖',t56:'🗾 🎟️ 🍣 🏮 🍜 🎌 ⚡',t57:'🎰 🎟️ 💵 🎲 🃏 🍸 💎',t58:'🌺 🎟️ 🎺 💃 🍹 🌴 🥁',t59:'🎭 🎟️ 👑 🪶 🎻 🥂 🌹',
+  t60:'🏺 🗝️ 👁️ 🐍 🪲 🐫 ☀️',t61:'🏛️ 📜 ⚡ 🏺 🦉 🫒 🍇',t62:'🌙 🛰️ 👨‍🚀 🚀 🛸 ⭐ 🪨',t63:'🪐 🛰️ 🚀 🔴 👽 🛸 🪨',t64:'💥 🌠 ☄️ ⭐ 🌟 ✨ 🔥',
+  t65:'🕳️ 🌀 🌌 🪐 ☄️ 🛸 ⭐',t66:'💠 🗝️ 💎 🔷 🔮 🪨 ✨',t67:'🦪 🐚 🧜‍♀️ 🐬 🐠 🫧 🌊',t68:'🍾 🎟️ 🥂 💎 🍓 🎩 ✨',t69:'🛳️ 🗝️ 💵 💎 🍾 🚁 ⚓',
+  vip1:'🥈 🎟️ 🪙 🔔 🍴 🏺 ⚪',vip2:'🥇 🎟️ 💰 🏆 🔔 🪙 🟡',vip3:'💎 🎟️ 💍 👑 🤍 ✨ 🔷',vip4:'🟢 🎟️ 💚 🐍 🍀 🌿 🥝',vip5:'🔴 🎟️ ❤️ 🌹 🍓 🍒 🌶️',vip6:'🔵 🎟️ 💙 🌊 🐋 🫐 🧊',
+  vip7:'🟣 🎟️ 💜 🔮 🍇 🦄 🪻',vip8:'⚫ 🎟️ 🖤 🐈‍⬛ 🦇 🕷️ 🌑',vip9:'🏆 🎟️ 💿 🥂 ⌚ 🔗 ⚪',vip10:'👑 🎟️ 💍 🏰 ⚜️ 🦢 🍷',vip11:'🌌 🎟️ 🪐 🌙 ☄️ 🔭 🌠',vip12:'🌠 🎟️ 💫 🌀 ⭐ 🛸 🌟',
+  star1:'🌅 ⭐ 🐓 ☀️ 🌄 ☕ 🌤️',star2:'♊ ⭐ 👯 🎭 🪞 🌗 ⚖️',star3:'🏇 ⭐ 🏆 🌹 🐎 🎩 🥃',star4:'🍀 ⭐ 🌸 ☀️ 🍂 ❄️ 🌱',star5:'🖐️ ⭐ 🙌 🎉 👏 🤝 💥',
+  star6:'💪 ⭐ 🏋️ 🥇 🥊 🍗 🔥',star7:'🍀 ⭐ 7️⃣ 🌈 🐞 🧲 🪙',star8:'♾️ ⭐ 🌌 🌀 💫 🪐 ☄️'};
+for(const k in SLOT_SYM) if(TTHEMES[k]) TTHEMES[k].sym=SLOT_SYM[k].split(' ');
+const SYM_K=['WILD','BONUS','SEVEN','BELL','ORN','STOCK','CANE'], SYM_ORIG={}, NAME_ORIG=Object.assign({},SYMNAME);
+function symSVG(i,e){ const tier=['#ffd84a','#3ad08a','#ff5a6a','#ffb03a','#6ab0ff','#c88aff','#9aa4b0'][i];
+  return `<circle cx="50" cy="${i<2?46:48}" r="${i<2?46:40}" style="fill:${tier}" fill-opacity="${i<2?.32:.16}"/>${i<3?`<circle cx="50" cy="48" r="40" fill="none" stroke="${tier}" stroke-width="3" stroke-opacity=".7"/>`:''}
+    <text x="50" y="${i<2?62:68}" text-anchor="middle" font-size="${i<2?54:58}">${e}</text>${i<2?`<text x="50" y="95" text-anchor="middle" font-family="Inter Tight,Arial,sans-serif" font-weight="900" font-size="19" fill="#fff" stroke="#000" stroke-width="3" paint-order="stroke">${i?'BONUS':'WILD'}</text>`:''}`; }
+function thSymbols(){ const key=S.mode==='casino'&&S.ctab==='slots'?curTheme():'lodge', set=TTHEMES[key]&&TTHEMES[key].sym; if(thSymbols.k===key) return; thSymbols.k=key;
+  SYM_K.forEach((id,i)=>{ const el=document.getElementById('s-'+id); if(!el) return; if(!(id in SYM_ORIG)) SYM_ORIG[id]=el.innerHTML;
+    if(!set){ el.innerHTML=SYM_ORIG[id]; SYMNAME[id]=NAME_ORIG[id]; } else { el.innerHTML=symSVG(i,set[i]); SYMNAME[id]=i===0?'Wild '+set[i]:i===1?'Bonus '+set[i]:set[i]; } }); }
+const _thRefreshS=themeRefresh; themeRefresh=function(){ _thRefreshS(); thSymbols(); };
+const _renderSym=render; render=function(){ _renderSym(); thSymbols(); };
+// The slot machine's name follows the theme (Lodge keeps "Jingle Jackpot").
+function thSlotTitle(){ if(S.mode!=='casino'||S.ctab!=='slots') return; const h=document.querySelector('#view .ghead h2'); if(!h) return; const k=curTheme(); h.textContent=k==='lodge'?'Jingle Jackpot':TTHEMES[k].name+' Slots'; }
+const _thRefreshT=themeRefresh; themeRefresh=function(){ _thRefreshT(); thSlotTitle(); };
+const _renderSlT=render; render=function(){ _renderSlT(); thSlotTitle(); };
