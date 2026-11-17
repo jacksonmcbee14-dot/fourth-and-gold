@@ -169,3 +169,8 @@ body.in-lodge .xppop{top:auto;bottom:80px;right:50%;transform:translateX(50%)}
 .hp-house span{font-size:24px;animation:hpIn .3s ease-out both;animation-delay:var(--d,0ms)}.hp-win.open{filter:drop-shadow(0 0 4px #e0203a)}.hp-win.cov{filter:drop-shadow(0 0 4px #3ad08a)}
 .hp-amt{text-align:center;font-size:18px;color:#ffd84a;margin:4px 0}
 .hp-lock,.hp-done{text-align:center;font-size:8px;color:#a89a80;margin:10px 0}.hp-lock b{color:#ffd84a}
+/* Upgrade from the closet / room */
+.gu-strip{display:flex;flex-direction:column;gap:6px;margin:6px 0}
+.gu-row{display:flex;align-items:center;gap:8px;padding:6px;background:#1a1006;box-shadow:0 0 0 2px #3a2617;animation:hpIn .3s ease-out both;animation-delay:var(--d,0ms)}
+.gu-row b{flex:1;font-size:7px;color:#f3ead8}.gu-btn,.gu-max{font-size:8px;white-space:nowrap}
+.gu-pop{text-align:center}.gu-art{display:flex;justify-content:center;margin:6px 0;animation:hpBob 1.6s ease-in-out infinite}.gu-art canvas{image-rendering:pixelated}
