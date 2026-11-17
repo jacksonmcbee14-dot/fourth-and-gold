@@ -12,7 +12,7 @@ const gearUpPrice=(it,next)=>nice(shopPrice(it)*GEAR_X[next]);
 const _renderShopU=renderShop;
 renderShop=function(){ _renderShopU(); const it=SHOP.sel&&ITEM[SHOP.sel]; if(!it||SHOP.confirm||!owns(it.id)||it.free||it.league) return;
   const row=LODGE.el&&LODGE.el.querySelector('.lg-shop .lg-prev .lg-row'); if(!row) return; const t=gearTier(it.id), nx=t+1;
-  row.insertAdjacentHTML('beforebegin',`<div class="lg-prev-desc ${t?'gold':''}">${t?'✨ '+GEAR_TIERS[t]+' — ':''}${nx<=3?`Upgrade to <b>${GEAR_TIERS[nx]}</b>: ${it.slot?['','gold sparkles around you','diamond twinkles around you','a rainbow neon outline'][nx]:['','gold glints','diamond twinkles','a neon glow'][nx]} that everyone sees.`:'Maxed out — as flashy as it gets.'}</div>
+  row.insertAdjacentHTML('beforebegin',`<div class="tchips">${[1,2,3].map(k=>`<span class="${k<=t?'on':''}" style="--d:${k*70}ms">${['','🥇 Gold','💎 Diamond','🌈 Neon'][k]}</span>`).join('')}</div>
     ${nx<=3?`<div class="lg-row"><button class="lg-btn lg-gold" data-lg="gearUp" ${gearUpPrice(it,nx)>S.bank?'disabled':''}>✨ ${GEAR_TIERS[nx]} · ${k$(gearUpPrice(it,nx))}</button></div>`:''}`); };
 Object.assign(LG_ACT,{ gearUp:()=>{ const it=ITEM[SHOP.sel]; if(!it||!owns(it.id)) return; const nx=gearTier(it.id)+1; if(nx>3) return;
   const pr=gearUpPrice(it,nx); if(pr>S.bank){ toast('Not enough in the bankroll','loss'); return; }

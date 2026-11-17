@@ -34,7 +34,7 @@ async function bestHomeBoard(){
   if(!r||r.error){ box.innerHTML='<p class="small muted">Couldn’t reach the server.</p>'; return; }
   box.innerHTML=`${r.last&&r.last.name?`<p class="small" style="margin:0 0 8px">👑 Last week: <b>${esc(r.last.name)}</b> with ${r.last.hearts} ❤️</p>`:''}
     ${(r.top||[]).map((x,i)=>`<button class="bh-row" data-a="visitLodge" data-v="${esc(x.name)}"><b>${i+1}</b><span>${esc(x.name)}</span><small>🏠 ${x.score.toLocaleString()}</small><em>${x.hearts} ❤️</em></button>`).join('')||'<p class="small muted">No homes scored yet.</p>'}
-    <p class="small muted" style="margin:10px 0 0">Visit a home and tap ❤️ to vote (once a week per home). Most hearts on Sunday night wins ${k$(bestHomePrize())} and a trophy.</p>`;
+    <div class="tchips"><span style="--d:0ms">❤️ 1 vote / home / week</span><span style="--d:70ms">🏆 Sunday winner</span><span style="--d:140ms">💰 ${k$(bestHomePrize())}</span></div>`;
 }
 const bestHomePrize=()=>nice(Math.max(5e6,worth()*.05));
 

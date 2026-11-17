@@ -102,14 +102,14 @@ function kenAdopt(){
     <div class="pk-breeds">${Object.entries(list).map(([k,b])=>`<button class="pk-breed ${k===ADOPT.breed?'on':''}" data-pk="adoptBr" data-v="${k}"><i style="background:${b.b};box-shadow:inset -6px 0 0 ${b.d}"></i>${esc(b.name.toUpperCase())}</button>`).join('')}</div>
     <input class="pk-name" id="pkName" maxlength="14" placeholder="NAME" value="${esc(ADOPT.name||'')}">
     <button class="lg-btn lg-gold" data-pk="adoptGo">ADOPT · ${k$(petAdoptPrice())}</button>
-    <div class="gf-note">Feed it, bathe it, play with it and train it. Then enter it in the daily ${sp} show.</div>`);
+    <div class="tchips"><span style="--d:0ms">🍖 Feed</span><span style="--d:70ms">🛁 Bathe</span><span style="--d:140ms">🎾 Play</span><span style="--d:210ms">🏆 Show</span></div>`);
 }
 
 // Training games
 function kenTrain(){
   kenCard(`<div class="gf-k">TRAINING · costs a little hunger and a bath</div>${Object.entries(PET_SKILLS).map(([k,t])=>{ const L=petLvOf(S.pet.skills&&S.pet.skills[k]);
     return `<button class="rg-game" data-pk="trainGo" data-v="${k}"><b>${t.toUpperCase()} · LV ${L.L}</b><small>${k==='agility'?'Tap GO as it lines up to jump each hurdle.':k==='tricks'?'Tap GO to catch the frisbee in the green.':'Watch the commands, then repeat them in order.'}</small><small class="gold">${L.L<50?L.into+' / '+L.need+' XP':'MAX'}</small></button>`; }).join('')}
-    <div class="gf-note">A fed, clean, happy pet learns faster.</div><div class="gf-row"><button class="lg-btn" data-pk="home">BACK</button></div>`);
+    <div class="tchips"><span style="--d:0ms">🍖 Fed</span><span style="--d:70ms">🛁 Clean</span><span style="--d:140ms">😊 Happy</span><span style="--d:210ms">= ⚡ faster</span></div><div class="gf-row"><button class="lg-btn" data-pk="home">BACK</button></div>`);
 }
 function trainStart(k){
   const P=S.pet; if(P.hunger<10){ toast(P.name+' is too hungry to train','loss'); return; }
@@ -145,8 +145,8 @@ const showFee=()=>nice(Math.max(10000,worth()*.01));
 async function kenShow(){
   const P=S.pet, today=dayKey(), entered=P.showDay===today;
   kenCard(`<div class="gf-k">TODAY’S ${P.species.toUpperCase()} SHOW</div><div class="gf-big">${petScore()} <small>pts</small></div>
-    <div class="gf-note">Score = training levels × condition (fed, clean, happy) × ${PET_TIERS[P.tier||0]||'normal'} tier${petRibbon()?' × spa ribbon':''}.</div>
-    ${entered?'<div class="gf-k">YOU’VE ENTERED TODAY</div>':`<button class="lg-btn lg-gold" data-pk="showGo">ENTER · ${k$(showFee())}</button><div class="gf-note">1st wins 6× the fee, 2nd 3×, 3rd 1.5×. One entry a day.</div>`}
+    <div class="tchips"><span style="--d:0ms">🏋️ Training</span><span style="--d:70ms">😊 Condition</span><span style="--d:140ms">✨ ${PET_TIERS[P.tier||0]||'Normal'}</span><span style="--d:210ms">${petRibbon()?'🎀 Spa':''}</span></div>
+    ${entered?'<div class="gf-k">YOU’VE ENTERED TODAY</div>':`<button class="lg-btn lg-gold" data-pk="showGo">ENTER · ${k$(showFee())}</button><div class="tchips"><span style="--d:0ms">🥇 6×</span><span style="--d:70ms">🥈 3×</span><span style="--d:140ms">🥉 1.5×</span><span style="--d:210ms">1 / day</span></div>`}
     <div class="pk-field">Loading the field…</div><div class="gf-row"><button class="lg-btn" data-pk="home">BACK</button></div>`);
   let f=[]; try{ f=await srpc('fg_pet_field',{p_species:P.species})||[]; }catch(e){}
   showField(Array.isArray(f)?f:[]);
@@ -168,7 +168,7 @@ async function showEnter(){ const P=S.pet, fee=showFee(); if(fee>S.bank){ toast(
 function kenUpgrade(){ const P=S.pet, t=P.tier||0, nx=PET_UP[t+1];
   if(!nx){ kenCard(`<div class="gf-k">MEGA NEON</div><div class="gf-note">${esc(P.name)} is as dazzling as a pet can get.</div><div class="gf-row"><button class="lg-btn" data-pk="home">BACK</button></div>`); return; }
   const ok=Object.keys(PET_SKILLS).every(k=>petLv(k)>=nx.need);
-  kenCard(`<div class="gf-k">UPGRADE TO ${PET_TIERS[t+1].toUpperCase()}</div><div class="gf-note">${t+1===1?'A glowing outline and a 1.5× show score.':'A rainbow that never stops and a 2.25× show score.'}</div>
+  kenCard(`<div class="gf-k">UPGRADE TO ${PET_TIERS[t+1].toUpperCase()}</div><div class="tchips"><span style="--d:0ms">${t+1===1?'✨ Glow':'🌈 Rainbow'}</span><span style="--d:70ms">🏆 ×${t+1===1?'1.5':'2.25'} score</span></div>
     ${Object.entries(PET_SKILLS).map(([k,n])=>`<div class="gf-k ${petLv(k)>=nx.need?'gold':''}">${n.toUpperCase()} LV ${petLv(k)} / ${nx.need}</div>`).join('')}
     <button class="lg-btn lg-gold" data-pk="upGo" ${ok?'':'disabled'}>${ok?'UPGRADE · '+k$(nx.price()):'TRAIN EVERY SKILL TO LV '+nx.need}</button><div class="gf-row"><button class="lg-btn" data-pk="home">BACK</button></div>`); }
 

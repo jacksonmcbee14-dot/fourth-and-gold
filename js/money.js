@@ -50,5 +50,5 @@ ACT.bankSheet=el=>{ _bankSheet2(el);
   <div style="display:flex;gap:8px;margin-bottom:8px">${[10000,50000,100000,250000].map(v=>`<button class="btn" style="flex:1;padding:8px 0" data-a="borrowPick" data-v="${v}">${k$(v)}</button>`).join('')}</div>
   <input class="input" id="borrowAmt" inputmode="numeric" value="250,000" aria-label="Amount to borrow" style="margin-bottom:8px">
   <button class="btn wide" data-a="borrow">Borrow</button>
-  <p class="small muted" style="text-align:center">What you owe counts against your leaderboard score. Each new day, cash below $1,000,000 is topped back up.</p>`);
+  <div class="tchips"><span style="--d:0ms">📉 Debt lowers your rank</span><span style="--d:70ms">🌅 Daily top-up to $1M</span></div>`);
 };
