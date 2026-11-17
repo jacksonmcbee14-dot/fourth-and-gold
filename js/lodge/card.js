@@ -20,6 +20,7 @@ function charCard(o){
     x.fillStyle='#c8a45c'; x.fillRect(30,176,132,6); x.fillStyle='#7a5a2a'; x.fillRect(36,182,120,10);
     const spr=personSprite('player',Math.sin(t*.8)>.97?'idle1':'idle0',look); x.drawImage(spr,pet?22:54,176-21*7,12*7,21*7);
     gearGlint(x,look,pet?22:54,176-21*7,7,t);
+    if(typeof auraFx==='function') auraFx(x,spr,pet?22:54,176-21*7,7,wornTier(o.outfit,o.me?null:(o.tiers||{})),t,1);
     if(pet) drawPet(x,pet,152,176,-1,t,0,5);
     CC.raf=requestAnimationFrame(draw); };
   draw();
