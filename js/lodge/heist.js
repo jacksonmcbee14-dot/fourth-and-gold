@@ -117,7 +117,7 @@ async function heistEnd(cracked,why){
   HV.data.tries_left=r.tries_left;
   if(r.result==='stole'){ setBank(r.amount); try{ fx.coins(80,2200); fx.confetti(140); }catch(e){} [523,659,784,1047,1319].forEach((f,i)=>tone(f,.12,'square',.05,i*.08));
     modal(`<div class="cel"><div class="cel-emoji">💰</div><div class="cel-t">You robbed ${esc(HV.data.name)}!</div><div class="cel-big">+${fmt$(r.amount)}</div>
-      <div class="fgm-row"><button class="btn gold" data-a="heistShare">Share it</button><button class="btn" data-a="closeModal">Get out of here</button></div></div>`); }
+      <div class="fgm-row" style="flex-wrap:wrap">${typeof stealButton==='function'?stealButton():''}<button class="btn" data-a="heistShare">Share it</button><button class="btn" data-a="closeModal">Get out of here</button></div></div>`); }
   else { setBank(-Math.min(r.fine,Math.max(0,S.bank)));
     modal(`<div class="cel"><div class="cel-emoji">🚨</div><div class="cel-t">${r.result==='caught'?'Caught by their security!':'The alarm went off!'}</div><p>You paid ${esc(HV.data.name)} a fine.</p><div class="cel-big" style="color:var(--loss-hi)">−${fmt$(r.fine)}</div>
       <div class="fgm-row"><button class="btn" data-a="closeModal">Run</button></div></div>`); }

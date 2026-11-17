@@ -300,3 +300,7 @@ body[data-heat] .chip.on,body[data-heat] .stack,body[data-heat] .pcard:not(.back
 .cc-pet{margin:4px 0 10px;font-size:14px}.cc-pet small{opacity:.65}
 .cc-open{display:block;width:100%;margin:6px 0 0;padding:6px;font-size:12px;border-radius:999px;border:1px solid rgba(200,164,92,.45);background:transparent;color:inherit}
 #lgLvl{cursor:pointer}
+.st-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:10px 0;max-height:50vh;overflow:auto}
+.st-it{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px;border-radius:10px;border:1px solid rgba(200,164,92,.4);background:rgba(255,255,255,.04);color:inherit}
+.st-it b{font-size:11px;line-height:1.2;text-align:center}.st-it small{font-size:10px;opacity:.65}
+.st-it canvas{width:48px!important;height:auto!important;image-rendering:pixelated}
