@@ -2,7 +2,7 @@
 //  • Long drive: 5 balls with the driver. Your longest carry counts.
 //  • Target practice: 5 balls at flags from 60 to 180 yards. Points for landing close.
 //  • Perfect streak: hit the green as many times in a row as you can. The meter speeds up each time.
-// Every ball earns golf XP. Beating your best in a game pays a prize that grows with your golf level.
+// Every ball earns golf XP. The range is free practice — golf only pays for eagles and holes in one on the course.
 
 const RANGE={el:null,c:null,ctx:null,loop:null,game:null,balls:0,shots:[],anim:null,meter:null,phase:'menu',score:0,target:0,speed:1,msg:null};
 const RANGE_GAMES={
@@ -41,8 +41,8 @@ function rangeMenu(){
   RANGE.phase='menu'; RANGE.game=null; RANGE.shots=[]; RANGE.anim=null;
   const card=RANGE.el.querySelector('.rg-card');
   card.innerHTML=`<div class="gf-card-in"><div class="gf-k">DRIVING RANGE · GOLF LV ${golfLv()}</div>
-    ${Object.entries(RANGE_GAMES).map(([k,g])=>`<button class="rg-game" data-rg="start" data-v="${k}"><b>${g.icon} ${g.name.toUpperCase()}</b><small>${esc(g.blurb)}</small><small class="gold">${rangeBest(k)?'BEST '+rangeBest(k)+' '+g.unit.toUpperCase()+' · ':''}NEW BEST PAYS ${k$(g.prize*golfPayX())}</small></button>`).join('')}
-    <div class="tchips"><span style="--d:0ms">⛳ Every ball = XP</span><span style="--d:70ms">🎯 Bigger sweet spot</span><span style="--d:140ms">💰 Bigger prizes</span></div></div>`;
+    ${Object.entries(RANGE_GAMES).map(([k,g])=>`<button class="rg-game" data-rg="start" data-v="${k}"><b>${g.icon} ${g.name.toUpperCase()}</b><small>${esc(g.blurb)}</small><small class="gold">${rangeBest(k)?'BEST '+rangeBest(k)+' '+g.unit.toUpperCase()+' · ':''}FREE · GOLF XP</small></button>`).join('')}
+    <div class="tchips"><span style="--d:0ms">⛳ Every ball = XP</span><span style="--d:70ms">🎯 Bigger sweet spot</span><span style="--d:140ms">🆓 Free practice</span></div></div>`;
   card.classList.add('on'); rangeHud();
 }
 function rangeStart(g){
@@ -75,11 +75,12 @@ function rangeLanded(){
 function rangeEnd(){
   const g=RANGE_GAMES[RANGE.game], best=rangeBest(RANGE.game), pb=RANGE.score>best&&RANGE.score>0;
   S.golf=S.golf||{}; S.golf.range=S.golf.range||{}; let prize=0;
-  if(pb){ S.golf.range[RANGE.game]=RANGE.score; prize=Math.round(g.prize*golfPayX()); setBank(prize); try{ fx.coins(50,1600); }catch(e){} [523,659,784,1047].forEach((f,i)=>tone(f,.12,'square',.05,i*.09)); }
+  if(pb){ S.golf.range[RANGE.game]=RANGE.score; prize=0;   // practice only: golf pays just for eagles and aces
+ try{ fx.coins(50,1600); }catch(e){} [523,659,784,1047].forEach((f,i)=>tone(f,.12,'square',.05,i*.09)); }
   golfXP(15,'range'); save();
   const card=RANGE.el.querySelector('.rg-card');
   card.innerHTML=`<div class="gf-card-in"><div class="gf-k">${esc(g.name.toUpperCase())}</div><div class="gf-big">${RANGE.score} <small>${esc(g.unit)}</small></div>
-    ${pb?`<div class="gf-k gold">NEW PERSONAL BEST · +${k$(prize)}</div>`:best?`<div class="gf-k">BEST ${best}</div>`:''}
+    ${pb?`<div class="gf-k gold">NEW PERSONAL BEST</div>`:best?`<div class="gf-k">BEST ${best}</div>`:''}
     <div class="gf-k">GOLF LEVEL ${golfLv()}</div>
     <div class="gf-row"><button class="lg-btn lg-gold" data-rg="start" data-v="${RANGE.game}">AGAIN</button><button class="lg-btn" data-rg="menu">OTHER GAMES</button></div></div>`;
   card.classList.add('on'); RANGE.phase='menu-end'; rangeHud();

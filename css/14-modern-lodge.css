@@ -102,3 +102,37 @@
 .lg-sub.on{color:#2a1606;background:var(--lg-gold);box-shadow:0 4px 12px rgba(232,150,60,.3)}
 .lg-bank{font-family:"Press Start 2P",monospace;font-size:9px;color:#ffd84a;padding:9px 12px;border-radius:999px;background:rgba(14,9,6,.72);backdrop-filter:blur(10px);box-shadow:inset 0 0 0 1px var(--lg-edge),0 6px 16px rgba(0,0,0,.35)}
 .lg-noscarf{display:grid;place-items:center;font-size:22px}
+/* 🌄 The Grounds (js/lodge/grounds.js) */
+.grounds{position:fixed;inset:0;z-index:40;display:none;background:#05060e;touch-action:none;-webkit-user-select:none;user-select:none}
+.grounds.on{display:block}
+.grounds canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.gr-top{position:absolute;left:0;right:0;top:calc(env(safe-area-inset-top,0px) + 10px);display:flex;align-items:flex-start;justify-content:space-between;gap:8px;padding:0 12px;pointer-events:none}
+.gr-top>*{pointer-events:auto}
+.gr-back,.gr-star{padding:9px 14px;border-radius:999px;border:1px solid rgba(255,233,176,.35);background:rgba(10,8,20,.6);backdrop-filter:blur(8px);color:#ffe9b0;font-weight:700;font-size:13px}
+.gr-zone{text-align:center;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.6)}
+.gr-zone b{display:block;font-family:var(--serif,Georgia,serif);font-size:24px;font-weight:400;letter-spacing:.02em}
+.gr-zone small{font-size:11px;opacity:.85}
+.gr-zone.in b{animation:grIn 1.2s cubic-bezier(.2,.8,.2,1) both}
+@keyframes grIn{from{opacity:0;letter-spacing:.4em;filter:blur(6px)}to{opacity:1;letter-spacing:.02em;filter:none}}
+.gr-map{position:absolute;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 74px);display:flex;gap:5px}
+.gr-map i{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.55);font-size:0;font-style:normal;transition:all .3s}
+.gr-map i.lock{background:rgba(255,216,74,.18);box-shadow:inset 0 0 0 1px rgba(255,216,74,.5)}
+.gr-map i.on{background:#ffd84a;box-shadow:0 0 10px #ffd84a;transform:scale(1.4)}
+.gr-act{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 22px);transform:translate(-50%,140%);opacity:0;padding:15px 22px;border:0;border-radius:18px;background:linear-gradient(90deg,#ffd84a,#ff9a4a);color:#1a1006;font-size:15px;font-weight:800;box-shadow:0 10px 30px rgba(0,0,0,.45);transition:transform .35s cubic-bezier(.2,.9,.3,1.2),opacity .25s;white-space:nowrap;max-width:92vw;overflow:hidden;text-overflow:ellipsis}
+.gr-act.on{transform:translate(-50%,0);opacity:1}
+.gr-tip{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 90px);transform:translateX(-50%);padding:8px 14px;border-radius:999px;background:rgba(10,8,20,.55);color:#fff;font-size:12px;transition:opacity .6s;pointer-events:none;white-space:nowrap}
+.gr-tip.off{opacity:0}
+/* 🦆 Dawn Flight (js/lodge/hunt.js) */
+.hunt canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:crosshair}
+.hunt .gf-x{position:absolute;left:12px;top:calc(env(safe-area-inset-top,0px) + 10px);z-index:5;width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,233,176,.4);background:rgba(10,8,20,.6);color:#ffe9b0;font-size:18px}
+.hu-menu{max-height:86vh;overflow:auto}
+.hu-sub{font-size:12px;line-height:1.5;opacity:.85;text-align:center;margin:4px 0 10px}
+.hu-guns{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.hu-gun{display:grid;grid-template-columns:auto 1fr auto;grid-template-rows:auto auto;column-gap:10px;align-items:center;padding:10px 12px;border-radius:14px;border:0;color:#fff;text-align:left;background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px rgba(255,255,255,.1)}
+.hu-gun span{grid-row:1/3;font-size:24px}.hu-gun b{font-size:14px}.hu-gun small{grid-column:2;font-size:11px;opacity:.75}.hu-gun em{grid-row:1/3;grid-column:3;font-style:normal;font-weight:800;font-size:12px;color:#ffd84a}
+.hu-gun.on{box-shadow:inset 0 0 0 2px #ffd84a,0 0 16px rgba(255,216,74,.3)}.hu-gun.lock{opacity:.6}
+.hu-stakes{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:6px 0 12px}
+.hu-stakes button{padding:8px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;font-weight:700;font-size:13px}
+.hu-stakes button.on{background:linear-gradient(90deg,#ffd84a,#ff9a4a);color:#1a1006;border-color:transparent}
+.hu-row{font-size:20px;letter-spacing:2px;margin:6px 0}
+.lg-item.star-item{box-shadow:inset 0 0 0 1px rgba(255,216,74,.55),0 0 12px rgba(255,216,74,.18)}

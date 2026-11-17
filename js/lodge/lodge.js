@@ -63,7 +63,7 @@ function goSpot(s){
   if(dest.bar){ openBar(); return; }
   if(dest.shop){ openShop(); return; }
   if(dest.room){ openRoom(); return; }
-  if(dest.golf){ if(typeof golfChooser==='function') golfChooser(); else openGolf({}); return; }
+  if(dest.golf){ if(typeof openGrounds==='function') openGrounds(); else if(typeof golfChooser==='function') golfChooser(); else openGolf({}); return; }
   if(dest.league){ S.mode='league'; S.ltab='league'; LODGE.from=true; save(); lodgeHide(); scrollTo(0,0); render(); return; }
   S.mode=dest.mode; if(dest.ftab) S.ftab=dest.ftab; if(dest.ctab) S.ctab=dest.ctab;
   if(dest.ctab&&S.howto) S.howto[dest.ctab]=false;

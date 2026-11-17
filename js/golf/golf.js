@@ -233,7 +233,8 @@ function golfHoled(){
   const diff=GOLF.strokes-GOLF.H.par, name=GOLF.strokes===1?'HOLE IN ONE!':(SCORE_NAMES[diff]||('+'+diff));
   [659,784,988,1319].forEach((f,i)=>tone(f,.1,'square',.05,i*.08));
   if(diff<0||GOLF.strokes===1){ try{ const b=GOLF.c.getBoundingClientRect(); fx.burst(b.left+b.width/2,b.top+b.height*.4,diff<=-2?90:50,'#ecd9a8'); if(diff<=-2||GOLF.strokes===1) fx.confetti(160); }catch(e){} }
-  const bonus=Math.round((GOLF.strokes===1?500000:diff<=-2?150000:diff===-1?25000:0)*golfPayX());
+  // Pay to play: only an eagle (or better) or a hole in one pays — 20× / 100× the hole's green fee, more with your golf level.
+  const fee=GOLF.holeFee||0, bonus=fee?Math.round((GOLF.strokes===1?100:diff<=-2?20:0)*fee*golfLvX()):0;
   golfHoleXP(diff,GOLF.strokes);
   if(bonus&&!GOLF.o.noCash){ setBank(bonus); GOLF.cash+=bonus; }
   golfMsg(name,(bonus&&!GOLF.o.noCash?'+'+k$(bonus)+' · ':'')+GOLF.strokes+' stroke'+(GOLF.strokes>1?'s':''),1700);
@@ -365,7 +366,9 @@ const GF_ACT={
 function openGolf(opts){
   golfDom(); GOLF.o=Object.assign({seed:Date.now()%100000,course:S.golfCourse||'links',holes:S.golfHoles||6},opts||{});
   if(!GOLF_COURSES[GOLF.o.course]) GOLF.o.course='links'; if(![3,6,9].includes(+GOLF.o.holes)) GOLF.o.holes=6;
-  GOLF.list=GOLF_COURSES[GOLF.o.course].holes.slice(0,+GOLF.o.holes); GOLF.cards=[]; GOLF.cash=0; GOLF.tips=0;
+  GOLF.list=GOLF_COURSES[GOLF.o.course].holes.slice(0,+GOLF.o.holes); GOLF.cards=[]; GOLF.cash=0; GOLF.tips=0; GOLF.holeFee=0;
+  if(!GOLF.o.noCash&&GOLF.o.course!=='home'){ const hf=golfHoleFee(), tot=hf*GOLF.list.length; if(tot>S.bank){ toast(`⛳ Green fee is ${k$(tot)} — not enough in the bankroll`,'loss'); return; }
+    setBank(-tot); S.spent=(S.spent||0); GOLF.holeFee=hf; toast(`⛳ Green fee ${k$(tot)} · eagle pays ${k$(Math.round(hf*20*golfLvX()))}, hole in one ${k$(Math.round(hf*100*golfLvX()))}`,'gold'); }
   GOLF.el.classList.add('on'); document.body.classList.add('in-golf'); GOLF.el.querySelector('.gf-card').classList.remove('on');
   const vs=GOLF.el.querySelector('.gf-vs'); vs.textContent=GOLF.o.vs?GOLF.o.vs:''; vs.style.display=GOLF.o.vs?'':'none';
   GOLF.fallF=snowField(SEASON.snow?28:14,77);
