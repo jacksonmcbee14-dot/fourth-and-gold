@@ -5,7 +5,7 @@
 //  • The table is drawn in your chosen table theme (js/casino/themes.js), and you can buy new machines, each with
 //    its own layout and feature: Neon Nights (4 bumpers + Neon Frenzy), Gridiron (Touchdown gate), Royale (2-lock
 //    multiball, double set targets).
-// Controls: tap the left/right half of the table (or the buttons) to flip; hold LAUNCH and let go to fire.
+// Controls: one button (or tap the table). With a ball in the launch lane: hold and let go to fire. Otherwise: both flippers.
 
 const PB_W=360, PB_H=640, PB_G=980, PB_R=7;
 const PB_MACH={
@@ -151,7 +151,7 @@ function pbDraw(st,t){ const x=PB.ctx, pal=pbPal(st), acc=pal[2], acc2=pal[3]||'
   x.restore(); }
 
 /* ---------- The loop ---------- */
-function pbTick(now){ const st=PB.st; if(!PB.cv||!document.body.contains(PB.cv)){ PB.raf=0; return; } const t=now/1000;
+function pbTick(now){ const st=PB.st; if(!PB.cv||!document.body.contains(PB.cv)){ PB.raf=0; return; } const t=now/1000; pbBtnLabel();
   if(st&&st.phase==='play'){ const dt=Math.min(.033,(now-(PB.last||now))/1000); const n=8; for(let i=0;i<n;i++) pbStep(st,dt/n);
     st.saveT=Math.max(0,st.saveT-dt); st.comboT=Math.max(0,st.comboT-dt); st.frenzyT=Math.max(0,st.frenzyT-dt); st.tdT=Math.max(0,st.tdT-dt); if(st.balls.some(b=>b.out)) pbDrain(st); }
   if(st&&st.phase==='bonus'){ st.bonusT+=1/60; st.bonusShown=Math.min(st.bonusLeft,st.bonusShown+st.bonusLeft/50+1); if(Math.random()<.3) PB.sfx(400+st.bonusShown/st.bonusLeft*800);
@@ -172,21 +172,23 @@ function viewPinball(){ const P=pbMine(), M=pbMachine(), st=PB.st, playing=st&&!
       ${playing?'':`<div class="pb-start"><div class="pb-ladder">${PB_LADDER.map(([s,m],i)=>`<span style="--d:${i*50}ms">${s>=1000?Math.round(s/1000)+'K':s} → ×${m}</span>`).join('')}</div>
         <div class="qb-chips">${QB_CHIPS.map(([v,c])=>`<button class="qb-chip" style="--c:${c}" data-a="pbChip" data-v="${v}">${k$(v)}</button>`).join('')}</div>
         <div class="qb-amt"><button data-a="pbClear">↺</button><b>${fmt$(PB.stake)}</b><button data-a="pbMaxB">MAX</button></div><button class="pb-go" data-a="pbPlay" ${PB.stake>S.bank||PB.stake<=0?'disabled':''}>🕹️ PLAY · 3 BALLS</button></div>`}</div>
-    <div class="pb-ctrl"><button class="pb-flip" id="pbL">◀</button><button class="pb-launch" id="pbLaunch">LAUNCH</button><button class="pb-flip" id="pbR">▶</button></div></div>`; }
+    <div class="pb-ctrl"><button class="pb-launch pb-one" id="pbOne">LAUNCH</button></div></div>`; }
 function pbMount(){ const cv=document.getElementById('pbCanvas'); if(!cv) return; PB.cv=cv; PB.ctx=cv.getContext('2d');
   const dpr=Math.min(2,devicePixelRatio||1); cv.width=PB_W*dpr; cv.height=PB_H*dpr; PB.ctx.setTransform(dpr,0,0,dpr,0,0);
   const set=(side,v)=>{ PB[side]=v; if(v) PB.sfx(side==='l'?300:320); };
-  cv.addEventListener('pointerdown',e=>{ const r=cv.getBoundingClientRect(); set((e.clientX-r.left)<r.width/2?'l':'r',1); });
-  if(!PB.upHook){ PB.upHook=1; addEventListener('pointerup',()=>{ PB.l=0; PB.r=0; }); }
-  const hold=(id,side)=>{ const b=document.getElementById(id); if(!b) return; b.addEventListener('pointerdown',e=>{ e.preventDefault(); set(side,1); }); b.addEventListener('pointerup',()=>set(side,0)); b.addEventListener('pointerleave',()=>set(side,0)); };
-  hold('pbL','l'); hold('pbR','r');
-  const L=document.getElementById('pbLaunch'); if(L){ L.addEventListener('pointerdown',e=>{ e.preventDefault(); PB.hold=performance.now(); }); L.addEventListener('pointerup',pbFire); L.addEventListener('pointerleave',()=>{ if(PB.hold) pbFire(); }); }
+  const press=e=>{ e.preventDefault(); if(pbWaiting()) PB.hold=performance.now(); else { PB.l=PB.r=1; PB.sfx(310); } };
+  cv.addEventListener('pointerdown',press);
+  if(!PB.upHook){ PB.upHook=1; addEventListener('pointerup',()=>{ PB.l=0; PB.r=0; if(PB.hold) pbFire(); }); addEventListener('pointercancel',()=>{ PB.l=0; PB.r=0; if(PB.hold) pbFire(); }); }
+  const O=document.getElementById('pbOne'); if(O){ O.addEventListener('pointerdown',press); O.addEventListener('contextmenu',e=>e.preventDefault()); }
   if(!PB.raf) PB.raf=requestAnimationFrame(pbTick); }
+// One button: if a ball is sitting in the launch lane it charges + launches, otherwise it flips both flippers.
+function pbWaiting(){ const st=PB.st; return !!(st&&st.phase==='play'&&st.balls.some(x=>!x.out&&x.x>326&&x.y>540&&Math.hypot(x.vx,x.vy)<60)); }
+function pbBtnLabel(){ const O=PB.oneEl&&document.body.contains(PB.oneEl)?PB.oneEl:(PB.oneEl=document.getElementById('pbOne')); if(!O) return; const w=pbWaiting()?1:0; if(O._w===w) return; O._w=w; O.textContent=w?'HOLD TO LAUNCH':'FLIP'; O.classList.toggle('flip',!w); }
 function pbFire(){ const st=PB.st; if(!PB.hold) return; const pw=Math.min(1,(performance.now()-PB.hold)/1000); PB.hold=0; if(!st||st.phase!=='play') return;
   const b=st.balls.find(x=>!x.out&&x.x>326&&x.y>540&&Math.hypot(x.vx,x.vy)<60); if(!b) return; b.lane=1; b.vy=-(700+800*pw); PB.sfx(220);
   if(pw>.82&&pw<.93){ setTimeout(()=>{ if(!st.over){ pbScore(st,10000,170,90,'#3ad08a',1.4); pbBanner(st,'SKILL SHOT!','#3ad08a'); } },700); } }
-addEventListener('keydown',e=>{ if(S.mode!=='casino'||S.ctab!=='pinball') return; if(e.key==='ArrowLeft'||e.key==='z') PB.l=1; if(e.key==='ArrowRight'||e.key==='/') PB.r=1; if(e.key===' '&&!PB.hold) PB.hold=performance.now(); });
-addEventListener('keyup',e=>{ if(e.key==='ArrowLeft'||e.key==='z') PB.l=0; if(e.key==='ArrowRight'||e.key==='/') PB.r=0; if(e.key===' ') pbFire(); });
+addEventListener('keydown',e=>{ if(S.mode!=='casino'||S.ctab!=='pinball') return; if(e.key===' '&&!pbWaiting()&&!e.repeat){ PB.l=PB.r=1; e.preventDefault(); return; } if(e.key==='ArrowLeft'||e.key==='z') PB.l=1; if(e.key==='ArrowRight'||e.key==='/') PB.r=1; if(e.key===' '&&!PB.hold) PB.hold=performance.now(); });
+addEventListener('keyup',e=>{ if(e.key==='ArrowLeft'||e.key==='z') PB.l=0; if(e.key==='ArrowRight'||e.key==='/') PB.r=0; if(e.key===' '){ if(PB.hold) pbFire(); else PB.l=PB.r=0; } });
 const _renderPB=render; render=function(){ _renderPB(); if(S.mode==='casino'&&S.ctab==='pinball') pbMount(); };
 Object.assign(ACT,{
   pbChip:el=>{ PB.stake=Math.min(pbStakeMax(),(PB.stake||0)+(+el.dataset.v)); render(); },

@@ -67,3 +67,6 @@
 .pb-m{background:linear-gradient(120deg,color-mix(in srgb,var(--p1,#1f6a4a) 55%,transparent),rgba(255,255,255,.03))}
 .pb-m small{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}.pb-m small i{font-style:normal;font-size:10px;padding:2px 6px;border-radius:999px;background:rgba(0,0,0,.35);color:#f3ead8;opacity:1}
 .pb-m.lock{opacity:.75}.pb-m em{font-size:12px;text-align:right}
+.pb-ctrl{grid-template-columns:1fr}
+.pb-one{padding:22px 0;font-size:18px;letter-spacing:.06em;transition:background .25s}
+.pb-one.flip{background:linear-gradient(160deg,#3a7aff,#12285a);box-shadow:0 5px 0 #0a1a3a}.pb-one.flip:active{box-shadow:0 2px 0 #0a1a3a}
