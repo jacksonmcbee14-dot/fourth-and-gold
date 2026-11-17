@@ -19,7 +19,8 @@ const hUnit=()=>nice(Math.max(5000,cashNow()*.0005*starOff()));
 const hStatCost=v=>nice(hUnit()*Math.pow(1.03,v));
 // A Pegasus costs about a third of your cash once you're rich; cheaper breeds far less.
 const hPrice=b=>nice(HBREEDS[b].price*Math.max(starOff(),wealthX()/200));
-const hTrackToday=()=>{ const k=Object.keys(HTRACKS); return k[[...dayKey()].reduce((s,c)=>s+c.charCodeAt(0),0)%k.length]; };
+// The map's tracks (js/lodge/grounds.js) are practice-only, out where you find them.
+const hTrackToday=()=>{ const k=Object.keys(HTRACKS).filter(t=>!HTRACKS[t].world); return k[[...dayKey()].reduce((s,c)=>s+c.charCodeAt(0),0)%k.length]; };
 function hRating(H,track){ const w=HTRACKS[track||'dirt'].w; return (H.spd*w[0]*.5+H.sta*w[1]*.25+H.acc*w[2]*.25)/(w[0]*.5+w[1]*.25+w[2]*.25); }
 const hFee=()=>nice(Math.max(10000,cashNow()*.004))*(1+(S.horse?S.horse.tier:0));
 
@@ -56,7 +57,7 @@ function hrTab(){ const H=S.horse;
       <button class="lg-btn lg-gold" data-hr="race" ${hFee()>S.bank?'disabled':''}>🏇 ENTER · ${k$(hFee())}</button>`); return; }
   if(HR.tab==='practice'){ const left=3-((S.horse.pDay===dayKey()&&S.horse.pN)||0);
     hrCard(`<div class="gf-k">🏋️ PRACTICE · FREE</div><div class="tchips"><span>${left>0?'⭐ +1 stat · '+left+' left today':'⭐ No stat gains left today'}</span></div>
-      <div class="hr-tracks">${Object.entries(HTRACKS).map(([k,T])=>`<button class="rg-game" data-hr="practice" data-v="${k}"><b>${T.ic} ${T.name.toUpperCase()}</b><small>${['ALL-ROUND','SPEED','STAMINA','ACCEL'][Object.keys(HTRACKS).indexOf(k)]} TRACK</small></button>`).join('')}</div>`); return; } }
+      <div class="hr-tracks">${Object.entries(HTRACKS).filter(([k,T])=>!T.world).map(([k,T])=>`<button class="rg-game" data-hr="practice" data-v="${k}"><b>${T.ic} ${T.name.toUpperCase()}</b><small>${['ALL-ROUND','SPEED','STAMINA','ACCEL'][Object.keys(HTRACKS).indexOf(k)]} TRACK</small></button>`).join('')}</div>`); return; } }
 function hrShop(){ const H=S.horse;
   hrCard(`<div class="gf-k">🛒 THE STABLES</div>${Object.entries(HBREEDS).map(([k,B])=>`<button class="rg-game" data-hr="buy" data-v="${k}" ${H&&H.breed===k?'disabled':''}><b>${B.wings?'🦄':'🐎'} ${B.name.toUpperCase()}</b><small>⚡ START ${B.base} · MAX ${B.cap}</small><small class="gold">${H&&H.breed===k?'YOURS':k$(hPrice(k))}</small></button>`).join('')}
     ${H?'<div class="tchips"><span>🏆 Your tier stays</span></div>':''}`); }
