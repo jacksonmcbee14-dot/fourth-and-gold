@@ -289,3 +289,14 @@ body[data-heat] .chip.on,body[data-heat] .stack,body[data-heat] .pcard:not(.back
 .hv-tub .btn{white-space:nowrap}
 .hv-tub-done{font-size:12px;opacity:.7;white-space:nowrap}
 .hv-send{margin:8px 0}
+/* Character card */
+.cc-stage{border-radius:12px;overflow:hidden;box-shadow:0 0 0 2px #c8a45c}
+.cc-cv{display:block;width:100%;height:auto;image-rendering:pixelated}
+.cc-items{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0}
+.cc-it{padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(200,164,92,.3)}
+.cc-it small{display:block;font-size:11px;opacity:.65}.cc-it b{font-size:13px}
+.cc-tier{display:inline-block;margin-left:6px;font-size:10px;padding:1px 6px;border-radius:999px;background:#c8a45c;color:#1a1006}
+.cc-tier.t2{background:#bff6ff}.cc-tier.t3{background:linear-gradient(90deg,#ff3a6a,#ffd84a,#3affd0,#b03aff)}
+.cc-pet{margin:4px 0 10px;font-size:14px}.cc-pet small{opacity:.65}
+.cc-open{display:block;width:100%;margin:6px 0 0;padding:6px;font-size:12px;border-radius:999px;border:1px solid rgba(200,164,92,.45);background:transparent;color:inherit}
+#lgLvl{cursor:pointer}
