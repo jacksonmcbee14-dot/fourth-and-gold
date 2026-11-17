@@ -3,7 +3,7 @@
 // $1K or $1B). When the week ends, the top 3 split the pot 50/30/20, plus a $1M house bonus.
 
 const TR={board:null,at:0,sendT:0};
-const tourneyFee=()=>nice(Math.max(100000,worth()*.02));
+const tourneyFee=()=>nice(Math.max(100000,cashNow()*.02));
 const tourneyIn=()=>!!(S.tourney&&TR.board&&S.tourney.week===TR.board.week&&S.tourney.in);
 const tourneyScore=()=>Math.round(((S.tourney&&S.tourney.best)||[]).reduce((s,x)=>s+x,0)*10)/10;
 function tourneyLoad(force){ if(!(typeof socOn==='function'&&socOn())) return; if(!force&&Date.now()-TR.at<30e3) return; TR.at=Date.now();

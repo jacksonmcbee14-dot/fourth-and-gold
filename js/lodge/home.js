@@ -117,7 +117,7 @@ function homeHud(mode){
   if(mode==='room'){ if(!b){ b=document.createElement('button'); b.id='lgHome'; b.className='lg-btn'; b.dataset.lg='homeOpen'; b.textContent='Home'; const lvl=document.getElementById('lgLvl'); bar.insertBefore(b,lvl); } }
   else if(b) b.remove();
 }
-const camPrice=()=>nice(Math.max(100000,worth()*.01));
+const camPrice=()=>nice(Math.max(100000,cashNow()*.01*starOff()));
 function homeOpen(){
   closeShop(); homeSync(); const i=homeTier(), H=HOMES[i], next=HOMES[i+1]&&!HOMES[i+1].owner?HOMES[i+1]:null, cams=Math.min(H.windows,camsOwned()), box=document.createElement('div'); box.className='lg-shop lg-home';
   const safeCap=H.safe;
@@ -156,7 +156,7 @@ Object.defineProperty(GOLF_COURSES,'home',{enumerable:false,value:{name:()=>'Hom
 
 /* ---------- Robbing: choose your way in ---------- */
 // Lockpicks: one more robbery try today. 1% of your net worth, doubling with each one (at least $50K), up to 10 a day.
-const lockpickPrice=n=>nice(Math.max(50000,worth()*.01*Math.pow(2,n||0)));
+const lockpickPrice=n=>nice(Math.max(50000,cashNow()*.01*Math.pow(2,n||0)*starOff()));
 ACT.buyTry=async el=>{ const d=HV.data; if(!d) return; const pr=lockpickPrice(d.tries_bought||0);
   if(pr>S.bank){ toast('Not enough in the bankroll','loss'); return; } el.disabled=true;
   let r=null; try{ r=await srpc('fg_buy_try'); }catch(e){}

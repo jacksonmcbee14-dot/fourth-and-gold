@@ -48,7 +48,7 @@ const PET_DECAY={hunger:4,clean:2.5,happy:3};   // points per hour
 function petTick(){ const P=S.pet; if(!P) return; const now=Date.now(), h=Math.max(0,(now-(P.t||now))/36e5); P.t=now;
   for(const k in PET_DECAY) P[k]=Math.max(0,Math.min(100,(P[k]??80)-PET_DECAY[k]*h)); }
 const petCond=()=>{ const P=S.pet; return P?(P.hunger+P.clean+P.happy)/300:0; };
-const petUnit=()=>nice(Math.max(2000,worth()*.002));
+const petUnit=()=>nice(Math.max(2000,cashNow()*.002*starOff()));
 const PET_FOOD=[['kibble','🥣 Kibble',1,{hunger:35}],['chicken','🍗 Chicken',3,{hunger:70,happy:10}],['steak','🥩 Steak dinner',8,{hunger:100,happy:25}],['treats','🦴 Treats',2,{happy:25,hunger:5}]];
 const PET_GROOM=[['bath','🛁 Bath',2,{clean:60}],['spa','✨ Full spa day',6,{clean:100,happy:20},'ribbon']];
 const petNeed=L=>20+10*(L-1);
@@ -58,8 +58,8 @@ const PET_SKILLS={agility:'🏃 Agility',tricks:'🥏 Tricks',obedience:'🐾 Ob
 const petRibbon=()=>S.pet&&(S.pet.ribbonUntil||0)>Date.now();
 function petScore(){ const P=S.pet; if(!P) return 0; petTick();
   return Math.round((petLv('agility')+petLv('tricks')+petLv('obedience'))*10*(.5+.5*petCond())*[1,1.5,2.25][P.tier||0]*(petRibbon()?1.1:1)); }
-const petAdoptPrice=()=>nice(Math.max(50000,worth()*.02));
-const PET_UP=[null,{need:10,price:()=>nice(Math.max(1e6,worth()*.25))},{need:30,price:()=>nice(Math.max(1e7,worth()))}];
+const petAdoptPrice=()=>nice(Math.max(50000,cashNow()*.02*starOff()));
+const PET_UP=[null,{need:10,price:()=>nice(Math.max(1e6,cashNow()*.2*starOff()))},{need:30,price:()=>nice(Math.max(1e7,cashNow()*.5*starOff()))}];
 
 /* ---------- The Kennel Club screen ---------- */
 const KEN={el:null,c:null,ctx:null,loop:null,mode:'home',game:null,fx:[]};
@@ -141,7 +141,7 @@ const SHOW_NPC={dog:['Duchess','Sir Woofs','Maple','Captain','Biscotti','Juniper
 const SHOW_LADDER=[60,140,300,550,900,1400,2100,3000,4200];
 function showNpcs(sp){ const day=Math.floor(Date.now()/864e5), r=prng(day*7+(sp==='cat'?3:1)), br=Object.keys(PET_BREEDS[sp]), names=SHOW_NPC[sp].slice();
   return SHOW_LADDER.filter(()=>r()<.8).map(v=>({owner:'Lodge regular',pet:{name:names.splice(Math.floor(r()*names.length),1)[0],breed:br[Math.floor(r()*br.length)],species:sp,tier:v>2000?2:v>900?1:0},score:Math.round(v*(.85+r()*.3)),npc:true})); }
-const showFee=()=>nice(Math.max(10000,worth()*.01));
+const showFee=()=>nice(Math.max(10000,cashNow()*.01));
 async function kenShow(){
   const P=S.pet, today=dayKey(), entered=P.showDay===today;
   kenCard(`<div class="gf-k">TODAY’S ${P.species.toUpperCase()} SHOW</div><div class="gf-big">${petScore()} <small>pts</small></div>

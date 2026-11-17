@@ -40,7 +40,7 @@ const pbMult=sc=>{ let m=0; for(const [s,x] of PB_LADDER) if(sc>=s) m=x; return 
 const PB={st:null,raf:0,cv:null,ctx:null,stake:0,launch:0,hold:0};
 const pbMine=()=>Object.assign({owned:['classic'],m:'classic',best:{}},S.pinball||{});
 const pbMachine=()=>{ const P=pbMine(); return PB_MACH[pbHas(P.m)?P.m:'classic']; };
-const pbPrice=k=>nice((PB_MACH[k].price||0)*(typeof wealthX==='function'?Math.max(1,wealthX()/20):1));
+const pbPrice=k=>nice((PB_MACH[k].price||0)*Math.max(starOff(),wealthX()/80000));   // the priciest machine ≈ 60% of the $1T vault
 const pbStakeMax=()=>Math.floor(Math.min(S.bank,typeof tableMax==='function'?tableMax():Infinity)), pbStakeMin=()=>typeof tableMin==='function'?tableMin():1000;
 
 /* ---------- Building a table ---------- */

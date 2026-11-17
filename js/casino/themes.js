@@ -168,7 +168,7 @@ function themeOk(k){ return ownOk(TTHEMES[k],k,S.themes); }
 function deckOk(k){ return ownOk(DECKS[k],k,S.decks); }
 function curTheme(){ return themeOk(S.ctheme)?S.ctheme:'lodge'; }
 function curDeck(){ return deckOk(S.cdeck)?S.cdeck:'classic'; }
-const itemPrice=it=>nice(it.price*(typeof wealthX==='function'?Math.max(1,wealthX()/20):1));
+const itemPrice=it=>nice(it.price*Math.max(starOff(),wealthX()/(it.v&&it.v.cf1?1600:5000)));   // the priciest theme/deck ≈ 60% of the $1T vault
 function deckPrice(k){ return itemPrice(DECKS[k]); }
 const lockWhy=it=>it.set?'🧩 '+(TTHEMES[it.set]||{}).name:it.tier?'🎟️ '+tierName(it.tier):it.stars?'⭐'.repeat(Math.min(3,it.stars))+(it.stars>3?' ×'+it.stars:''):'';
 const BODY_VARS=['t1','t2','t3','r1','r2','re1','re2','bk1','bk2','z1','z2','wh','cf1','cf2','ci','cr','cb','cl','cm','da','k1','k2','k3','k4','k5'];
