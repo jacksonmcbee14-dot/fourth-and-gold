@@ -119,6 +119,7 @@ function makeRoom(host){
     if(inR(ROOM_WARDROBE,px,py)){ walk(30,186,()=>openShop('closet')); return; }
     if(inR(ROOM_SHELF,px,py)){ walk(150,190,openTrophies); return; }
     if(inR(ROOM_STAIRS,px,py)){ walk(30,274,()=>lodgeHub()); return; }
+    { const hp=hitDecor(px,py); if(hp&&typeof itemUpPopup==='function'){ itemUpPopup(hp.id); return; } }
     if(py>=176) walk(px,py);
   });
   function trayFade(on){ const b=LODGE.el.querySelector('.lg-tray'); if(b) b.classList.toggle('dragging',on); }
@@ -150,7 +151,7 @@ function makeRoom(host){
     const box=LODGE.el.querySelector('.lg-tray'); if(!box) return;
     const unplaced=ITEMS.filter(i=>i.cat==='decor'&&owns(i.id)&&!placed().some(p=>p.id===i.id));
     box.classList.toggle('min',ED.min);
-    box.innerHTML=`<div class="lg-tray-h">${ED.sel?`<span>${esc(ITEM[ED.sel.id].name)}</span><button class="lg-btn" data-lg="decStore">Store it</button>`:`<span>${unplaced.length?(ED.min?unplaced.length+' pieces to place':'Tap a piece to place it · drag to move'):(placed().length?'Drag pieces to move them':'Buy decor from Silas the merchant')}</span>`}
+    box.innerHTML=`<div class="lg-tray-h">${ED.sel?`<span>${esc(ITEM[ED.sel.id].name)}</span>${typeof gearUpBtn==='function'?gearUpBtn(ED.sel.id):''}<button class="lg-btn" data-lg="decStore">Store it</button>`:`<span>${unplaced.length?(ED.min?unplaced.length+' pieces to place':'Tap a piece to place it · drag to move'):(placed().length?'Drag pieces to move them':'Buy decor from Silas the merchant')}</span>`}
         <button class="lg-btn" data-lg="decArrange">Arrange for me</button><button class="lg-btn lg-round" data-lg="decMin" aria-label="${ED.min?'Show pieces':'Hide pieces'}">${ED.min?'▲':'▼'}</button></div>
       <div class="lg-tray-list">${unplaced.map(i=>`<button class="lg-item" data-lg="decPlace" data-id="${i.id}"><span class="lg-ic" data-ic="${i.id}"></span><span class="lg-in">${esc(i.name)}</span></button>`).join('')}</div>`;
     box.querySelectorAll('[data-ic]').forEach(s=>s.appendChild(iconCanvas(ITEM[s.dataset.ic],1)));

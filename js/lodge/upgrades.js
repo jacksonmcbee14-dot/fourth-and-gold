@@ -54,3 +54,28 @@ for(const id of Object.keys(DECOR_ART)){ const f=DECOR_ART[id], it=ITEM[id];
 // Someone else's room: their outfit and decor tiers.
 const _drawFriendRoomU=drawFriendRoom;
 drawFriendRoom=function(cv,d){ WEAR_FOR={outfit:d&&d.outfit,tiers:(d&&d.tiers)||{}}; DECOR_TIERS=(d&&d.tiers)||{}; try{ _drawFriendRoomU(cv,d); }finally{ WEAR_FOR=undefined; DECOR_TIERS=undefined; } };
+
+// Upgrade from anywhere: the closet, decorate mode, or tapping a piece in your room.
+function gearUpgrade(id){ const it=ITEM[id]; if(!it||!owns(id)||it.free||it.league) return false; const nx=gearTier(id)+1; if(nx>3) return false;
+  const pr=gearUpPrice(it,nx); if(pr>S.bank){ toast('Not enough in the bankroll','loss'); return false; }
+  setBank(-pr); S.lodge.tiers=Object.assign({},S.lodge.tiers,{[id]:nx}); notePaid([id],[(S.lodge.paid&&S.lodge.paid[id]||paidFor(id))+pr]);
+  S.spent=(S.spent||0)+pr*(1-RESALE); save(); try{ fx.confetti(nx===3?160:80); }catch(e){} [659,784,988,1319].slice(0,nx+1).forEach((f,i)=>tone(f,.1,'square',.05,i*.08));
+  toast(`✨ ${it.name} is now ${GEAR_TIERS[nx]}!`,'gold'); return true; }
+const TIER_IC=['','🥇','💎','🌈'];
+function gearUpBtn(id){ const it=ITEM[id]; if(!it||it.free||it.league) return ''; const t=gearTier(id), nx=t+1;
+  return nx>3?`<span class="lg-btn gu-max">🌈 MAX</span>`:`<button class="lg-btn lg-gold gu-btn" data-lg="gearUpId" data-id="${id}">${TIER_IC[nx]} ${k$(gearUpPrice(it,nx))}</button>`; }
+function itemUpPopup(id){ const it=ITEM[id]; if(!it) return; const t=gearTier(id), nx=t+1;
+  modal(`<div class="gu-pop"><div class="gu-art"></div><div class="fgm-k">${esc(it.name)}</div>
+    <div class="tchips">${[1,2,3].map(k=>`<span class="${k<=t?'on':''}" style="--d:${k*70}ms">${TIER_IC[k]} ${GEAR_TIERS[k]}</span>`).join('')}</div>
+    ${S.lodge.stolen&&S.lodge.stolen[id]?`<div class="tchips"><span>🦝 from ${esc(S.lodge.stolen[id].from)}</span></div>`:''}
+    <div class="fgm-row">${nx<=3?`<button class="btn gold" data-a="gearUpA" data-v="${id}" ${gearUpPrice(it,nx)>S.bank?'disabled':''}>${TIER_IC[nx]} ${GEAR_TIERS[nx]} · ${k$(gearUpPrice(it,nx))}</button>`:'<span class="btn">🌈 Maxed out</span>'}<button class="btn" data-a="closeModal">Close</button></div></div>`);
+  const a=document.querySelector('#fgModal .gu-art'); if(a){ const c=iconCanvas(it,it.cat==='decor'?4:6); a.appendChild(c); } }
+ACT.gearUpA=el=>{ const id=el.dataset.v; if(gearUpgrade(id)) itemUpPopup(id); };
+Object.assign(LG_ACT,{ gearUpId:b=>{ if(gearUpgrade(b.dataset.id)){ if(LODGE.room&&LODGE.room.tray) LODGE.room.tray(); if(SHOP.tab==='closet'&&LODGE.el.querySelector('.lg-shop')) renderShop(); } } });
+// The closet: an upgrade strip for everything you're wearing.
+const _renderShopUC=renderShop;
+renderShop=function(){ _renderShopUC(); if(SHOP.tab!=='closet'||SHOP.sel) return; const me=LODGE.el&&LODGE.el.querySelector('.lg-shop .lg-closet-me'); if(!me) return;
+  const worn=Object.values(S.lodge.outfit||{}).filter(id=>id&&ITEM[id]&&owns(id)&&!ITEM[id].free&&!ITEM[id].league);
+  if(!worn.length) return;
+  me.insertAdjacentHTML('afterend',`<div class="gu-strip">${worn.map((id,i)=>`<div class="gu-row" style="--d:${i*60}ms"><span class="lg-ic" data-guic="${id}"></span><b>${TIER_IC[gearTier(id)]||''} ${esc(ITEM[id].name)}</b>${gearUpBtn(id)}</div>`).join('')}</div>`);
+  LODGE.el.querySelectorAll('[data-guic]').forEach(s=>s.appendChild(iconCanvas(ITEM[s.dataset.guic],2))); };
