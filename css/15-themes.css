@@ -66,3 +66,126 @@ body[data-cdeck=glow]{--cf1:#0a140a;--cf2:#122a12;--ci:#5aff8a;--cr:#ff5aff;--cb
 .dk-glow{--bk:radial-gradient(circle,#1a4a1a,#040a04);--bl:#5aff8a;--mk:'✦'}
 body[data-cdeck=pixel]{--cf1:#f3ead8;--cf2:#e0d0b0;--ci:#16161c;--cr:#c0302a;--cb:repeating-conic-gradient(#2a6a3a 0 25%,#3a8a4a 0 50%) 0 0/8px 8px;--cl:#ffd84a;--cm:'👾'}
 .dk-pixel{--bk:repeating-conic-gradient(#2a6a3a 0 25%,#3a8a4a 0 50%) 0 0/8px 8px;--bl:#ffd84a;--mk:'👾'}
+/* Decks also theme the chips, the deal animation and a win burst (js/casino/themes.js → deckWinFx). */
+@keyframes dkArc{0%{opacity:0;transform:translate(-90px,-120px) rotate(-40deg)}60%{opacity:1;transform:translate(0,8px) rotate(4deg)}80%{transform:translateY(-6px)}100%{transform:none}}
+@keyframes dkFlicker{0%{opacity:0;filter:brightness(3) blur(3px)}20%{opacity:1}30%{opacity:.2}45%{opacity:1}55%{opacity:.4}70%,100%{opacity:1;filter:none}}
+@keyframes dkSlide{from{opacity:0;transform:translateX(-140px)}75%{transform:translateX(6px)}to{opacity:1;transform:none}}
+@keyframes dkFlip{from{opacity:0;transform:perspective(400px) rotateY(-180deg)}to{opacity:1;transform:perspective(400px) rotateY(0)}}
+@keyframes dkDrop{0%{opacity:0;transform:translateY(-160px) rotate(-8deg)}70%{opacity:1;transform:translateY(6px) rotate(3deg)}85%{transform:rotate(-2deg)}100%{transform:none}}
+@keyframes dkSpin{from{opacity:0;transform:scale(.2) rotate(-540deg)}to{opacity:1;transform:none}}
+@keyframes dkPixel{0%{opacity:0;transform:translate(40px,-40px)}25%{opacity:1;transform:translate(30px,-30px)}50%{transform:translate(20px,-20px)}75%{transform:translate(10px,-10px)}100%{transform:none}}
+@keyframes dkPaint{from{opacity:0;clip-path:inset(0 100% 0 0);filter:saturate(0)}to{opacity:1;clip-path:inset(0 0 0 0);filter:none}}
+@keyframes dkShine{0%{opacity:0;transform:scale(.6);filter:brightness(2.4)}60%{opacity:1;transform:scale(1.08);filter:brightness(1.6)}100%{transform:none;filter:none}}
+@keyframes dkTick{0%{opacity:0;transform:rotate(-90deg) scale(.7)}25%{transform:rotate(-60deg)}50%{opacity:1;transform:rotate(-30deg)}75%{transform:rotate(-10deg)}100%{transform:none}}
+@keyframes dkFade{from{opacity:0;filter:brightness(.1)}to{opacity:1;filter:none}}
+@keyframes dkPop{0%{opacity:0;transform:translate(0,0) scale(.3)}15%{opacity:1;transform:translate(calc(var(--dx)*.2),-30px) scale(1.2)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.8) rotate(var(--rot))}}
+.dk-burst{position:fixed;z-index:60;pointer-events:none;font-size:26px;animation:dkPop 1.4s cubic-bezier(.2,.7,.3,1) both;filter:drop-shadow(0 4px 8px rgba(0,0,0,.4))}
+body[data-cdeck] .chips .chip::before{border-color:var(--chd)}
+body[data-cdeck] .stack{background:var(--chs);color:var(--cht);box-shadow:0 0 10px var(--chs)}
+body[data-cdeck=neon] .chips .chip,body[data-cdeck=glow] .chips .chip{box-shadow:0 0 12px var(--cc),0 3px 0 rgba(0,0,0,.4)}
+body[data-cdeck=pixel] .chips .chip{border-radius:6px}body[data-cdeck=pixel] .chips .chip::before{border-radius:3px;border-style:solid}
+body[data-cdeck=golf]{--chd:#1c6a3a;--chs:#2a8a4a;--cht:#ffffff}
+body[data-cdeck=golf] .chips .chip:nth-child(1):not(.custom){--cc:#ffffff!important;--ct:#1a1006!important}
+body[data-cdeck=golf] .chips .chip:nth-child(2):not(.custom){--cc:#2a8a4a!important;--ct:#1a3a1e!important}
+body[data-cdeck=golf] .chips .chip:nth-child(3):not(.custom){--cc:#c8a45c!important;--ct:#1a3a1e!important}
+body[data-cdeck=golf] .chips .chip:nth-child(4):not(.custom){--cc:#1c6a3a!important;--ct:#1a3a1e!important}
+body[data-cdeck=golf] .chips .chip:nth-child(5):not(.custom){--cc:#f3ead8!important;--ct:#1a1006!important}
+body[data-cdeck=golf] .pcard{animation-name:dkArc}
+body[data-cdeck=neon]{--chd:#ffffff;--chs:#ff3ad0;--cht:#ffffff}
+body[data-cdeck=neon] .chips .chip:nth-child(1):not(.custom){--cc:#ff3ad0!important;--ct:#ffffff!important}
+body[data-cdeck=neon] .chips .chip:nth-child(2):not(.custom){--cc:#3affd0!important;--ct:#1a1006!important}
+body[data-cdeck=neon] .chips .chip:nth-child(3):not(.custom){--cc:#b03aff!important;--ct:#ffffff!important}
+body[data-cdeck=neon] .chips .chip:nth-child(4):not(.custom){--cc:#3a7aff!important;--ct:#ffffff!important}
+body[data-cdeck=neon] .chips .chip:nth-child(5):not(.custom){--cc:#ffd84a!important;--ct:#1a1006!important}
+body[data-cdeck=neon] .pcard{animation-name:dkFlicker}
+body[data-cdeck=security]{--chd:#7fd0ff;--chs:#3a7aff;--cht:#ffffff}
+body[data-cdeck=security] .chips .chip:nth-child(1):not(.custom){--cc:#4a5664!important;--ct:#ffffff!important}
+body[data-cdeck=security] .chips .chip:nth-child(2):not(.custom){--cc:#3a7aff!important;--ct:#ffffff!important}
+body[data-cdeck=security] .chips .chip:nth-child(3):not(.custom){--cc:#8a929e!important;--ct:#ffffff!important}
+body[data-cdeck=security] .chips .chip:nth-child(4):not(.custom){--cc:#16304a!important;--ct:#ffffff!important}
+body[data-cdeck=security] .chips .chip:nth-child(5):not(.custom){--cc:#cfd9e0!important;--ct:#1a1006!important}
+body[data-cdeck=security] .pcard{animation-name:dkSlide}
+body[data-cdeck=pennants]{--chd:#ffffff;--chs:#e0203a;--cht:#ffffff}
+body[data-cdeck=pennants] .chips .chip:nth-child(1):not(.custom){--cc:#e0203a!important;--ct:#ffffff!important}
+body[data-cdeck=pennants] .chips .chip:nth-child(2):not(.custom){--cc:#12244a!important;--ct:#ffffff!important}
+body[data-cdeck=pennants] .chips .chip:nth-child(3):not(.custom){--cc:#ffffff!important;--ct:#1a1006!important}
+body[data-cdeck=pennants] .chips .chip:nth-child(4):not(.custom){--cc:#ffd84a!important;--ct:#1a1006!important}
+body[data-cdeck=pennants] .chips .chip:nth-child(5):not(.custom){--cc:#1e3a7a!important;--ct:#ffffff!important}
+body[data-cdeck=pennants] .pcard{animation-name:dkFlip}
+body[data-cdeck=cabin]{--chd:#f3ead8;--chs:#c06a2a;--cht:#ffffff}
+body[data-cdeck=cabin] .chips .chip:nth-child(1):not(.custom){--cc:#a0302a!important;--ct:#ffffff!important}
+body[data-cdeck=cabin] .chips .chip:nth-child(2):not(.custom){--cc:#3a2010!important;--ct:#ffffff!important}
+body[data-cdeck=cabin] .chips .chip:nth-child(3):not(.custom){--cc:#c06a2a!important;--ct:#ffffff!important}
+body[data-cdeck=cabin] .chips .chip:nth-child(4):not(.custom){--cc:#5a8a3a!important;--ct:#ffffff!important}
+body[data-cdeck=cabin] .chips .chip:nth-child(5):not(.custom){--cc:#f3e6cc!important;--ct:#1a1006!important}
+body[data-cdeck=cabin] .pcard{animation-name:dkDrop}
+body[data-cdeck=holiday]{--chd:#ffffff;--chs:#c81a2a;--cht:#ffffff}
+body[data-cdeck=holiday] .chips .chip:nth-child(1):not(.custom){--cc:#c81a2a!important;--ct:#ffffff!important}
+body[data-cdeck=holiday] .chips .chip:nth-child(2):not(.custom){--cc:#1a7a3a!important;--ct:#ffffff!important}
+body[data-cdeck=holiday] .chips .chip:nth-child(3):not(.custom){--cc:#ffffff!important;--ct:#1a1006!important}
+body[data-cdeck=holiday] .chips .chip:nth-child(4):not(.custom){--cc:#ffd84a!important;--ct:#1a1006!important}
+body[data-cdeck=holiday] .chips .chip:nth-child(5):not(.custom){--cc:#c81a2a!important;--ct:#ffffff!important}
+body[data-cdeck=holiday] .pcard{animation-name:dkSpin}
+body[data-cdeck=arcade]{--chd:#ffffff;--chs:#ff8a3a;--cht:#ffffff}
+body[data-cdeck=arcade] .chips .chip:nth-child(1):not(.custom){--cc:#ff3ad0!important;--ct:#ffffff!important}
+body[data-cdeck=arcade] .chips .chip:nth-child(2):not(.custom){--cc:#ffd84a!important;--ct:#1a1006!important}
+body[data-cdeck=arcade] .chips .chip:nth-child(3):not(.custom){--cc:#3affd0!important;--ct:#1a1006!important}
+body[data-cdeck=arcade] .chips .chip:nth-child(4):not(.custom){--cc:#ff8a3a!important;--ct:#ffffff!important}
+body[data-cdeck=arcade] .chips .chip:nth-child(5):not(.custom){--cc:#3a2a7a!important;--ct:#ffffff!important}
+body[data-cdeck=arcade] .pcard{animation-name:dkPixel}
+body[data-cdeck=art]{--chd:#ffd84a;--chs:#ffd84a;--cht:#1a1006}
+body[data-cdeck=art] .chips .chip:nth-child(1):not(.custom){--cc:#6a1a3a!important;--ct:#ffffff!important}
+body[data-cdeck=art] .chips .chip:nth-child(2):not(.custom){--cc:#ffd84a!important;--ct:#1a1006!important}
+body[data-cdeck=art] .chips .chip:nth-child(3):not(.custom){--cc:#2a2030!important;--ct:#ffffff!important}
+body[data-cdeck=art] .chips .chip:nth-child(4):not(.custom){--cc:#c0303a!important;--ct:#ffffff!important}
+body[data-cdeck=art] .chips .chip:nth-child(5):not(.custom){--cc:#fbf3e6!important;--ct:#1a1006!important}
+body[data-cdeck=art] .pcard{animation-name:dkPaint}
+body[data-cdeck=crowns]{--chd:#ffd84a;--chs:#ffd84a;--cht:#1a1006}
+body[data-cdeck=crowns] .chips .chip:nth-child(1):not(.custom){--cc:#4a1a8a!important;--ct:#ffffff!important}
+body[data-cdeck=crowns] .chips .chip:nth-child(2):not(.custom){--cc:#ffd84a!important;--ct:#1a1006!important}
+body[data-cdeck=crowns] .chips .chip:nth-child(3):not(.custom){--cc:#d83a5a!important;--ct:#ffffff!important}
+body[data-cdeck=crowns] .chips .chip:nth-child(4):not(.custom){--cc:#fff3b0!important;--ct:#1a1006!important}
+body[data-cdeck=crowns] .chips .chip:nth-child(5):not(.custom){--cc:#2a0e52!important;--ct:#ffffff!important}
+body[data-cdeck=crowns] .pcard{animation-name:dkShine}
+body[data-cdeck=watches]{--chd:#cfd9e0;--chs:#cfd9e0;--cht:#1a1006}
+body[data-cdeck=watches] .chips .chip:nth-child(1):not(.custom){--cc:#1a2a4a!important;--ct:#ffffff!important}
+body[data-cdeck=watches] .chips .chip:nth-child(2):not(.custom){--cc:#cfd9e0!important;--ct:#1a1006!important}
+body[data-cdeck=watches] .chips .chip:nth-child(3):not(.custom){--cc:#5a7aaa!important;--ct:#ffffff!important}
+body[data-cdeck=watches] .chips .chip:nth-child(4):not(.custom){--cc:#8a929e!important;--ct:#ffffff!important}
+body[data-cdeck=watches] .chips .chip:nth-child(5):not(.custom){--cc:#0e182e!important;--ct:#ffffff!important}
+body[data-cdeck=watches] .pcard{animation-name:dkTick}
+body[data-cdeck=midnight]{--chd:#cfd9e0;--chs:#cfd9e0;--cht:#1a1006}
+body[data-cdeck=midnight] .chips .chip:nth-child(1):not(.custom){--cc:#2a2a3a!important;--ct:#ffffff!important}
+body[data-cdeck=midnight] .chips .chip:nth-child(2):not(.custom){--cc:#16161c!important;--ct:#ffffff!important}
+body[data-cdeck=midnight] .chips .chip:nth-child(3):not(.custom){--cc:#cfd9e0!important;--ct:#1a1006!important}
+body[data-cdeck=midnight] .chips .chip:nth-child(4):not(.custom){--cc:#ff6a7a!important;--ct:#ffffff!important}
+body[data-cdeck=midnight] .chips .chip:nth-child(5):not(.custom){--cc:#3a3a4a!important;--ct:#ffffff!important}
+body[data-cdeck=midnight] .pcard{animation-name:dkFade}
+body[data-cdeck=goldfoil]{--chd:#3a2a06;--chs:#ffd84a;--cht:#1a1006}
+body[data-cdeck=goldfoil] .chips .chip:nth-child(1):not(.custom){--cc:#ffe08a!important;--ct:#1a1006!important}
+body[data-cdeck=goldfoil] .chips .chip:nth-child(2):not(.custom){--cc:#c8962a!important;--ct:#2a1606!important}
+body[data-cdeck=goldfoil] .chips .chip:nth-child(3):not(.custom){--cc:#fff3b0!important;--ct:#1a1006!important}
+body[data-cdeck=goldfoil] .chips .chip:nth-child(4):not(.custom){--cc:#a8742a!important;--ct:#2a1606!important}
+body[data-cdeck=goldfoil] .chips .chip:nth-child(5):not(.custom){--cc:#3a2a06!important;--ct:#2a1606!important}
+body[data-cdeck=goldfoil] .pcard{animation-name:dkShine}
+body[data-cdeck=diamond]{--chd:#3a7aaa;--chs:#bff6ff;--cht:#1a1006}
+body[data-cdeck=diamond] .chips .chip:nth-child(1):not(.custom){--cc:#bff6ff!important;--ct:#1a1006!important}
+body[data-cdeck=diamond] .chips .chip:nth-child(2):not(.custom){--cc:#ffffff!important;--ct:#1a1006!important}
+body[data-cdeck=diamond] .chips .chip:nth-child(3):not(.custom){--cc:#9ad8f0!important;--ct:#1a1006!important}
+body[data-cdeck=diamond] .chips .chip:nth-child(4):not(.custom){--cc:#3a7aaa!important;--ct:#0e3a5a!important}
+body[data-cdeck=diamond] .chips .chip:nth-child(5):not(.custom){--cc:#e6fbff!important;--ct:#1a1006!important}
+body[data-cdeck=diamond] .pcard{animation-name:dkTick}
+body[data-cdeck=glow]{--chd:#5aff8a;--chs:#5aff8a;--cht:#1a1006}
+body[data-cdeck=glow] .chips .chip:nth-child(1):not(.custom){--cc:#5aff8a!important;--ct:#1a1006!important}
+body[data-cdeck=glow] .chips .chip:nth-child(2):not(.custom){--cc:#ff5aff!important;--ct:#0a140a!important}
+body[data-cdeck=glow] .chips .chip:nth-child(3):not(.custom){--cc:#1a4a1a!important;--ct:#0a140a!important}
+body[data-cdeck=glow] .chips .chip:nth-child(4):not(.custom){--cc:#ffff5a!important;--ct:#1a1006!important}
+body[data-cdeck=glow] .chips .chip:nth-child(5):not(.custom){--cc:#0a140a!important;--ct:#0a140a!important}
+body[data-cdeck=glow] .pcard{animation-name:dkFlicker}
+body[data-cdeck=pixel]{--chd:#16161c;--chs:#ffd84a;--cht:#1a1006}
+body[data-cdeck=pixel] .chips .chip:nth-child(1):not(.custom){--cc:#3a8a4a!important;--ct:#ffffff!important}
+body[data-cdeck=pixel] .chips .chip:nth-child(2):not(.custom){--cc:#c0302a!important;--ct:#ffffff!important}
+body[data-cdeck=pixel] .chips .chip:nth-child(3):not(.custom){--cc:#ffd84a!important;--ct:#1a1006!important}
+body[data-cdeck=pixel] .chips .chip:nth-child(4):not(.custom){--cc:#3a7aff!important;--ct:#ffffff!important}
+body[data-cdeck=pixel] .chips .chip:nth-child(5):not(.custom){--cc:#f3ead8!important;--ct:#1a1006!important}
+body[data-cdeck=pixel] .pcard{animation-name:dkPixel}
