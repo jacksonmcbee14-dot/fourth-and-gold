@@ -198,8 +198,16 @@ function wdDraw(t,dt){ const x=GR.ctx, m=GR.me, Wd=wdGen(), {T,CH}=WD, VW=GR.VW,
     x.fillStyle=(t*4+f.n)%2<1?'#fff6c0':'#ffd84a'; x.fillRect(X-1,Y-3,2,7); x.fillRect(X-3,Y-1,7,2); x.fillStyle='#ffffff'; x.fillRect(X,Y,1,1);
     if(Math.abs(m.x-(f.x*T+8))<10&&Math.abs(m.y-(f.y*T+15))<12) wdForageGet(f); }
   const fr=(m.path&&m.path.length)||m.moving?'walk'+((m.walk*8|0)%4):'idle0', spr=personSprite('player',fr,typeof lodgeLook==='function'?lodgeLook():null);
-  x.fillStyle='rgba(0,0,0,.3)'; x.fillRect(Math.round(m.x-cx-5),Math.round(m.y-cy-1),10,2);
-  x.save(); x.translate(Math.round(m.x-cx),Math.round(m.y-cy-PERSON_H)); if(m.face<0) x.scale(-1,1); x.drawImage(spr,-6,0); x.restore();
+  // your pet trots along on a leash a few steps behind (drawn behind or in front of you by depth)
+  const P=S.pet, pp=GR.pet; if(P&&pp){ const dx=m.x-pp.x, dy=m.y-pp.y, d=Math.hypot(dx,dy); pp.moving=d>18; if(d>18){ const st=Math.min(d-16,(d>60?160:95)*dt); pp.x+=dx/d*st; pp.y+=dy/d*st; if(Math.abs(dx)>1) pp.face=dx<0?-1:1; pp.walk+=dt; pp.dist+=st; }
+    if(d>200){ pp.x=m.x-(m.face||1)*14; pp.y=m.y; }
+    if(pp.dist>480){ pp.dist=0; if(typeof petTick==='function') petTick(); P.happy=Math.min(100,(P.happy||0)+1); } }
+  const drawMe=()=>{ x.fillStyle='rgba(0,0,0,.3)'; x.fillRect(Math.round(m.x-cx-5),Math.round(m.y-cy-1),10,2);
+    x.save(); x.translate(Math.round(m.x-cx),Math.round(m.y-cy-PERSON_H)); if(m.face<0) x.scale(-1,1); x.drawImage(spr,-6,0); x.restore(); };
+  const drawPal=()=>{ if(!P||!pp||typeof drawPet!=='function') return; x.strokeStyle='rgba(224,32,58,.85)'; x.lineWidth=1; x.beginPath(); x.moveTo(Math.round(m.x-cx+(m.face>0?5:-5))+.5,Math.round(m.y-cy-9)+.5); x.quadraticCurveTo((m.x+pp.x)/2-cx,Math.max(m.y,pp.y)-cy-2,Math.round(pp.x-cx)+.5,Math.round(pp.y-cy-6)+.5); x.stroke();
+    x.fillStyle='rgba(0,0,0,.28)'; x.fillRect(Math.round(pp.x-cx-5),Math.round(pp.y-cy-1),10,2); drawPet(x,P,pp.x-cx,pp.y-cy,pp.face,t,pp.moving?((pp.walk*9|0)%2):0,1);
+    pp.hearts=(pp.hearts||[]).filter(h=>(h.t+=dt)<1.2); for(const h of pp.hearts){ if(h.t<0) continue; x.fillStyle=`rgba(255,90,140,${1-h.t/1.2})`; const hx=Math.round(pp.x-cx+h.ox), hy=Math.round(pp.y-cy-16-h.t*14); x.fillRect(hx-2,hy,2,2); x.fillRect(hx+1,hy,2,2); x.fillRect(hx-2,hy+1,5,2); x.fillRect(hx-1,hy+3,3,1); x.fillRect(hx,hy+4,1,1); } };
+  if(pp&&pp.y<m.y){ drawPal(); drawMe(); } else { drawMe(); drawPal(); }
   { const [ax,ay]=wdMeT(); const ch=Wd.chests.find(c=>c.x===ax&&c.y===ay&&!W.chests.includes(c.n)&&regOpen(c.reg)); if(ch) wdOpenChest(ch); }
   const [mtx,mty]=wdMeT(), ri=Wd.reg[Wd.I(Math.max(0,Math.min(WD.W-1,mtx)),Math.max(0,Math.min(WD.H-1,mty)))], R=REG[ri];
   if(R.tint){ x.fillStyle=R.tint; x.fillRect(0,0,VW,VH); }
@@ -286,6 +294,8 @@ function grDom(){ if(GR.el) return; const el=document.createElement('div'); el.c
   <button class="gr-act" data-gr="act"></button><div class="gr-tip">Use the stick or tap to walk · tap a building, chest or marsh to go there</div><div class="wd-joy"><i></i></div>`;
   document.body.appendChild(el); GR.el=el; GR.c=el.querySelector('canvas'); GR.ctx=GR.c.getContext('2d'); GR.loop=makeLoop(wdDraw);
   GR.c.addEventListener('pointerdown',e=>{ const r=GR.c.getBoundingClientRect(), wx=GR.cam[0]+(e.clientX-r.left)/GR.sc, wy=GR.cam[1]+(e.clientY-r.top)/GR.sc, tx=Math.floor(wx/16), ty=Math.floor(wy/16); el.querySelector('.gr-tip').classList.add('off');
+    if(GR.pet&&S.pet&&Math.abs(wx-GR.pet.x)<10&&wy<GR.pet.y+3&&wy>GR.pet.y-16){ const pp=GR.pet; pp.hearts=(pp.hearts||[]).concat([{t:0,ox:-4},{t:-.15,ox:3},{t:-.3,ox:0}]); tone(880,.06,'triangle',.04); tone(1175,.08,'triangle',.03,.08);
+      if(Date.now()-(pp.petAt||0)>60e3){ pp.petAt=Date.now(); if(typeof petTick==='function') petTick(); S.pet.happy=Math.min(100,(S.pet.happy||0)+3); save(); toast(`🐾 ${esc(S.pet.name||'Your pet')} loves that`,'gold'); } return; }
     const Wd=wdGen(), ch=Wd.chests.find(c=>c.x===tx&&c.y===ty&&regOpen(c.reg));
     if(ch){ wdWalkTo(ch.x,ch.y,()=>wdOpenChest(ch)); tone(660,.04,'square',.03); return; }
     const L=wdLandAt(tx,ty); if(L&&regOpen(L.reg)){ wdWalkTo(L.door[0],L.door[1],()=>wdAct(L)); tone(660,.04,'square',.03); return; }
@@ -302,11 +312,12 @@ function grDom(){ if(GR.el) return; const el=document.createElement('div'); el.c
   addEventListener('resize',()=>{ if(GR.open) wdSize(); }); }
 function openGrounds(){ if(typeof closeModal==='function') closeModal(); grDom(); GR.open=true; GR.paused=false; GR.el.classList.add('on'); document.body.classList.add('in-golf');
   if(typeof lodgeActive==='function'&&lodgeActive()&&LODGE.hub) LODGE.hub.loop.stop(); wdGen(); wdSize(); const h=WORLD.L[0];
-  GR.me=GR.me||{x:h.door[0]*16+8,y:(h.door[1]+1)*16+15,face:1,walk:0,path:null,arrive:null}; GR.forage=null; GR.ri=-1; wdHud(); GR.loop.start(); }
+  GR.me=GR.me||{x:h.door[0]*16+8,y:(h.door[1]+1)*16+15,face:1,walk:0,path:null,arrive:null}; GR.forage=null; GR.ri=-1;
+  GR.pet=S.pet?{x:GR.me.x-14,y:GR.me.y,face:1,walk:0,dist:0,moving:false,hearts:[]}:null; if(S.pet&&typeof petTick==='function') petTick(); wdHud(); GR.loop.start(); }
 function closeGrounds(){ if(!GR.el) return; GR.loop.stop(); GR.open=false; GR.el.classList.remove('on'); document.body.classList.remove('in-golf'); GR.el.querySelectorAll('.wd-look').forEach(e=>e.remove()); save();
   if(typeof lodgeActive==='function'&&lodgeActive()&&LODGE.hub) LODGE.hub.loop.start(); else render(); }
 function grPause(){ GR.joy=null; GR.paused=true; if(GR.loop) GR.loop.stop(); }
-function grResume(){ if(!GR.open) return; GR.paused=false; document.body.classList.add('in-golf'); if(typeof lodgeActive==='function'&&lodgeActive()&&LODGE.hub) LODGE.hub.loop.stop(); wdHud(); GR.loop.start(); }
+function grResume(){ if(!GR.open) return; GR.paused=false; if(S.pet&&!GR.pet&&GR.me) GR.pet={x:GR.me.x-14,y:GR.me.y,face:1,walk:0,dist:0,moving:false,hearts:[]}; document.body.classList.add('in-golf'); if(typeof lodgeActive==='function'&&lodgeActive()&&LODGE.hub) LODGE.hub.loop.stop(); wdHud(); GR.loop.start(); }
 for(const fn of ['closeGolf','closeWalks','closeHorses','closeHunt','closeRange']){ if(typeof window[fn]!=='function') continue; const f=window[fn]; window[fn]=function(){ const r=f.apply(this,arguments); if(GR.open) grResume(); return r; }; }
 const grSubOpen=()=>!!document.querySelector('.golf.on');
 const _closeModalGR=closeModal; closeModal=function(){ const r=_closeModalGR.apply(this,arguments); if(GR.open&&GR.paused) setTimeout(()=>{ if(GR.open&&GR.paused&&!grSubOpen()) grResume(); },60); return r; };
