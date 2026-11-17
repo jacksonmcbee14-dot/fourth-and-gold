@@ -159,10 +159,10 @@ function pbTick(now){ const st=PB.st; if(!PB.cv||!document.body.contains(PB.cv))
   PB.last=now; if(st) pbDraw(st,t); else pbIdle(t); PB.raf=requestAnimationFrame(pbTick); }
 function pbIdle(t){ const st=pbTable(pbMachine()); st.balls=[{x:170+Math.sin(t)*80,y:300+Math.cos(t*1.3)*120,vx:0,vy:0}]; st.bumpers.forEach((u,i)=>u.hit=Math.sin(t*3+i)>.7?.2:0); st.sets.forEach((s,i)=>s.lit=Math.sin(t*2+i)>0?1:0); pbDraw(st,t); }
 PB.sfx=f=>{ try{ tone(f,.04,'square',.025); }catch(e){} };
-function pbOver(st){ st.phase='over'; st.over=true; const P=pbMine(), pay=Math.round(PB.stake*pbMult(st.score)); if(pay) setBank(pay);
+function pbOver(st){ st.phase='over'; st.over=true; const P=pbMine(), paid=PB.paid||PB.stake, pay=boostRet(Math.round(paid*pbMult(st.score)),paid,PB.wx); if(pay) setBank(pay);   // old fashioned: ×3 on the winnings
   P.best=P.best||{}; const k=P.m; const pb=st.score>(P.best[k]||0); if(pb) P.best[k]=st.score; S.pinball=P; save(); if(typeof gainXP==='function') gainXP(10+Math.floor(st.score/20000),'Pinball');
-  if(pay>PB.stake){ try{ fx.confetti(140); fx.coins(60,1800); }catch(e){} }
-  const box=document.querySelector('#pbOver'); if(box){ box.innerHTML=`<b>${pay>=PB.stake?'🎉':'🕹️'} ${st.score.toLocaleString()}</b><span>${pay?'×'+pbMult(st.score)+' · +'+fmt$(pay):'No payout'}${pb?' · ⭐ NEW BEST':''}</span><button class="pb-go" data-a="pbAgain">▶ PLAY AGAIN</button>`; box.classList.add('on'); } }
+  if(pay>paid){ try{ fx.confetti(140); fx.coins(60,1800); }catch(e){} }
+  const box=document.querySelector('#pbOver'); if(box){ box.innerHTML=`<b>${pay>=paid?'🎉':'🕹️'} ${st.score.toLocaleString()}</b><span>${pay?'×'+pbMult(st.score)+' · +'+fmt$(pay):'No payout'}${pb?' · ⭐ NEW BEST':''}</span><button class="pb-go" data-a="pbAgain">▶ PLAY AGAIN</button>`; box.classList.add('on'); } }
 
 /* ---------- The screen ---------- */
 function viewPinball(){ const P=pbMine(), M=pbMachine(), st=PB.st, playing=st&&!st.over;
@@ -193,7 +193,7 @@ const _renderPB=render; render=function(){ _renderPB(); if(S.mode==='casino'&&S.
 Object.assign(ACT,{
   pbChip:el=>{ PB.stake=Math.min(pbStakeMax(),(PB.stake||0)+(+el.dataset.v)); render(); },
   pbClear:()=>{ PB.stake=Math.min(pbStakeMin(),pbStakeMax()); render(); }, pbMaxB:()=>{ PB.stake=pbStakeMax(); render(); },
-  pbPlay:()=>{ if(PB.stake>S.bank||PB.stake<=0) return; if(typeof belowMin==='function'&&belowMin(PB.stake)) return; setBank(-PB.stake); save();
+  pbPlay:()=>{ const cost=PB.stake*betX(); if(PB.stake<=0) return; if(cost>S.bank){ noFunds(); return; } if(typeof belowMin==='function'&&belowMin(PB.stake)) return; setBank(-cost); PB.paid=cost; PB.wx=winX(); if(typeof heatWager==='function') heatWager(); save();   // old fashioned: the bet is doubled
     PB.st=pbTable(pbMachine()); PB.st.phase='play'; pbBallInLane(PB.st); pbBanner(PB.st,'HOLD LAUNCH!','#ffffff'); render(); const el=document.querySelector('.pb-top'); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); },
   pbAgain:()=>{ PB.st=null; render(); },
   pbMachines:()=>pbPicker(),
