@@ -1,7 +1,7 @@
 // 🐎 Horse racing (out the back of the lodge → Horse stables).
 //  • Buy a horse at the stables (Pony → Quarter horse → Thoroughbred → Arabian → Pegasus). Better breeds start
 //    faster and can be trained higher.
-//  • Train Speed, Stamina and Acceleration (costs money; it grows with each level and your net worth).
+//  • Train Speed, Stamina and Acceleration (costs money; it grows with each level and your cash, and prestige stars take some off).
 //  • Race in tiers: Maiden → Allowance → Stakes → Grade III → Grade II → Grade I → Triple Crown. Win 3 races in a
 //    tier to move up — the other horses get faster, but good riding still wins.
 //  • The race: tap STRIDE when the marker is in the green for a burst of speed. Bursts cost stamina; stumbles slow you.
@@ -15,12 +15,13 @@ const HTIERS=['Maiden','Allowance','Stakes','Grade III','Grade II','Grade I','Tr
 const HTRACKS={dirt:{name:'Dirt',ic:'🟫',w:[1,1,1],sky:'#7fb0d8',ground:'#9a6a3a'},turf:{name:'Turf',ic:'🟩',w:[1.4,.8,.8],sky:'#8ac8f0',ground:'#4a9a42'},
   mud:{name:'Mud',ic:'🟤',w:[.8,1.5,.8],sky:'#8a9aa8',ground:'#5a3a20'},snow:{name:'Snow',ic:'⬜',w:[.8,.8,1.5],sky:'#cfd9e0',ground:'#f3f6fa'}};
 const HNAMES=['Thunder','Biscuit','Lucky','Midnight','Golden','Rocket','Maple','Comet','Blaze','Shadow','Sugar','Dash'], HNAMES2=['Run','Star','Hooves','Bolt','Dream','Express','Jack','Glory'];
-const hUnit=()=>nice(Math.max(5000,worth()*.0015));
-const hStatCost=v=>nice(hUnit()*Math.pow(1.06,v));
-const hPrice=b=>nice(HBREEDS[b].price*(typeof wealthX==='function'?Math.max(1,wealthX()/10):1));
+const hUnit=()=>nice(Math.max(5000,cashNow()*.0005*starOff()));
+const hStatCost=v=>nice(hUnit()*Math.pow(1.03,v));
+// A Pegasus costs about a third of your cash once you're rich; cheaper breeds far less.
+const hPrice=b=>nice(HBREEDS[b].price*Math.max(starOff(),wealthX()/200));
 const hTrackToday=()=>{ const k=Object.keys(HTRACKS); return k[[...dayKey()].reduce((s,c)=>s+c.charCodeAt(0),0)%k.length]; };
 function hRating(H,track){ const w=HTRACKS[track||'dirt'].w; return (H.spd*w[0]*.5+H.sta*w[1]*.25+H.acc*w[2]*.25)/(w[0]*.5+w[1]*.25+w[2]*.25); }
-const hFee=()=>nice(Math.max(10000,worth()*.004))*(1+(S.horse?S.horse.tier:0));
+const hFee=()=>nice(Math.max(10000,cashNow()*.004))*(1+(S.horse?S.horse.tier:0));
 
 // Pixel horse (facing right), feet at (x, y).
 const HSPR={top:['............hh..','...........hhhe.','..........mhhhhn','....jj...mhh....','...jjjj.mhh.....','..tbbjbbbbh.....','.ttbbbbbbbb.....','t..bbbbbbbb.....','...bbbbbbbb.....'],

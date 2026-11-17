@@ -11,7 +11,7 @@
 const BUTLERS=[{name:'Hollis',need:()=>homeTier()>=4,why:'Comes with the Mansion'},{name:'Pemberton',need:()=>myLevel()>=75||homeTier()>=6,why:'Joins at level 75'}];
 const BSUITS=[{lv:0,name:'Black tie',x:2},{lv:60,name:'Silver tails',x:2.25},{lv:75,name:'Gold tails',x:2.5},{lv:90,name:'Velvet smoking jacket',x:2.75},{lv:100,name:'Diamond tuxedo',x:3}];
 const butlerSuit=()=>{ if(homeTier()>=6) return BSUITS[BSUITS.length-1]; let s=BSUITS[0]; for(const x of BSUITS) if(myLevel()>=x.lv) s=x; return s; };
-const butlerStake=()=>nice(Math.max(1e6,worth()*.05));
+const butlerStake=()=>nice(Math.max(1e6,cashNow()*.05));
 const butlersHave=()=>BUTLERS.filter(b=>b.need());
 // A free trial (S.lodge.butlerTrial: job keys left) lets you use each job once on top of the daily one.
 // BT_JOB is the job being run right now, so the trial is used before the butler's daily job.

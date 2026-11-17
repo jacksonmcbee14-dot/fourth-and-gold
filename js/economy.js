@@ -12,8 +12,12 @@
 
 const worth=()=>Math.max(0,scoreNow());
 const nice=n=>{ if(n<1000) return Math.round(n); const p=Math.pow(10,Math.floor(Math.log10(n))-1); return Math.round(n/p)*p; };
-// Prices grow a little slower than wealth (power 0.8), so pricey items come within reach as you get richer.
-const wealthX=()=>Math.max(1,Math.pow(worth()/1e6,.8));
+// Prices grow a little slower than your CASH (power 0.8), so pricey items come within reach as you get richer.
+// Cash = bankroll + safe − debt. What you own doesn't count, so buying things never makes everything else dearer.
+// Each prestige star takes 5% off (up to 40%).
+const cashNow=()=>Math.max(0,(S.bank||0)+(S.safe||0)-(S.debt||0));
+const starOff=()=>1-Math.min(.4,.05*(S.prestige||0));
+const wealthX=()=>Math.max(1,Math.pow(cashNow()/1e6,.8))*starOff();
 
 /* ---------- VIP tables (endless) ---------- */
 // Each table's minimum is 100× the one before, and it needs 20× its minimum in net worth.
@@ -104,7 +108,7 @@ for(const it of ITEMS){ if(it.free||it.league||!(it.price>0)||it._base) continue
   Object.defineProperty(it,'price',{get(){ return nice(base*wealthX()); },configurable:true}); }
 const DRINK_PCT={oldfash:.10,cocoa:.02,cider:.01,eggnog:.005};
 const _drinkPriceE=drinkPrice;
-drinkPrice=function(d){ const base=_drinkPriceE(d); if(base===0) return 0; return Math.max(base,nice(worth()*(DRINK_PCT[d.id]||0))); };
+drinkPrice=function(d){ const base=_drinkPriceE(d); if(base===0) return 0; return Math.max(base,nice(cashNow()*(DRINK_PCT[d.id]||0)*starOff())); };
 
 /* ---------- Enforcing the table minimum ---------- */
 const belowMin=amt=>{ const m=tableMin(), M=tableMax()*betX(); if(amt<m){ toast(`${vipTier().name} table minimum: ${fmt$(m)}`,'loss'); return true; }
