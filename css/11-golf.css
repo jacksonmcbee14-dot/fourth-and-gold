@@ -61,3 +61,10 @@ body.in-golf{overflow:hidden}
 .pk-hint{grid-column:1/-1;text-align:center;font-size:9px;color:#ffd84a;padding:12px 0;animation:hpBob 1.2s ease-in-out infinite}
 .pk-grid .pk-cmds{grid-column:1/-1;margin:0;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.pk-grid .pk-cmds .lg-btn{padding:12px 0;font-size:9px}
 .pk-tug{animation:hpBob .4s ease-in-out infinite}
+/* Stables */
+.hr-port{display:block;width:100%;max-width:288px;margin:4px auto;image-rendering:pixelated}
+.hr-stat{display:flex;align-items:center;gap:6px;margin:6px 0;font-size:7px;color:#f3ead8}.hr-stat>span{width:62px}.hr-stat i{flex:1;height:8px;background:#120a06;box-shadow:0 0 0 1px #c8a45c}.hr-stat u{display:block;height:100%;background:linear-gradient(90deg,#3ad08a,#ffd84a)}.hr-stat b{width:22px;text-align:right;color:#ffd84a}.hr-stat .lg-btn{font-size:7px;padding:6px 4px;white-space:nowrap}.hr-max{color:#3ad08a}
+.hr-tracks{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.hr-meter{position:relative;height:22px;background:#9a2a35;box-shadow:0 0 0 2px #c8a45c}.hr-meter i{position:absolute;top:3px;bottom:3px;background:#3ad08a;box-shadow:0 0 8px #3ad08a}.hr-mark{position:absolute;top:-4px;bottom:-4px;width:4px;margin-left:-2px;background:#fff;left:0}
+.hr-stam{height:8px;background:#120a06;box-shadow:0 0 0 1px #c8a45c}.hr-stam u{display:block;height:100%;width:100%;background:linear-gradient(90deg,#3a7aff,#bff6ff)}
+.hr-bot .gf-swing{width:100%}
