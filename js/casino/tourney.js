@@ -31,7 +31,7 @@ const _renderT=render; render=function(){ _renderT(); tourneyChip(); };
 function tourneyOpen(){ const B=TR.board; tourneyLoad(true);
   const rows=(B&&B.players||[]).map((p,i)=>`<div class="tn-row ${p.me?'me':''}"><b>${i+1}</b><span>${esc(p.name)}</span><em>${p.score}</em></div>`).join('');
   modal(`<div class="fgm-k">🏆 Weekly slots tournament</div>
-    <p class="small muted">Your score is your <b>10 best slot wins</b>, counted in multiples of your bet — so any bet size can win. Top 3 split the pot when the week ends (Sunday night): 50% · 30% · 20%.</p>
+    <div class="tchips"><span style="--d:0ms">🎰 Best 10 wins × bet</span><span style="--d:70ms">🥇 50%</span><span style="--d:140ms">🥈 30%</span><span style="--d:210ms">🥉 20%</span></div>
     <div class="tn-pot">Pot <b>${B?fmt$(B.pot):'…'}</b></div>
     ${tourneyIn()?`<p class="small">Your best wins: ${(S.tourney.best||[]).map(x=>x+'×').join(' · ')||'none yet — spin!'}</p>`:`<button class="btn gold wide" data-a="tourneyJoin" ${tourneyFee()>S.bank?'disabled':''}>Buy in · ${fmt$(tourneyFee())}</button>`}
     <div class="tn-list">${rows||'<p class="small muted">No one has entered yet this week.</p>'}</div>

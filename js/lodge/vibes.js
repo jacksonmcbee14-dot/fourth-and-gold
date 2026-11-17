@@ -90,7 +90,7 @@ function vibeLayout(k){
 function openVibes(){
   closeShop(); const box=document.createElement('div'); box.className='lg-shop lg-vibes';
   box.innerHTML=`<div class="lg-shop-head"><span class="lg-dlg-who">ARRANGE MY ROOM</span><button class="lg-btn lg-round" data-lg="shopClose" aria-label="Close">X</button></div>
-    <div class="lg-prev-desc">Pick a vibe. I’ll lay out the pieces you own that fit it — everything else goes back in storage. Tap it again for a different take.</div>
+    <div class="tchips"><span style="--d:0ms">✨ Tap a vibe</span><span style="--d:70ms">🔁 Tap again to remix</span></div>
     <div class="lg-shop-body"><div class="lg-vibe-grid">${vibeList().map(k=>{ const n=vibeOwned(k).length, ok=n>=3;
       return `<button class="lg-btn lg-vibe ${ok?'':'off'}" data-lg="vibeGo" data-v="${k}" ${ok?'':'disabled'}><span class="ic">${VIBES[k].icon}</span>${esc(VIBES[k].name)}<small>${ok?n+' pieces you own':'Own '+(3-n)+' more to unlock'}</small></button>`; }).join('')}</div>
     <div class="lg-prev-desc" style="margin-top:10px">Need more for a vibe? Silas sells golf, casino, sports and cabin pieces.</div></div>`;

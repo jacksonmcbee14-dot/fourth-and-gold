@@ -67,7 +67,7 @@ function visitDraw(){
     <div class="hv-def">${def.items.length?def.items.map(id=>`<span>${esc(ITEM[id]?ITEM[id].name:id)}</span>`).join(''):'<span class="none">No security. Wide open.</span>'}</div>
     ${d.me?'<p class="small muted">This is how your lodge looks to friends.</p>':`
     ${typeof robChoices==='function'?robChoices(d,shield,left):''}
-    <p class="small muted" style="text-align:center;margin:8px 0 0">Crack the safe to take up to 5% of what they’re worth (never more than you’re worth). Get caught and you pay them 2% of yours.</p>`}
+    <div class="tchips"><span style="--d:0ms">💰 Win 5%</span><span style="--d:70ms">🚨 Caught −2%</span><span style="--d:140ms">🦝 + 1 piece</span></div>`}
     ${(d.recent||[]).length?`<div class="hv-recent">${d.recent.map(r=>`<div>${r.result==='stole'?'💰':'🚨'} <b>${esc(r.thief)}</b> ${r.result==='stole'?'stole '+k$(r.amount):r.result==='caught'?'got caught':'set off the alarm'} <small class="muted">· ${ago(r.at)}</small></div>`).join('')}</div>`:''}
   </div>`);
   const cv=document.querySelector('#fgModal .hv-room'); if(cv) drawFriendRoom(cv,d);
@@ -137,7 +137,7 @@ Object.assign(ACT,{
 function heistInbox(it){
   if(it.kind==='robbed'){ const amt=Math.min(it.amount,Math.max(0,S.bank)); S.bank=Math.round(S.bank-amt); save();
     modal(`<div class="cel"><div class="cel-emoji">🕵️</div><div class="cel-t">You got robbed!</div><p>${esc(it.label)} cracked your safe.</p><div class="cel-big" style="color:var(--loss-hi)">−${fmt$(amt)}</div>
-      <p class="small muted">You’re shielded for 1 hour. Buy security from Silas (Decor → Security) so it doesn’t happen again.</p>
+      <div class="tchips"><span style="--d:0ms">🛡️ Safe for 1 hr</span><span style="--d:70ms">📹 Buy cameras</span><span style="--d:140ms">🤵 Butler guard</span></div>
       <div class="fgm-row"><button class="btn gold" data-a="heistRevenge" data-v="${esc(it.label)}">Get revenge</button><button class="btn" data-a="closeModal">OK</button></div></div>`); }
   else { setBank(it.amount); toast(`🚨 You caught ${it.label} trying to rob you · +${fmt$(it.amount)}`,'win'); }
 }

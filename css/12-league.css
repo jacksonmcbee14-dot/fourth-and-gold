@@ -311,3 +311,10 @@ body[data-heat] .chip.on,body[data-heat] .stack,body[data-heat] .pcard:not(.back
 #tourneyChip{display:block;width:100%;margin:0 0 10px;padding:8px 12px;border-radius:999px;border:1px solid rgba(200,164,92,.55);background:rgba(200,164,92,.12);color:inherit;font-size:13px;text-align:left}
 .tn-pot{font-size:20px;text-align:center;margin:8px 0}.tn-list{max-height:40vh;overflow:auto;margin:8px 0}
 .tn-row{display:flex;gap:10px;padding:6px 10px;border-bottom:1px solid rgba(255,255,255,.06)}.tn-row b{width:22px;color:#c8a45c}.tn-row span{flex:1}.tn-row.me{color:#3ad08a}
+/* Short animated chips instead of paragraphs */
+@keyframes tcIn{from{opacity:0;transform:translateY(6px) scale(.9)}to{opacity:1;transform:none}}
+.tchips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:8px 0}
+.tchips span{font-size:12px;padding:5px 10px;border-radius:999px;background:rgba(200,164,92,.12);border:1px solid rgba(200,164,92,.4);animation:tcIn .3s ease-out both;animation-delay:var(--d,0ms);white-space:nowrap}
+.tchips span:empty{display:none}.tchips span.on{background:#c8a45c;color:#1a1006}
+.lg-shop .tchips span,.golf .tchips span{font-family:"Press Start 2P",ui-monospace,monospace;font-size:7px;border-radius:0;background:#2a1d15;border:0;box-shadow:0 0 0 1px #c8a45c;color:#f3ead8}
+.lg-shop .tchips span.on{background:#c8a45c;color:#1a1006}

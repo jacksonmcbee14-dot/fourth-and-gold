@@ -52,7 +52,7 @@ function vipLook(){ const t=vipTier(); document.body.classList.remove('vip-silve
 function vipOpen(){
   const cur=vipTier().i, top=Math.max(vipAfford(),vipIndex(S.vipBest)), last=Math.min(top+5,vipMaxTier()), list=[];
   for(let i=0;i<=last;i++) list.push(vipAt(i));
-  modal(`<div class="fgm-k">Choose your table</div><p class="small muted" style="margin:-4px 0 12px">Your minimum bet stays put until you change it. Payouts are the same everywhere — higher tables earn XP faster and bring VIP perks. Past the top table, Prestige (⭐) keeps you climbing.</p>
+  modal(`<div class="fgm-k">Choose your table</div><div class="tchips"><span style="--d:0ms">⚡ More XP</span><span style="--d:70ms">👑 VIP perks</span><span style="--d:140ms">⭐ Prestige at the top</span></div>
     <div class="vipx">${list.slice().reverse().map(v=>{ const ok=worth()>=v.need, on=v.i===cur;
       return `<button class="vipx-t ${on?'on':''}" style="--vc:${v.color}" data-a="vipPick" data-v="${v.i}" ${ok?'':'disabled'}><span class="vipx-ic">${v.icon}</span>
         <div><b>${esc(v.name)}</b><span>Bets ${k$(v.min)} – ${k$(v.min*100)}</span><small>${esc(v.perks)}</small></div>
@@ -156,7 +156,7 @@ save=function(){
 function vaultFull(){
   modal(`<div class="cel"><div class="cel-emoji">🏦</div><div class="cel-t">Your vault is full</div><p>You’ve hit ${k$(VAULT)} — the most the lodge can hold. Winnings past this are lost until you Prestige.</p>
     <div class="cel-big">⭐ Prestige ${(S.prestige||0)+1}</div>
-    <p class="small muted">Start again at $1,000,000. Keep every item, trophy and title. +20% XP per star, forever, and a star next to your name. Stars rank first on the leaderboard.</p>
+    <div class="tchips"><span style="--d:0ms">💵 Back to $1M</span><span style="--d:70ms">🎒 Keep your stuff</span><span style="--d:140ms">⚡ +20% XP</span><span style="--d:210ms">⭐ Rank first</span></div>
     <div class="fgm-row"><button class="btn gold" data-a="prestigeGo">Prestige now</button><button class="btn" data-a="closeModal">Not yet</button></div></div>`);
 }
 ACT.prestigeGo=()=>{

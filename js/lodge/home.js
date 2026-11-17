@@ -172,6 +172,6 @@ function robChoices(d,shield,left){
   let html=`<div class="rob-h">🕵️ Pick your way in · ${d.tries_left} ${d.tries_left===1?'try':'tries'} left today</div><div class="rob-grid">
     <button class="rob-e" data-a="heistStart" data-v="0"><b>🚪 Front door</b><small>${guard.length?'Guarded: '+guard.join(' & '):'No guards'}</small></button>`;
   for(let w=1;w<=wins;w++){ const cov=w<=cams; html+=`<button class="rob-e ${cov?'cov':'open'}" data-a="heistStart" data-v="${w}"><b>🪟 Window ${w}</b><small>${cov?'📹 Camera — risky':'No camera — easiest'}</small></button>`; }
-  html+=`</div>${d.has_safe?'<p class="small muted" style="margin:6px 0 0">🔐 They keep savings in a vault room — that cash can’t be taken.</p>':''}`;
+  html+=`</div>${d.has_safe?'<div class="tchips"><span style="--d:0ms">🔐 Vault cash is safe</span></div>':''}`;
   return html;
 }

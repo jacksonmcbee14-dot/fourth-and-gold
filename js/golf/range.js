@@ -42,7 +42,7 @@ function rangeMenu(){
   const card=RANGE.el.querySelector('.rg-card');
   card.innerHTML=`<div class="gf-card-in"><div class="gf-k">DRIVING RANGE · GOLF LV ${golfLv()}</div>
     ${Object.entries(RANGE_GAMES).map(([k,g])=>`<button class="rg-game" data-rg="start" data-v="${k}"><b>${g.icon} ${g.name.toUpperCase()}</b><small>${esc(g.blurb)}</small><small class="gold">${rangeBest(k)?'BEST '+rangeBest(k)+' '+g.unit.toUpperCase()+' · ':''}NEW BEST PAYS ${k$(g.prize*golfPayX())}</small></button>`).join('')}
-    <div class="gf-note">Every ball earns golf XP: a bigger sweet spot, a slower meter, less wind and bigger prizes on the course.</div></div>`;
+    <div class="tchips"><span style="--d:0ms">⛳ Every ball = XP</span><span style="--d:70ms">🎯 Bigger sweet spot</span><span style="--d:140ms">💰 Bigger prizes</span></div></div>`;
   card.classList.add('on'); rangeHud();
 }
 function rangeStart(g){

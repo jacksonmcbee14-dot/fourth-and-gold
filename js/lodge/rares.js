@@ -61,11 +61,11 @@ renderShop=function(){ _renderShopR(); const box=LODGE.el&&LODGE.el.querySelecto
     return; }
   if(SHOP.sel||!body) return;
   if(SHOP.tab==='rares'){ const L=rareNow();
-    body.innerHTML=`<div class="lg-prev-desc">This month’s rares — only <b>${RARE_COPIES}</b> of each, ever. They retire in <b>${monthLeft()}</b>; after that you can only buy one from another player.</div>
+    body.innerHTML=`<div class="tchips"><span style="--d:0ms">💎 ${RARE_COPIES} ever</span><span style="--d:70ms">⏳ ${monthLeft()} left</span><span style="--d:140ms">🏷️ Then market only</span></div>
       <div class="lg-grid">${L.map(i=>{ const sold=MK.stock[i.id]||0, mine=owns(i.id); return `<button class="lg-item ${mine?'wearing':''}" data-lg="shopSel" data-id="${i.id}"><span class="lg-ic" data-ic="${i.id}"></span><span class="lg-in">${esc(i.name)}</span><span class="lg-ip">${mine?'#'+(serialOf(i.id)||'?'):sold>=RARE_COPIES?'SOLD OUT':(RARE_COPIES-sold)+' LEFT · '+k$(shopPrice(i))}</span></button>`; }).join('')}</div>`;
     srpc('fg_rare_stock',{p_items:L.map(i=>i.id)}).then(r=>{ if(r&&!r.error){ const ch=JSON.stringify(r)!==JSON.stringify(MK.stock); MK.stock=Object.assign(MK.stock,r); if(ch&&SHOP.tab==='rares'&&!SHOP.sel) renderShop(); } }).catch(()=>{}); }
   else if(SHOP.tab==='market'){ const L=MK.list;
-    body.innerHTML=`<div class="lg-prev-desc">Buy from other players. To sell, open something you own and tap <b>Sell to players</b>.</div>
+    body.innerHTML=`<div class="tchips"><span style="--d:0ms">🛒 Buy from players</span><span style="--d:70ms">🏷️ Sell: open an item</span></div>
       ${L?(L.length?`<div class="mk-list">${L.map(m=>{ const it=ensureRare(m.item)||ITEM[m.item]; if(!it) return ''; return `<div class="mk-row"><span class="lg-ic" data-ic="${it.id}"></span><div><b>${esc(it.name)}${m.serial?' #'+m.serial:''}</b><small>${m.mine?'Your listing':'from '+esc(m.seller)}</small></div>
         ${m.mine?`<button class="lg-btn" data-lg="mkCancel" data-id="${m.id}">Cancel</button>`:`<button class="lg-btn lg-gold" data-lg="mkBuy" data-id="${m.id}" ${m.price>S.bank?'disabled':''}>${k$(m.price)}</button>`}</div>`; }).join('')}</div>`:'<div class="lg-prev-desc">Nothing for sale right now.</div>'):'<div class="lg-prev-desc">Loading the market…</div>'}`;
     if(!L||Date.now()-MK.at>15e3){ MK.at=Date.now(); srpc('fg_market_browse').then(r=>{ MK.list=Array.isArray(r)?r:[]; if(SHOP.tab==='market'&&!SHOP.sel) renderShop(); }).catch(()=>{ MK.list=[]; }); } }

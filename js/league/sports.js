@@ -121,7 +121,7 @@ function pickemOpen(){
     const btn=s=>{ const t=s==='a'?g.a:g.h, on=m&&m.side===s; return `<button class="${on?'on':''} ${m&&m.result&&on?m.result:''}" data-a="pickemPick" data-g="${g.id}" data-s="${s}" ${started?'disabled':''}>${esc(t.name)}</button>`; };
     const theirs=others.filter(o=>o.gid===g.id).map(o=>`${esc(o.name)}: ${esc(o.side==='a'?g.a.name:g.h.name)}`).join(' · ');
     return `<div class="pk-g"><small class="muted">${esc(g.lg.toUpperCase())} · ${esc(when(g.t,g.tba))}</small><div class="pk-b">${btn('a')}<span>@</span>${btn('h')}</div>${theirs?`<small class="muted">${theirs}</small>`:''}</div>`; };
-  modal(`<div class="pk"><div class="fgm-k">🏈 Weekly pick’em</div><p class="small muted" style="margin:-4px 0 10px">Free. Pick the winners — picks lock at kickoff. Best record when the week ends (Monday) wins +2,000 XP.</p>
+  modal(`<div class="pk"><div class="fgm-k">🏈 Weekly pick’em</div><div class="tchips"><span style="--d:0ms">🆓 Free</span><span style="--d:70ms">🔒 Locks at kickoff</span><span style="--d:140ms">🏆 +2,000 XP</span></div>
     ${P?`<div class="pk-st">${P.standings.map((s,i)=>`<div class="${s.me?'me':''}"><span>${i+1}</span><b>${esc(s.name)}</b><span class="mono">${s.wins}–${s.losses}</span></div>`).join('')}</div>`:''}
     ${G.length?G.map(row).join(''):'<div class="empty">No games on the board this week.</div>'}</div>`);
 }
