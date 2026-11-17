@@ -12,10 +12,11 @@ const IC={
   roul:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.5"/><path d="M12 3v5.5M12 15.5V21M3 12h5.5M15.5 12H21"/></svg>',
   bj:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="5" width="11" height="15" rx="2"/><path d="M10 5V4a1 1 0 0 1 1-1h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3"/></svg>',
   pk:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3c3 4 7 6 7 10a4 4 0 0 1-7 2.5A4 4 0 0 1 5 13c0-4 4-6 7-10z"/><path d="M12 15.5 10 21h4z"/></svg>',
+  pin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 21 7 4h10l2 17"/><circle cx="12" cy="9" r="2"/><path d="M8 17l3 1.5M16 17l-3 1.5"/></svg>',
   dice:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9" cy="9" r="1.2" fill="currentColor"/><circle cx="15" cy="15" r="1.2" fill="currentColor"/><circle cx="15" cy="9" r="1.2" fill="currentColor"/><circle cx="9" cy="15" r="1.2" fill="currentColor"/></svg>',
 };
 const FTABS=[['today','Today','home'],['home','Season','cal'],['predict','Predict','pred'],['bets','Bets','bets'],['ranks','Ranks','rank']];
-const CTABS=[['slots','Slots','slot'],['roulette','Roulette','roul'],['blackjack','Blackjack','bj'],['poker','Poker','pk'],['craps','Craps','dice'],['ranks','Ranks','rank']];
+const CTABS=[['slots','Slots','slot'],['roulette','Roulette','roul'],['blackjack','Blackjack','bj'],['poker','Poker','pk'],['craps','Craps','dice'],['pinball','Pinball','pin'],['ranks','Ranks','rank']];
 let lastViewKey='';
 function render(){
   document.body.classList.toggle('calm',S.mode==='football'||S.ctab==='ranks');   // calmer look for the football screens (css/09-calm.css)
@@ -28,7 +29,7 @@ function render(){
   let html='';
   if(S.mode==='football') html={today:viewToday,home:viewHome,predict:viewPredict,bets:viewBets,ranks:viewRanks}[S.ftab]();
   else if(S.ctab==='ranks') html=viewRanks();
-  else { const V={slots:['Jingle Jackpot',viewSlots],roulette:['Roulette',viewRoulette],blackjack:['Blackjack',viewBlackjack],poker:['Video Poker',viewPoker],craps:['Craps',viewCraps]}[S.ctab]; html=gameHead(S.ctab,V[0])+(S.howto[S.ctab]?TIPS[S.ctab]():V[1]()); }
+  else { const V={slots:['Jingle Jackpot',viewSlots],roulette:['Roulette',viewRoulette],blackjack:['Blackjack',viewBlackjack],poker:['Video Poker',viewPoker],craps:['Craps',viewCraps],pinball:['Pinball',typeof viewPinball==='function'?viewPinball:()=>'']}[S.ctab]; html=gameHead(S.ctab,V[0])+(S.howto[S.ctab]?TIPS[S.ctab]():V[1]()); }
   const key=S.mode+(S.mode==='football'?S.ftab+S.lg:S.ctab);
   const v=$('#view');
   v.innerHTML=`<div class="${key!==lastViewKey?'view':''}">${html}</div>`;
