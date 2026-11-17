@@ -17,18 +17,18 @@ const PB_MACH={
 const PB_MPAL={neon:['#1a0636','#05010e','#ff3ad0','#3affd0'],gridiron:['#2a7a3a','#0c3a18','#ffffff','#ffd84a'],royale:['#3a0e5a','#12041e','#ffd84a','#ff5a8a']};
 // 96 more machines: 76 to buy (cheap → very expensive), 12 for VIP table tiers, 8 for prestige stars.
 const PB_LAY=[[[120,240],[220,240],[170,310]],[[118,250],[222,250],[170,320]],[[110,230],[230,230],[170,300],[170,180]],[[110,240],[230,240],[140,310],[200,310]],[[105,230],[235,230],[170,190],[135,300],[205,300]]];
-const PB_BASE=[['Galaxy Quest','🚀','space',230],['Pirate Cove','🏴‍☠️','ocean',200],['Jungle Rumble','🦍','jungle',110],['Candy Land','🍭','candy',320],['Volcano Vault','🌋','volcano',12],['Arctic Blast','❄️','arctic',195],['Metro Nights','🌆','city',250],['Pixel Arcade','👾','retro',280],
-  ['Dragon Lair','🐉','volcano',0],['Deep Sea','🐙','ocean',215],['Safari','🦁','jungle',40],['Sugar Rush','🧁','candy',340],['Moon Base','🌙','space',250],['Ice Castle','🏰','arctic',205],['Vegas Strip','🎰','city',45],['Retro Racer','🏎️','retro',0],
-  ['Wild West','🤠','desert',30],['Pharaoh','🐫','desert',45],['Ninja Dojo','🥷','royale',0],['Haunted Manor','👻','space',270],['Disco Fever','🪩','neon',300],['Rock Legend','🎸','neon',350],['Robot Wars','🤖','retro',200],['Dino Park','🦖','jungle',100],
-  ['Treasure Island','💰','ocean',185],['Snow Lodge','🎿','arctic',210],['Circus','🎪','candy',0],['Samurai','⛩️','royale',350],['Alien Invasion','👽','space',120],['Lava Lamp','🫧','neon',20],['Gold Rush','⛏️','desert',42],['Thunder Road','⚡','city',55],
-  ['Fairy Garden','🧚','jungle',300],['Hockey Night','🏒','arctic',220],['Slam Dunk','🏀','gridiron',25],['Home Run','⚾','gridiron',130],['Hole in One','⛳','gridiron',120],['Monster Truck','🛻','volcano',15]];
+const PB_BASE=[['Galaxy Quest','🚀','space',230],['Pirate Cove','🏴‍☠️','ocean',200],['Jungle Rumble','🦍','jungle',110],['Candy Land','🍭','candy',320],['Volcano Vault','🌋','volcano',12],['Arctic Blast','❄️','arctic',192],['Metro Nights','🌆','city',255],['Pixel Arcade','👾','retro',280],
+  ['Dragon Lair','🐉','volcano',0],['Deep Sea','🐙','ocean',215],['Safari','🦁','jungle',40],['Sugar Rush','🧁','candy',335],['Moon Base','🌙','space',240],['Ice Castle','🏰','arctic',205],['Vegas Strip','🎰','city',48],['Retro Racer','🏎️','retro',18],
+  ['Wild West','🤠','desert',30],['Pharaoh','🐫','desert',52],['Ninja Dojo','🥷','royale',170],['Haunted Manor','👻','space',285],['Disco Fever','🪩','neon',305],['Rock Legend','🎸','neon',350],['Robot Wars','🤖','retro',165],['Dino Park','🦖','jungle',100],
+  ['Treasure Island','💰','ocean',175],['Snow Lodge','🎿','arctic',225],['Circus','🎪','candy',345],['Samurai','⛩️','royale',325],['Alien Invasion','👽','space',75],['Lava Lamp','🫧','neon',310],['Gold Rush','⛏️','desert',45],['Thunder Road','⚡','city',60],
+  ['Fairy Garden','🧚','jungle',290],['Hockey Night','🏒','arctic',235],['Slam Dunk','🏀','gridiron',28],['Home Run','⚾','gridiron',130],['Hole in One','⛳','gridiron',120],['Monster Truck','🛻','volcano',145]];
 const PB_GATE={space:'WARP',ocean:'TREASURE',jungle:'VINE SWING',candy:'SUGAR RUSH',volcano:'ERUPTION',arctic:'AVALANCHE',city:'JACKPOT ALLEY',retro:'1UP',desert:'GOLD STRIKE',royale:'SHOGUN',neon:'ENCORE',gridiron:'SCORE!'};
 function pbGen(i,deluxe,extra){ const [nm,ic,art,h]=PB_BASE[i%PB_BASE.length], d=deluxe?1:0;
-  return Object.assign({name:nm+(deluxe?' Deluxe':''),icon:ic,art,pal:[`hsl(${h},55%,${d?24:28}%)`,`hsl(${h},65%,6%)`,`hsl(${(h+40)%360},90%,66%)`,`hsl(${(h+200)%360},90%,70%)`],
+  return Object.assign({name:nm+(deluxe?' Deluxe':''),icon:ic,art,pal:d?[`hsl(${(h+28)%360},50%,18%)`,`hsl(${(h+28)%360},60%,4%)`,'#ffd84a',`hsl(${(h+28)%360},90%,72%)`]:[`hsl(${h},55%,28%)`,`hsl(${h},65%,6%)`,`hsl(${(h+40)%360},90%,66%)`,`hsl(${(h+200)%360},90%,70%)`],
     bumpers:PB_LAY[(i+d*2)%PB_LAY.length],locks:d?2:3,save:8+d*4,bp:100+(i%3)*50+d*100,frenzy:(i%2||d)?15-d*5:0,gate:(i%3===0||d)?PB_GATE[art]:null,royal:d&&i%4===0,xball:i%5===0||(d&&i%3===0),m0:d&&i%6===0?2:1},extra); }
 PB_BASE.forEach((b,i)=>{ PB_MACH['m'+i]=pbGen(i,0,{cat:'shop',price:Math.round(250000*Math.pow(1.22,i*2))}); PB_MACH['md'+i]=pbGen(i,1,{cat:'shop',price:Math.round(250000*Math.pow(1.22,i*2+1))}); });
-for(let j=1;j<=12;j++) PB_MACH['mvip'+j]=Object.assign(pbGen(j*3,1,{cat:'vip',tier:j}),{name:'VIP Table '+j,icon:'🎟️',bp:200+j*20,gate:'VIP JACKPOT',xball:true});
-for(let s=1;s<=8;s++) PB_MACH['mstar'+s]=Object.assign(pbGen(s*5,1,{cat:'star',stars:s}),{name:'⭐ '+(typeof STAR_N!=='undefined'?STAR_N[s-1]:'Star '+s),icon:'⭐',bumpers:PB_LAY[4],locks:2,save:14,bp:300+s*25,frenzy:10,gate:'SUPERNOVA',royal:true,xball:true,m0:2});
+for(let j=1;j<=12;j++){ const V=vipAt(j), T=TTHEMES['vip'+j].v; PB_MACH['mvip'+j]=Object.assign(pbGen(j*3,1,{cat:'vip',tier:j}),{name:V.name+' Table',icon:V.icon,art:['royale','city','neon','space'][j%4],pal:[T.t1,T.t3,V.color,T.k[1]],bp:200+j*20,gate:V.name.toUpperCase()+' JACKPOT',xball:true}); }
+for(let s=1;s<=8;s++) PB_MACH['mstar'+s]=Object.assign(pbGen(s*5,1,{cat:'star',stars:s}),{name:STAR_N[s-1],icon:TTHEMES['star'+s].fx[0],art:['space','retro','royale','jungle','neon','volcano','candy','space'][s-1],pal:[TTHEMES['star'+s].v.t1,TTHEMES['star'+s].v.t3,TTHEMES['star'+s].v.r1,TTHEMES['star'+s].v.k[1]],bumpers:PB_LAY[4],locks:2,save:14,bp:300+s*25,frenzy:10,gate:'SUPERNOVA',royal:true,xball:true,m0:2});
 Object.assign(PB_MACH.classic,{cat:'free',free:1}); ['neon','gridiron','royale'].forEach(k=>PB_MACH[k].cat='shop');
 Object.assign(PB_MACH.neon,{bp:100,frenzy:15}); Object.assign(PB_MACH.gridiron,{gate:'TOUCHDOWN'}); Object.assign(PB_MACH.royale,{royal:1});
 const pbHas=k=>{ const M=PB_MACH[k]; if(!M) return false; if(M.free) return true; if(M.tier) return myTier()>=M.tier; if(M.stars) return myStars()>=M.stars; return pbMine().owned.includes(k); };
@@ -107,7 +107,7 @@ function pbDrain(st){ const live=st.balls.filter(b=>!b.out); st.balls=live; if(l
   const B=st.bonus, bonus=(B.lanes*5000+B.targets*3000+B.bumps*100)*st.mult; st.phase='bonus'; st.bonusLeft=bonus; st.bonusShown=0; st.bonusT=0; }
 
 /* ---------- Drawing ---------- */
-function pbPal(st){ if(st.pal) return st.pal; const mk=Object.keys(PB_MACH).find(k=>PB_MACH[k]===st.M)||'classic', T=TTHEMES[curTheme()];
+function pbPal(st){ if(st.pal&&st.palT===curTheme()) return st.pal; st.palT=curTheme(); const mk=Object.keys(PB_MACH).find(k=>PB_MACH[k]===st.M)||'classic', T=TTHEMES[curTheme()];
   const pal=st.M.pal||PB_MPAL[mk]||(T&&T.v?[T.v.t1,T.v.t3,T.v.r1,T.v.r2]:PB_PAL.lodge); st.pal=pal; st.art=st.M.art||mk; st.acc=pal[2]; return pal; }
 const PB_BG={};
 function pbBg(st,acc,acc2){ const dpr=Math.min(2,devicePixelRatio||1), key=st.M.name+'|'+curTheme()+'|'+dpr; if(PB_BG[key]) return PB_BG[key];
