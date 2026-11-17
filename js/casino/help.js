@@ -8,6 +8,9 @@ function slotPaytable(){
   ${JPT.map(t=>`<div class="pt"><div class="badge ${t.k}" style="justify-self:center">${t.n}</div><div><b>${t.n} Jackpot</b><span>${cmp$(jpVal(t))} at your bet</span></div></div>`).join('')}</div>`;
 }
 const TIPS={
+  pinball:()=>`<div class="tchips"><span>👆 Tap left / right to flip</span><span>🚀 Hold LAUNCH, let go</span><span>🟢 Green = skill shot</span></div>
+    <div class="tchips"><span>🔒 Lock balls → MULTIBALL</span><span>💥 Saucer in multiball = JACKPOT</span><span>🟡 Top lanes → bonus ×</span><span>🟦 Targets → ×</span><span>🧩 Your sets = targets</span></div>
+    <div class="tchips">${PB_LADDER.map(([s,m])=>`<span>${Math.round(s/1000)}K → ×${m}</span>`).join('')}</div>`,
   slots:()=>`<div class="tips">
     <div class="tip"><h4>How it works</h4><p>Choose your bet with − and +, then tap <b>Spin</b>. This is a <b>243 ways</b> machine (like Dancing Drums and 88 Fortunes): there are no paylines. Land a symbol on reels 1, 2 and 3 — any row — and you win. More matching symbols on a reel multiply the ways.</p></div>
     <div class="tip"><h4>The Wild tree</h4><p>Appears on the middle three reels and stands in for every symbol except the gift box.</p></div>
