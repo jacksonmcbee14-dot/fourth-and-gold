@@ -143,7 +143,7 @@ Object.assign(LG_ACT,{
     setBank(-pr); S.spent=(S.spent||0)+pr; S.lodge.camsBought=(S.lodge.camsBought||0)+1; homeSync(); tone(880,.08,'square',.04); toast('📹 Camera installed','gold'); homeOpen(); },
   homeDeposit:()=>{ const cap=home().safe-(S.safe||0); if(cap<=0){ toast('Your vault room is full','loss'); return; }
     askAmount({title:'Put cash in the vault',value:Math.min(S.bank,cap),max:Math.min(S.bank,cap),note:'Safe from thieves',onSet:v=>{ S.bank-=v; S.safe=(S.safe||0)+v; save(); hudBank(); homeOpen(); toast('🔐 '+fmt$(v)+' locked away','gold'); },onCancel:()=>homeOpen()}); },
-  homeWithdraw:()=>askAmount({title:'Take cash out of the vault',value:S.safe||0,max:S.safe||0,onSet:v=>{ S.safe-=v; S.bank+=v; save(); hudBank(); homeOpen(); toast(fmt$(v)+' back in your bankroll','gold'); },onCancel:()=>homeOpen()}),
+  homeWithdraw:()=>askAmount({title:'Take cash out of the vault',value:S.safe||0,max:S.safe||0,onSet:v=>{ S.safe-=v; S.bank+=v; S.safeOut=(S.safeOut||0)+v; save(); hudBank(); homeOpen(); toast(fmt$(v)+' back in your bankroll','gold'); },onCancel:()=>homeOpen()}),
   homeGolf:()=>{ closeShop(); openGolf({course:'home',holes:3}); },
 });
 
