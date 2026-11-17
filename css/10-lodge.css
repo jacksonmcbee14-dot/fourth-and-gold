@@ -137,3 +137,7 @@ body.in-lodge .xppop{top:auto;bottom:80px;right:50%;transform:translateX(50%)}
 .bt-log{max-height:230px;overflow:auto;margin:8px 0;font:12px/1.5 ui-monospace,monospace;background:rgba(0,0,0,.25);border-radius:8px;padding:6px 8px}
 .bt-line{color:#cfc6b4}.bt-line.win{color:#7be08a}.bt-line.loss{color:#e88a7a}
 .bt-bal{font-weight:700;color:#ffd84a;margin:4px 0 8px}
+.mk-list{display:flex;flex-direction:column;gap:6px}
+.mk-row{display:flex;align-items:center;gap:8px;padding:6px;background:#1a1006;box-shadow:0 0 0 2px #3a2617}
+.mk-row>div{flex:1;display:flex;flex-direction:column;gap:3px;font-size:8px;color:#f3ead8}.mk-row small{font-size:7px;color:#a89a80}
+.mk-row .lg-btn{font-size:8px;white-space:nowrap}
