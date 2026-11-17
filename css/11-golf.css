@@ -46,3 +46,15 @@ body.in-golf{overflow:hidden}
 .gk-perks{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12px}.gk-note{font-size:11px;opacity:.7;margin-top:6px}
 .rg-game{display:flex;flex-direction:column;gap:4px;width:100%;text-align:left;margin:6px 0;padding:10px;background:#1a1006;color:#f3ead8;box-shadow:0 0 0 2px #c8a45c;font-size:9px;line-height:1.5}
 .rg-game small{font-size:7px;color:#cfc6b4}.rg-game small.gold{color:#ffd84a}
+/* Kennel Club */
+.pk-bars{display:flex;align-items:center;gap:8px;font-size:9px;color:#f3ead8}
+.pk-bars span{display:flex;align-items:center;gap:4px;flex:1}.pk-bars i{flex:1;height:8px;background:#120a06;box-shadow:0 0 0 1px #c8a45c}.pk-bars u{display:block;height:100%}
+.pk-bars .pk-score{flex:0 0 auto;color:#ffd84a}
+.pk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.pk-grid .lg-btn{font-size:8px;padding:10px 2px}.pk-grid .gf-swing{grid-column:1/-1}
+.pk-in{max-height:100%;overflow:auto}
+.pk-breeds{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0}
+.pk-breed{display:flex;align-items:center;gap:6px;padding:8px;background:#1a1006;color:#f3ead8;font-size:7px;box-shadow:0 0 0 2px #5a4a2a}.pk-breed.on{box-shadow:0 0 0 2px #ffd84a}
+.pk-breed i{width:14px;height:14px;flex:0 0 14px}
+.pk-name{width:100%;margin:6px 0 10px;padding:10px;background:#120a06;color:#ffd84a;border:0;box-shadow:0 0 0 2px #c8a45c;font:12px "Press Start 2P",monospace;text-align:center}
+.pk-field{margin:8px 0;font-size:8px;line-height:1.9;text-align:left}.pk-field div{display:flex;gap:6px}.pk-field span{margin-left:auto;color:#ffd84a}.pk-field small{color:#9fb0bf;font-size:7px}.pk-field .me{color:#3ad08a}
+.pk-cmds{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.pk-cmds .lg-btn{padding:14px 0;font-size:11px}
