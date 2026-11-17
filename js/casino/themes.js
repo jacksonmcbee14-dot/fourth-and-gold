@@ -34,3 +34,16 @@ Object.assign(ACT,{
     setBank(-pr); S.spent=(S.spent||0)+pr; S.decks=(S.decks||[]).concat(k); S.cdeck=k; save(); try{ fx.confetti(80); }catch(e){} toast(`${DECKS[k].icon} ${DECKS[k].name} deck — yours!`,'gold'); render(); themePick(); },
   themeLocked:el=>{ const k=el.dataset.v, s=(TTHEMES[k]||DECKS[k]||{}).set, set=SETS.find(x=>x.id===s); toast(set?`🧩 Finish the ${set.name} set to unlock`:'Locked','gold'); },
 });
+
+// Decks theme the win too: a burst of the deck's icons from the table when you win.
+const DECK_FX={golf:['⛳','🏌️','🟢'],neon:['✨','💜','⚡'],security:['🔒','💰','🛡️'],pennants:['🚩','🏆','⭐'],cabin:['🦌','🌲','🔥'],holiday:['❄️','🎁','⭐'],arcade:['👾','🕹️','💥'],
+  art:['🎨','🖼️','✨'],crowns:['👑','💎','✨'],watches:['⌚','⏱️','✨'],midnight:['🌙','⭐','✨'],goldfoil:['💰','✨','🪙'],diamond:['💎','✨','❄️'],glow:['🟢','✨','⚡'],pixel:['👾','⭐','💥']};
+function deckWinFx(big){ const k=curDeck(), I=DECK_FX[k]; if(!I) return; const host=document.querySelector('#view .felt,#view .pb-stage'); if(!host) return; const r=host.getBoundingClientRect();
+  const n=big?22:12; for(let i=0;i<n;i++){ const e=document.createElement('span'); e.className='dk-burst'; e.textContent=I[i%I.length];
+    e.style.left=(r.left+r.width/2-13+(Math.random()-.5)*r.width*.3)+'px'; e.style.top=(r.top+r.height*.45)+'px';
+    e.style.setProperty('--dx',((Math.random()-.5)*r.width*1.1)+'px'); e.style.setProperty('--dy',(-80-Math.random()*r.height*.6)+'px'); e.style.setProperty('--rot',((Math.random()-.5)*540)+'deg');
+    e.style.animationDelay=(i*25)+'ms'; document.body.appendChild(e); setTimeout(()=>e.remove(),1600+i*25); } }
+const _setBankDk=setBank;
+setBank=function(delta){ const r=_setBankDk.apply(this,arguments);
+  if(delta>0&&S.mode==='casino'&&['roulette','blackjack','poker','craps','pinball'].includes(S.ctab)) deckWinFx(delta>=(S.chip||1000)*5);
+  return r; };
