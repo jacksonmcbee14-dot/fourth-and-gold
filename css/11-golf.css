@@ -58,3 +58,6 @@ body.in-golf{overflow:hidden}
 .pk-name{width:100%;margin:6px 0 10px;padding:10px;background:#120a06;color:#ffd84a;border:0;box-shadow:0 0 0 2px #c8a45c;font:12px "Press Start 2P",monospace;text-align:center}
 .pk-field{margin:8px 0;font-size:8px;line-height:1.9;text-align:left}.pk-field div{display:flex;gap:6px}.pk-field span{margin-left:auto;color:#ffd84a}.pk-field small{color:#9fb0bf;font-size:7px}.pk-field .me{color:#3ad08a}
 .pk-cmds{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.pk-cmds .lg-btn{padding:14px 0;font-size:11px}
+.pk-hint{grid-column:1/-1;text-align:center;font-size:9px;color:#ffd84a;padding:12px 0;animation:hpBob 1.2s ease-in-out infinite}
+.pk-grid .pk-cmds{grid-column:1/-1;margin:0;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.pk-grid .pk-cmds .lg-btn{padding:12px 0;font-size:9px}
+.pk-tug{animation:hpBob .4s ease-in-out infinite}
