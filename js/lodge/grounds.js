@@ -161,7 +161,7 @@ function wdForageGet(f){ const W=wdState(); if(W.forage.includes(f.n)) return; W
 /* ---------- moving around ---------- */
 const GR={el:null,c:null,ctx:null,loop:null,me:null,cam:[0,0],VW:192,VH:340,sc:2,open:false,paused:false,forage:null,parts:[],ri:-1};
 const wdPass=(tx,ty)=>{ if(tx<0||ty<0||tx>=WD.W||ty>=WD.H) return false; const Wd=wdGen(), i=Wd.I(tx,ty); return PASS.has(Wd.map[i])&&regOpen(Wd.reg[i]); };
-const wdMeT=()=>[Math.round((GR.me.x-8)/16),Math.round((GR.me.y-15)/16)];
+const wdMeT=()=>[Math.floor(GR.me.x/16),Math.floor((GR.me.y-1)/16)];
 function wdPath(sx,sy,gx,gy){ const W=WD.W, prev=new Int32Array(W*WD.H).fill(-1), s=sy*W+sx, goal=gy*W+gx, q=[s]; prev[s]=s; let h=0;
   while(h<q.length){ const c=q[h++]; if(c===goal) break; const x=c%W, y=(c/W)|0; for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){ const nx=x+dx, ny=y+dy, n=ny*W+nx; if(nx<0||ny<0||nx>=W||ny>=WD.H||prev[n]>=0||!wdPass(nx,ny)) continue; prev[n]=c; q.push(n); } }
   if(prev[goal]<0) return null; const out=[]; let c=goal; while(c!==s){ out.push([c%W,(c/W)|0]); c=prev[c]; } return out.reverse(); }
@@ -172,7 +172,10 @@ function wdLandAt(tx,ty){ return wdGen().L.find(o=>tx>=o.x&&tx<o.x+o.w&&ty>=o.y-
 function wdNearL(){ const [tx,ty]=wdMeT(); return wdGen().L.find(o=>Math.abs(o.door[0]-tx)<=1&&Math.abs(o.door[1]-ty)<=1&&regOpen(o.reg)); }
 function wdName(o){ if(o.k==='golf') return courseName(o.course); if(o.k==='track') return (HTRACKS[o.track]||{}).name||'Race track'; if(o.k==='marsh') return HU_MARSH[o.m].name; return o.name; }
 
+function wdFree(px,py){ for(const [ox,oy] of [[-4,-1],[4,-1],[-4,-5],[4,-5]]) if(!wdPass(Math.floor((px+ox)/16),Math.floor((py+oy)/16))) return false; return true; }
 function wdDraw(t,dt){ const x=GR.ctx, m=GR.me, Wd=wdGen(), {T,CH}=WD, VW=GR.VW, VH=GR.VH;
+  const J=GR.joy; if(J&&(J.dx||J.dy)){ m.path=null; m.arrive=null; const sp=88*dt*Math.min(1,Math.hypot(J.dx,J.dy)), nx=m.x+J.dx*sp, ny=m.y+J.dy*sp;
+    if(wdFree(nx,m.y)) m.x=nx; if(wdFree(m.x,ny)) m.y=ny; if(Math.abs(J.dx)>.15) m.face=J.dx<0?-1:1; m.walk+=dt; m.moving=true; } else m.moving=false;
   if(m.path&&m.path.length){ const [nx,ny]=m.path[0], gx=nx*16+8, gy=ny*16+15, dx=gx-m.x, dy=gy-m.y, d=Math.hypot(dx,dy), sp=80*dt;
     if(d<=sp){ m.x=gx; m.y=gy; m.path.shift(); } else { m.x+=dx/d*sp; m.y+=dy/d*sp; } if(Math.abs(dx)>.5) m.face=dx<0?-1:1; m.walk+=dt;
     if(!m.path.length&&m.arrive){ const a=m.arrive; m.arrive=null; setTimeout(a,80); } }
@@ -194,7 +197,7 @@ function wdDraw(t,dt){ const x=GR.ctx, m=GR.me, Wd=wdGen(), {T,CH}=WD, VW=GR.VW,
   GR.forage=GR.forage||wdForage(); for(const f of GR.forage){ if(W.forage.includes(f.n)) continue; const X=f.x*T-cx+8, Y=f.y*T-cy+8+Math.round(Math.sin(t*3+f.n)*2); if(X<-8||Y<-8||X>VW+8||Y>VH+8) continue;
     x.fillStyle=(t*4+f.n)%2<1?'#fff6c0':'#ffd84a'; x.fillRect(X-1,Y-3,2,7); x.fillRect(X-3,Y-1,7,2); x.fillStyle='#ffffff'; x.fillRect(X,Y,1,1);
     if(Math.abs(m.x-(f.x*T+8))<10&&Math.abs(m.y-(f.y*T+15))<12) wdForageGet(f); }
-  const fr=m.path&&m.path.length?'walk'+((m.walk*8|0)%4):'idle0', spr=personSprite('player',fr,typeof lodgeLook==='function'?lodgeLook():null);
+  const fr=(m.path&&m.path.length)||m.moving?'walk'+((m.walk*8|0)%4):'idle0', spr=personSprite('player',fr,typeof lodgeLook==='function'?lodgeLook():null);
   x.fillStyle='rgba(0,0,0,.3)'; x.fillRect(Math.round(m.x-cx-5),Math.round(m.y-cy-1),10,2);
   x.save(); x.translate(Math.round(m.x-cx),Math.round(m.y-cy-PERSON_H)); if(m.face<0) x.scale(-1,1); x.drawImage(spr,-6,0); x.restore();
   { const [ax,ay]=wdMeT(); const ch=Wd.chests.find(c=>c.x===ax&&c.y===ay&&!W.chests.includes(c.n)&&regOpen(c.reg)); if(ch) wdOpenChest(ch); }
@@ -280,7 +283,7 @@ function wdHud(flash){ if(!GR.el) return; const R=REG[Math.max(0,GR.ri)], W=wdSt
 function wdSize(){ const w=innerWidth, h=innerHeight, sc=Math.max(2,Math.round(Math.min(w,h*.62)/185)); GR.sc=sc; GR.VW=Math.ceil(w/sc); GR.VH=Math.ceil(h/sc); GR.c.width=GR.VW; GR.c.height=GR.VH; GR.c.style.width=GR.VW*sc+'px'; GR.c.style.height=GR.VH*sc+'px'; GR.ctx.imageSmoothingEnabled=false; GR.parts=[]; }
 function grDom(){ if(GR.el) return; const el=document.createElement('div'); el.className='grounds'; el.innerHTML=`<canvas class="wd-c"></canvas>
   <div class="gr-top"><button class="gr-back" data-gr="close">← Lodge</button><div class="gr-zone"></div><div class="wd-btns"><button data-gr="map" aria-label="Map">🗺️</button><button data-gr="pack" aria-label="Pack">🎒</button></div></div>
-  <button class="gr-act" data-gr="act"></button><div class="gr-tip">Tap to walk · tap a building, chest or marsh to go there</div>`;
+  <button class="gr-act" data-gr="act"></button><div class="gr-tip">Use the stick or tap to walk · tap a building, chest or marsh to go there</div><div class="wd-joy"><i></i></div>`;
   document.body.appendChild(el); GR.el=el; GR.c=el.querySelector('canvas'); GR.ctx=GR.c.getContext('2d'); GR.loop=makeLoop(wdDraw);
   GR.c.addEventListener('pointerdown',e=>{ const r=GR.c.getBoundingClientRect(), wx=GR.cam[0]+(e.clientX-r.left)/GR.sc, wy=GR.cam[1]+(e.clientY-r.top)/GR.sc, tx=Math.floor(wx/16), ty=Math.floor(wy/16); el.querySelector('.gr-tip').classList.add('off');
     const Wd=wdGen(), ch=Wd.chests.find(c=>c.x===tx&&c.y===ty&&regOpen(c.reg));
@@ -289,13 +292,20 @@ function grDom(){ if(GR.el) return; const el=document.createElement('div'); el.c
     if(tx>=0&&ty>=0&&tx<WD.W&&ty<WD.H&&!regOpen(Wd.reg[Wd.I(tx,ty)])){ const R=REG[Wd.reg[Wd.I(tx,ty)]]; toast(`⭐ ${R.name} opens at prestige ${R.stars}`,'gold'); return; }
     wdWalkTo(tx,ty); tone(520,.03,'square',.02); });
   el.addEventListener('click',e=>{ const b=e.target.closest('[data-gr]'); if(!b) return; const a=b.dataset.gr; if(a==='close') closeGrounds(); else if(a==='map') wdMapOpen(); else if(a==='pack') wdPackOpen(); else if(a==='act'){ const L=wdNearL(); if(L) wdAct(L); } });
+  // the joystick: drag from its centre; the knob follows your thumb (up to the rim)
+  const joy=el.querySelector('.wd-joy'), knob=joy.querySelector('i'); let jp=null;
+  const jmove=e=>{ const r=joy.getBoundingClientRect(), cx=r.left+r.width/2, cy=r.top+r.height/2, R=r.width/2-14; let dx=e.clientX-cx, dy=e.clientY-cy; const d=Math.hypot(dx,dy); if(d>R){ dx*=R/d; dy*=R/d; }
+    knob.style.transform=`translate(${dx}px,${dy}px)`; const k=Math.hypot(dx,dy)/R; GR.joy=k<.18?{dx:0,dy:0}:{dx:dx/R,dy:dy/R}; };
+  joy.addEventListener('pointerdown',e=>{ e.preventDefault(); e.stopPropagation(); jp=e.pointerId; joy.setPointerCapture(jp); joy.classList.add('on'); el.querySelector('.gr-tip').classList.add('off'); jmove(e); });
+  joy.addEventListener('pointermove',e=>{ if(e.pointerId===jp) jmove(e); });
+  const jend=e=>{ if(e.pointerId!==jp) return; jp=null; GR.joy=null; joy.classList.remove('on'); knob.style.transform=''; }; joy.addEventListener('pointerup',jend); joy.addEventListener('pointercancel',jend);
   addEventListener('resize',()=>{ if(GR.open) wdSize(); }); }
 function openGrounds(){ if(typeof closeModal==='function') closeModal(); grDom(); GR.open=true; GR.paused=false; GR.el.classList.add('on'); document.body.classList.add('in-golf');
   if(typeof lodgeActive==='function'&&lodgeActive()&&LODGE.hub) LODGE.hub.loop.stop(); wdGen(); wdSize(); const h=WORLD.L[0];
   GR.me=GR.me||{x:h.door[0]*16+8,y:(h.door[1]+1)*16+15,face:1,walk:0,path:null,arrive:null}; GR.forage=null; GR.ri=-1; wdHud(); GR.loop.start(); }
 function closeGrounds(){ if(!GR.el) return; GR.loop.stop(); GR.open=false; GR.el.classList.remove('on'); document.body.classList.remove('in-golf'); GR.el.querySelectorAll('.wd-look').forEach(e=>e.remove()); save();
   if(typeof lodgeActive==='function'&&lodgeActive()&&LODGE.hub) LODGE.hub.loop.start(); else render(); }
-function grPause(){ GR.paused=true; if(GR.loop) GR.loop.stop(); }
+function grPause(){ GR.joy=null; GR.paused=true; if(GR.loop) GR.loop.stop(); }
 function grResume(){ if(!GR.open) return; GR.paused=false; document.body.classList.add('in-golf'); if(typeof lodgeActive==='function'&&lodgeActive()&&LODGE.hub) LODGE.hub.loop.stop(); wdHud(); GR.loop.start(); }
 for(const fn of ['closeGolf','closeWalks','closeHorses','closeHunt','closeRange']){ if(typeof window[fn]!=='function') continue; const f=window[fn]; window[fn]=function(){ const r=f.apply(this,arguments); if(GR.open) grResume(); return r; }; }
 const grSubOpen=()=>!!document.querySelector('.golf.on');
