@@ -39,3 +39,4 @@ const _buyItemPS=buyItem; buyItem=function(id){ const it=ITEM[id]; if(starLocked
 const _renderShopPS=renderShop; renderShop=function(){ _renderShopPS(); const box=LODGE.el&&LODGE.el.querySelector('.lg-shop'); if(!box) return;
   box.querySelectorAll('[data-lg=shopSel][data-id]').forEach(b=>{ const it=ITEM[b.dataset.id]; if(!it||!it.stars) return; b.classList.add('star-item'); if(starLocked(it)){ b.classList.add('locked'); const p=b.querySelector('.lg-ip'); if(p) p.textContent='⭐'.repeat(Math.min(3,it.stars))+(it.stars>3?'×'+it.stars:''); } });
   const ask=box.querySelector('[data-lg=shopAsk]'); if(ask&&SHOP.sel&&starLocked(ITEM[SHOP.sel])){ ask.disabled=true; ask.textContent=`Prestige ${ITEM[SHOP.sel].stars} only`; } };
+

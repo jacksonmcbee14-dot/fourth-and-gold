@@ -163,3 +163,9 @@
 .hu-note{font-size:11px;opacity:.7;text-align:center;margin-top:8px}
 .hu-guns{max-height:30vh;overflow:auto}.hu-guns.shop{max-height:56vh}
 .hu-gun small{grid-column:2}
+.up-sum{display:flex;gap:6px;justify-content:center;margin-bottom:6px}.up-sum span{padding:5px 10px;border-radius:999px;background:rgba(255,216,74,.12);color:#ffe9b0;font-size:12px;font-weight:700}
+.up-row{display:grid;grid-template-columns:30px 1fr auto;align-items:center;gap:8px;padding:8px 10px;margin:4px 0;border-radius:12px;background:rgba(255,255,255,.05)}
+.up-row span{font-size:16px;text-align:center}.up-row b{font-size:13px}.up-row b small{display:block;font-size:10px;font-weight:400;opacity:.75}.up-row em{font-style:normal;font-size:10px;font-weight:800;color:#ffd84a;text-align:right}
+.up-row.now{box-shadow:inset 0 0 0 2px #ffd84a;background:rgba(255,216,74,.1)}.up-row.lock{opacity:.6}
+.up-note{font-size:11px;opacity:.7;text-align:center;margin:10px 0 4px}
+.hp-tabs{grid-template-columns:repeat(6,1fr)!important}.hp-tab small{font-size:10px}
