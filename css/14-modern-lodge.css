@@ -1,0 +1,103 @@
+/* Modern lodge: the 8-bit art and the warm lodge colours stay; the panels, buttons and menus around them get a
+   cutting-edge finish — glass panels, soft depth, rounded tiles, pill buttons, a clean font for reading, and the
+   pixel font kept for headings and big numbers. Covers the lodge HUD, shop, Home panel, decorate tray, Kennel Club,
+   golf, range, park, stables and butler panels. Pure styling. */
+
+:root{--lg-glass:rgba(22,13,8,.82);--lg-edge:rgba(255,216,74,.22);--lg-gold:linear-gradient(135deg,#ffe08a,#f2b84b 45%,#e8963c);--lg-tile:linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.02))}
+@keyframes mlIn{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
+
+/* Readable font for everything you read or tap; pixel font only for headings and numbers */
+.lodge,.lodge button,.golf,.golf button{font-family:var(--sans)}
+.lg-dlg-who,.gf-hole,.gf-tot,.gf-big,.lodgebtn,.lg-lvl span,.hp-amt,.wk-score,.hr-bank,.pk-bank{font-family:"Press Start 2P",ui-monospace,monospace}
+
+/* Buttons: pills with depth */
+.lodge .lg-btn,.golf .lg-btn{font-size:12px;font-weight:700;letter-spacing:.01em;padding:10px 14px;border-radius:14px;color:#f6ebcb;
+  background:linear-gradient(180deg,rgba(255,255,255,.1),rgba(255,255,255,.04));box-shadow:inset 0 0 0 1px rgba(255,255,255,.12),0 4px 12px rgba(0,0,0,.3);transition:transform .1s,box-shadow .15s}
+.lodge .lg-btn:active,.golf .lg-btn:active{transform:translateY(1px) scale(.97);box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+.lodge .lg-btn.lg-gold,.golf .lg-btn.lg-gold{color:#2a1606;background:var(--lg-gold);box-shadow:0 6px 18px rgba(232,150,60,.35),inset 0 -2px 0 rgba(0,0,0,.18)}
+.lodge .lg-btn:disabled,.golf .lg-btn:disabled{opacity:.45;box-shadow:none}
+.lodge .lg-round,.golf .lg-round{width:38px;height:38px;padding:0;border-radius:50%;display:grid;place-items:center}
+
+/* The bottom HUD and the level bar */
+.lg-hud .lg-btn{backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);background:rgba(22,13,8,.7)}
+.lg-lvl{font-size:9px}.lg-lvl i{height:9px;border-radius:999px;background:rgba(0,0,0,.45);box-shadow:inset 0 0 0 1px rgba(255,216,74,.25);overflow:hidden}
+.lg-lvl b{border-radius:999px;background:linear-gradient(90deg,#f2b26b,#ffd84a);transition:width .6s ease}
+.lg-label{font-family:var(--sans);font-size:11px;font-weight:700;padding:5px 9px;border-radius:999px;background:rgba(10,6,4,.78);backdrop-filter:blur(6px);box-shadow:0 0 0 1px var(--lg-edge)}
+.lodgebtn{border-radius:10px}
+
+/* Panels: glass with a soft gold edge */
+.lg-shop{border-radius:24px;padding:14px;background:var(--lg-glass);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  box-shadow:0 24px 60px rgba(0,0,0,.55),inset 0 0 0 1px var(--lg-edge);animation:mlIn .25s ease-out both}
+.lg-shop-head{padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.06)}
+.lg-dlg-who{font-size:9px;background:var(--lg-gold);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lg-bank-s{font-size:11px;font-weight:700;color:#ffd84a}
+.lg-dlg-text{font-size:13px;line-height:1.5;color:#e8dcc0}
+
+/* Tabs and tiles */
+.lg-tabs{gap:6px}
+.lg-tab,.hp-tab{font-family:var(--sans);font-size:11px;font-weight:700;text-transform:none;padding:9px 4px;border-radius:12px;color:#c8b896;background:rgba(255,255,255,.05);box-shadow:inset 0 0 0 1px rgba(255,255,255,.07);transition:all .15s}
+.lg-tab.on,.hp-tab.on{color:#2a1606;background:var(--lg-gold);box-shadow:0 4px 14px rgba(232,150,60,.35)}
+.hp-tab small{font-size:9px;text-transform:none}
+.lg-item{border-radius:16px;padding:10px 6px;font-size:11px;font-weight:600;background:var(--lg-tile);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);transition:transform .12s,box-shadow .15s;animation:mlIn .3s ease-out both}
+.lg-item:active{transform:scale(.96)}.lg-item.wearing{box-shadow:inset 0 0 0 2px #e8963c,0 0 18px rgba(232,150,60,.25)}
+.lg-ip{font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;background:rgba(0,0,0,.35);color:#ffd84a}
+.lg-item.perk{box-shadow:inset 0 0 0 1px rgba(255,216,74,.35)}
+.lg-prev-art{border-radius:20px;background:radial-gradient(circle at 50% 40%,#4a3018,#160c06 72%);box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
+.lg-prev-name{font-size:16px;font-weight:800}.lg-prev-desc{font-size:13px;line-height:1.5}
+.lg-set,.mk-row,.gu-row,.rg-game,.hp-tile,.hp-room,.hp-house,.hp-chip,.pk-breed,.st-it,.bt-log{border-radius:16px!important}
+.lg-set{padding:10px;background:var(--lg-tile);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+
+/* Home panel */
+.hp-tile{background:var(--lg-tile);box-shadow:inset 0 0 0 1px rgba(255,216,74,.25),0 6px 16px rgba(0,0,0,.25)}
+.hp-tile small{font-size:10px;font-weight:700;text-transform:none}.hp-tile span{font-size:26px}
+.hp-chip{font-family:var(--sans);font-size:11px;font-weight:700;padding:6px 10px;border-radius:999px!important;background:rgba(255,255,255,.06)}
+.hp-big{font-family:var(--sans);font-size:14px;font-weight:800;border-radius:16px;background:var(--lg-gold);box-shadow:0 8px 20px rgba(232,150,60,.35)}
+.hp-room{background:var(--lg-tile)}.hp-room small{font-size:10px;font-weight:700;text-transform:none}.hp-room canvas{border-radius:10px}
+.hp-cv{border-radius:18px}.hp-next,.hp-lock,.hp-done{font-size:12px}.hp-next i,.hr-stat i,.pk-bars i{border-radius:999px;overflow:hidden}
+.hp-amt{font-size:20px}
+
+/* Decorate tray */
+.lg-tray{border-radius:22px;background:var(--lg-glass);backdrop-filter:blur(14px);box-shadow:0 18px 40px rgba(0,0,0,.5),inset 0 0 0 1px rgba(232,150,60,.45)}
+.lg-tray-h{font-size:12px;font-weight:600}.lg-tray-h .lg-btn{font-size:11px}
+
+/* Chips used inside lodge / golf panels */
+.lg-shop .tchips span,.golf .tchips span{font-family:var(--sans);font-size:11px;font-weight:700;border-radius:999px;padding:5px 10px;background:rgba(255,255,255,.07);box-shadow:inset 0 0 0 1px rgba(255,216,74,.25)}
+
+/* Full-screen games: golf, range, kennel, park, stables */
+.gf-top{padding:12px 14px 8px}
+.gf-hole{font-size:9px}.gf-tot{border-radius:12px;font-size:10px;background:var(--lg-gold);box-shadow:0 4px 14px rgba(232,150,60,.35)}
+.gf-lv{font-family:var(--sans);font-size:11px;font-weight:800;padding:4px 8px;border-radius:999px;background:rgba(58,208,138,.15)}
+.gf-stage canvas.px{border-radius:18px}
+.gf-card{border-radius:22px;background:rgba(14,9,6,.86);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 20px 50px rgba(0,0,0,.55),inset 0 0 0 1px var(--lg-edge)}
+.gf-card-in{gap:12px;padding:16px}.gf-card-in>*{animation:mlIn .3s ease-out both}
+.gf-k{font-size:12px;font-weight:800;letter-spacing:.06em;color:#c8d2dc}.gf-k.gold{color:#ffd84a}
+.gf-note{font-size:12px}
+.gf-bot{gap:10px}
+.gf-info{font-size:11px;font-weight:600}
+.gf-club{font-size:13px;font-weight:700}.gf-club small{font-size:11px}
+.gf-meter,.hr-meter,.pk-meter{height:24px;border-radius:999px;overflow:hidden;box-shadow:inset 0 0 0 2px rgba(255,216,74,.45),0 4px 12px rgba(0,0,0,.35)}
+.gf-meter i,.hr-meter i{border-radius:0}.gf-mark,.hr-mark{border-radius:3px;box-shadow:0 0 8px #fff}
+.gf-swing,.hr-bot .gf-swing,.pk-grid .gf-swing{font-family:var(--sans);font-size:17px;font-weight:900;letter-spacing:.06em;padding:16px 0;border-radius:18px;color:#2a1606;background:var(--lg-gold);box-shadow:0 8px 22px rgba(232,150,60,.4),inset 0 -3px 0 rgba(0,0,0,.18)}
+.gf-swing.hit{background:linear-gradient(135deg,#7bf0b0,#3ad08a);box-shadow:0 8px 22px rgba(58,208,138,.45)}
+.rg-game{background:var(--lg-tile);box-shadow:inset 0 0 0 1px rgba(255,216,74,.25);font-size:13px;padding:12px;gap:4px}
+.rg-game b{font-size:13px}.rg-game small{font-size:11px;color:#c8b896}.rg-game small.gold{color:#ffd84a}
+.pk-field{font-size:12px;line-height:2}.pk-field small{font-size:10px}
+.pk-bars{font-size:12px}.pk-bars i{height:10px}
+.pk-grid{gap:8px}
+.pk-grid .lg-btn{font-size:12px;padding:12px 4px;border-radius:16px}
+.pk-grid .lg-btn:nth-child(1){background:linear-gradient(160deg,#3a8a4a,#1a4a24)}.pk-grid .lg-btn:nth-child(2){background:linear-gradient(160deg,#3a7aa0,#16384a)}
+.pk-grid .lg-btn:nth-child(3){background:linear-gradient(160deg,#c06a2a,#5a2a0a)}.pk-grid .lg-btn:nth-child(4){background:linear-gradient(160deg,#8a3aff,#2a1050)}
+.pk-grid .lg-btn:nth-child(5){background:linear-gradient(160deg,#ffd84a,#c8962a);color:#2a1606}.pk-grid .lg-btn:nth-child(6){background:linear-gradient(160deg,#ff3ad0,#5a0a4a)}
+.pk-grid .lg-btn.lg-gold{background:var(--lg-gold)}
+.pk-cmds .lg-btn{font-size:14px!important;padding:14px 0!important}
+.pk-hint{font-family:var(--sans);font-size:13px;font-weight:800}
+.pk-name{font-family:var(--sans);font-size:18px;font-weight:800;border-radius:14px}
+.pk-breed{font-family:var(--sans);font-size:11px;font-weight:700;background:var(--lg-tile)}
+.hr-stat{font-size:12px;font-weight:600}.hr-stat>span{width:84px}.hr-stat .lg-btn{font-size:11px}
+.bt-log{font-size:12px;padding:10px}.bt-bal{font-size:14px}
+
+/* Small modals that pop over the lodge (level-up, celebrations) keep their look; xp popups stay pixel */
+/* Shop filters and the bankroll chip */
+.lg-sub{font-family:var(--sans);font-size:11px;font-weight:700;text-transform:none;padding:7px 12px;border-radius:999px;color:#c8b896;background:rgba(255,255,255,.05);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+.lg-sub.on{color:#2a1606;background:var(--lg-gold);box-shadow:0 4px 12px rgba(232,150,60,.3)}
+.lg-bank{font-family:"Press Start 2P",monospace;font-size:9px;color:#ffd84a;padding:9px 12px;border-radius:999px;background:rgba(14,9,6,.72);backdrop-filter:blur(10px);box-shadow:inset 0 0 0 1px var(--lg-edge),0 6px 16px rgba(0,0,0,.35)}
