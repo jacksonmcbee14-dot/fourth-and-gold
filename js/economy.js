@@ -151,14 +151,21 @@ const vipMaxTier=()=>{ let i=0; while(vipAt(i+1).need<=VAULT) i++; return i; };
 let vaultNoted=0;
 const _saveV=save;
 save=function(){
-  if(S.bank>VAULT){ S.bank=VAULT; if(Date.now()-vaultNoted>60e3){ vaultNoted=Date.now(); setTimeout(vaultFull,400); } }
+  if(S.bank>VAULT){ const over=S.bank-VAULT, room=Math.max(0,safeRoom()), moved=Math.min(over,room); S.bank=VAULT;
+    if(moved>0){ S.safe=(S.safe||0)+moved; safeNote(moved); }   // winnings past $1T go to your vault-room safe first
+    if(over>moved&&Date.now()-vaultNoted>60e3){ vaultNoted=Date.now(); setTimeout(vaultFull,400); } }
   if(S.peak>VAULT) S.peak=VAULT;
   // League bookkeeping (shop spending, gifts, top-ups, adjustments) must stay sane: anything runaway resets.
   for(const k of ['spent','gifts','topups','ladj']) if(S[k]!=null&&!(Math.abs(S[k])<=1e16)) S[k]=0;
   return _saveV.apply(this,arguments);
 };
+// The vault-room safe (Lodge house and up) catches winnings past the $1T cap.
+const safeMax=()=>typeof homeTier==='function'&&typeof HOMES!=='undefined'?(HOMES[homeTier()].safe||0):0;
+const safeRoom=()=>safeMax()-(S.safe||0);
+let safeAdd=0, safeT=0;
+function safeNote(n){ safeAdd+=n; clearTimeout(safeT); safeT=setTimeout(()=>{ toast(`🏦 ${k$(safeAdd)} past the $1T cap went into your safe (${k$(S.safe||0)} of ${k$(safeMax())})`,'gold'); safeAdd=0; },600); }
 function vaultFull(){
-  modal(`<div class="cel"><div class="cel-emoji">🏦</div><div class="cel-t">Your vault is full</div><p>You’ve hit ${k$(VAULT)} — the most the lodge can hold. Winnings past this are lost until you Prestige.</p>
+  modal(`<div class="cel"><div class="cel-emoji">🏦</div><div class="cel-t">Your vault is full</div><p>You’ve hit ${k$(VAULT)} — the most the lodge can hold${safeMax()?` and your safe is full (${k$(safeMax())})`:''}. Winnings past this are lost until you Prestige${safeMax()?'':' — a vault-room safe (Lodge house, level 35) would catch them'}.</p>
     <div class="cel-big">⭐ Prestige ${(S.prestige||0)+1}</div>
     <div class="tchips"><span style="--d:0ms">💵 Back to $1M</span><span style="--d:70ms">🎒 Keep your stuff</span><span style="--d:140ms">⚡ +20% XP</span><span style="--d:210ms">⭐ Rank first</span></div>
     <div class="fgm-row"><button class="btn gold" data-a="prestigeGo">Prestige now</button><button class="btn" data-a="closeModal">Not yet</button></div></div>`);
@@ -242,3 +249,17 @@ function prestigeGear(){ let got=null; PRESTIGE_ITEMS.forEach((it,i)=>{ if((S.pr
 const _prestigeGoH=ACT.prestigeGo;
 ACT.prestigeGo=el=>{ const p0=S.prestige||0; _prestigeGoH(el); if((S.prestige||0)>p0){ S.heat=0; const g=prestigeGear(); if(g) setTimeout(()=>toast('Prestige reward: '+g.name,'gold'),2500); } };
 setTimeout(prestigeGear,1500);
+
+/* ---------- Drink meter: what your drink is doing, how much old fashioned bonus is left, and time left ---------- */
+const DRINK_IC={oldfash:'🥃',cocoa:'☕',cider:'🍎',eggnog:'🎅'};
+function drinkMeter(){ let el=document.getElementById('drinkChip'); const d=typeof heldDrink==='function'?heldDrink():null, h=S.lodge&&S.lodge.drink;
+  const show=!!d&&!(typeof lodgeActive==='function'&&lodgeActive())&&(S.mode==='casino'?S.ctab!=='ranks':S.mode==='football');
+  if(!show){ if(el&&el.classList.contains('on')){ el.classList.remove('on'); el.textContent=''; } return; }
+  if(!el){ el=document.createElement('div'); el.id='drinkChip'; }
+  const row=document.getElementById('hotRow'); if(row&&el.parentNode!==row) row.appendChild(el); else if(!row&&el.parentNode!==document.body) document.body.appendChild(el);
+  const left=Math.max(0,h.until-Date.now()), mm=Math.floor(left/60e3), ss=String(Math.floor(left/1e3)%60).padStart(2,'0');
+  let t, pct=left/DRINK_MS;
+  if(d.id==='oldfash'){ const room=Math.max(0,(h.cap||0)-(h.used||0)); pct=h.cap?room/h.cap:pct; t=`🥃 ×${oldfashX()} wins · bets ×2 · <b>${k$(room)}</b> bonus left · ${mm}:${ss}`; }
+  else t=`${DRINK_IC[d.id]||'🍹'} ${esc(d.name)} · ${d.id==='cocoa'?'×1.5 wins':d.id==='cider'?'half-price shop':'Santa suit'} · ${mm}:${ss}`;
+  if(el._t!==t){ el._t=t; el.innerHTML=t; } el.style.setProperty('--p',Math.max(0,Math.min(1,pct)).toFixed(3)); el.classList.add('on'); }
+setInterval(drinkMeter,1000); const _renderDM=render; render=function(){ _renderDM(); drinkMeter(); };

@@ -198,7 +198,7 @@ heatWin=function(base,profit){ const r=_heatWinB(base,profit); return hotbOn()&&
 function hotRow(casino){ const tbl=casino&&document.querySelector('#view .tblmin'); let row=document.getElementById('hotRow');
   if(!tbl){ if(row) row.remove(); return; }
   if(!row||row.previousElementSibling!==tbl){ if(row) row.remove(); row=document.createElement('div'); row.id='hotRow'; tbl.after(row); }
-  const chip=document.getElementById('heatChip'); if(chip&&chip.parentNode!==row) row.appendChild(chip); }
+  for(const id of ['heatChip','drinkChip']){ const chip=document.getElementById(id); if(chip&&chip.parentNode!==row) row.appendChild(chip); } }
 function hotbUI(){ let el=document.getElementById('butlerHot');
   const casino=S.mode==='casino'&&!(typeof lodgeActive==='function'&&lodgeActive());
   const show=casino&&(hotbOn()||((S.heat||0)>=HEAT_MAX&&canDo('hot')));

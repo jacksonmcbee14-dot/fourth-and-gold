@@ -281,7 +281,7 @@ body[data-heat] .chip.on,body[data-heat] .stack,body[data-heat] .pcard:not(.back
 .hv-rooms button{font-size:12px;padding:6px 10px;border-radius:999px;border:1px solid rgba(200,164,92,.45);background:transparent;color:inherit}
 .hv-rooms button.on{background:#c8a45c;color:#1a1006;border-color:#c8a45c}
 #hotRow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 10px}
-#hotRow:empty,#hotRow:not(:has(#butlerHot,#heatChip.on)){display:none}   /* only takes space when something in it is showing */
+#hotRow:empty,#hotRow:not(:has(#butlerHot,#heatChip.on,#drinkChip.on)){display:none}   /* only takes space when something in it is showing */
 #hotRow #butlerHot,#hotRow #heatChip{position:static;bottom:auto;left:auto}
 #hotRow #heatChip:not(.on){display:none}
 .hv-tub{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:8px 0;padding:10px 12px;border-radius:12px;background:rgba(58,176,208,.12);border:1px solid rgba(58,176,208,.45)}
@@ -453,3 +453,9 @@ body[data-heat] .chip.on,body[data-heat] .stack,body[data-heat] .pcard:not(.back
 .rk-rate .gd-badge{width:28px;height:28px;font-size:9px}
 .rk-list .rk-rate.extra{display:none}.rk-list.all .rk-rate.extra{display:flex}
 .gd.still .rk-row,.gd.still .rk-p,.gd.still .rk-step,.gd.still .rk-rate{animation:none!important}
+
+/* Drink meter (js/economy.js drinkMeter): the bar drains as the old fashioned bonus is used up */
+#drinkChip{display:none;position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 96px);right:max(12px,env(safe-area-inset-right,0px));z-index:40;padding:6px 12px;border-radius:999px;font-size:12px;font-weight:700;color:#f6ebcb;
+  background:linear-gradient(90deg,rgba(232,150,60,.45) calc(var(--p,1)*100%),rgba(20,8,4,.85) calc(var(--p,1)*100%));border:1px solid rgba(232,150,60,.6);box-shadow:0 4px 14px rgba(0,0,0,.4);white-space:nowrap}
+#drinkChip.on{display:block}#drinkChip b{color:#ffd84a}
+#hotRow #drinkChip{position:static;bottom:auto;right:auto}
