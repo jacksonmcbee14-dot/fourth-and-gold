@@ -55,6 +55,7 @@ const myLevel=()=>levelOf(S.lodge.xp).L;
 function outfitLook(over){
   const o=Object.assign({},S.lodge.outfit||{},over||{}), col={}, gear={};
   for(const slot of ['body','scarf']){ const it=ITEM[o[slot]]; if(it&&(owns(it.id)||over&&over[slot]===it.id)) Object.assign(col,it.colors); }
+  if(o.scarf==='none') col.w=col.c||PEOPLE.player.c;   // no scarf: the collar is just more coat
   for(const slot of ['hat','glasses','watch','acc']){ const id=o[slot]; if(id&&ITEM[id]&&(owns(id)||over&&over[slot]===id)) gear[slot]=id; }
   if(Object.keys(gear).length) col._gear=gear;
   return Object.keys(col).length?col:null;
@@ -120,7 +121,7 @@ function renderShop(){
       <button class="lg-btn" data-lg="shopBack">Back</button></div></div>`;
   } else {
     const list=SHOP.tab==='closet'?ITEMS.filter(i=>i.slot&&owns(i.id)):ITEMS.filter(i=>i.cat===SHOP.tab&&!i.free);
-    body=`${SHOP.tab==='closet'?`<div class="lg-closet-me"></div><div class="lg-prev-desc">Tap something you own to wear it or take it off.</div>`:''}
+    body=`${SHOP.tab==='closet'?`<div class="lg-closet-me"></div><div class="lg-prev-desc">Tap something you own to wear it or take it off.</div><button class="lg-btn lg-scarf-off" data-lg="scarfOff">${(S.lodge.outfit||{}).scarf==='none'?'🧣 Put a scarf back on':'🧣 Take off scarf'}</button>`:''}
       <div class="lg-grid">${list.map(i=>{const mine=owns(i.id),wearing=i.slot&&(S.lodge.outfit||{})[i.slot]===i.id,locked=lv<i.lvl;
         return `<button class="lg-item ${locked?'locked':''} ${wearing?'wearing':''}" data-lg="shopSel" data-id="${i.id}"><span class="lg-ic" data-ic="${i.id}"></span><span class="lg-in">${esc(i.name)}</span><span class="lg-ip">${SHOP.tab==='closet'?(wearing?'WEARING':'TAP TO WEAR'):mine?'OWNED':locked?'LV '+i.lvl:k$(shopPrice(i))}</span></button>`;}).join('')||'<div class="lg-prev-desc">Nothing here yet.</div>'}</div>`;
   }
@@ -148,12 +149,13 @@ function buyItem(id){
 function wearToggle(id){
   const it=ITEM[id]; if(!it||!it.slot||!owns(id)) return;
   const o=Object.assign({},S.lodge.outfit||{});
-  if(o[it.slot]===id){ if(it.slot==='body'||it.slot==='scarf') o[it.slot]=it.slot==='body'?'coat_lodge':'scarf_cream'; else delete o[it.slot]; }
+  if(o[it.slot]===id){ if(it.slot==='body'||it.slot==='scarf') o[it.slot]=it.slot==='body'?'coat_lodge':'none'; else delete o[it.slot]; }
   else o[it.slot]=id;
   S.lodge.outfit=o; save(); tone(700,.06,'square',.03);
 }
 function unlocksBetween(a,b){ return ITEMS.filter(i=>!i.free&&i.lvl>a&&i.lvl<=b).map(i=>i.name); }
 Object.assign(LG_ACT,{
+  scarfOff:()=>{ const o=Object.assign({},S.lodge.outfit||{}); o.scarf=o.scarf==='none'?(o.scarfWas&&owns(o.scarfWas)?o.scarfWas:'scarf_cream'):'none'; if(o.scarf==='none') o.scarfWas=(S.lodge.outfit||{}).scarf; S.lodge.outfit=o; save(); tone(700,.06,'square',.03); renderShop(); },
   shopTab:b=>{ SHOP.tab=b.dataset.v; SHOP.sel=null; SHOP.confirm=false; renderShop(); },
   shopSel:b=>{ const id=b.dataset.id; if(SHOP.tab==='closet'){ wearToggle(id); renderShop(); return; } SHOP.sel=id; SHOP.confirm=false; renderShop(); },
   shopBack:()=>{ SHOP.sel=null; SHOP.confirm=false; renderShop(); },

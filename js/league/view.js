@@ -37,6 +37,7 @@ ACT.tab=el=>{ if(S.mode==='league'){ S.ltab=el.dataset.v; save(); scrollTo(0,0);
 function needMe(){ if(SOC.busy||Date.now()-(SOC.triedAt||0)<4000) return; SOC.triedAt=Date.now(); socRefresh(true).then(()=>{ if(S.mode==='league') render(); }); }
 function lookFor(o){ if(!o) return null; const col={},gear={};
   for(const s of ['body','scarf']){ const it=ITEM[o[s]]; if(it&&it.colors) Object.assign(col,it.colors); }
+  if(o.scarf==='none') col.w=col.c||PEOPLE.player.c;
   for(const s of ['hat','glasses','watch','acc']) if(o[s]&&ITEM[o[s]]) gear[s]=o[s];
   if(Object.keys(gear).length) col._gear=gear; return Object.keys(col).length?col:null; }
 function avatar(look){ LV.av.push(look); return `<span class="av" data-av="${LV.av.length-1}"></span>`; }
