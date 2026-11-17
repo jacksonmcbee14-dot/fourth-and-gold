@@ -54,7 +54,7 @@ async function socRefresh(force){
   SOC.busy=false; socBadge(); return SOC.me;
 }
 // Apply money and prizes waiting on the server, then tell the server they arrived.
-const INBOX_KINDS=['invite','champion','challenge_win','robbed','heist_fine','home_gift','xp_set','butler_trial','palace','tub_guest','tub_party','money_gift','item_stolen','room_winner','market_sold','pickem_champ','challenge_refund'];
+const INBOX_KINDS=['invite','champion','challenge_win','robbed','heist_fine','home_gift','xp_set','butler_trial','palace','tub_guest','tub_party','money_gift','item_stolen','room_winner','market_sold','tourney_win','pickem_champ','challenge_refund'];
 async function socInbox(items){
   if(!items.length) return;
   S.inboxDone=S.inboxDone||[]; const done=[];
@@ -74,6 +74,7 @@ async function socInbox(items){
     else if(it.kind==='item_stolen'&&typeof stealInbox==='function'){ stealInbox(it); }
     else if(it.kind==='room_winner'&&typeof homeWinInbox==='function'){ homeWinInbox(it); }
     else if(it.kind==='market_sold'&&typeof marketInbox==='function'){ marketInbox(it); }
+    else if(it.kind==='tourney_win'&&typeof tourneyInbox==='function'){ tourneyInbox(it); }
     else if(it.kind==='home_gift'&&typeof homeGiftInbox==='function'){ homeGiftInbox(it); }
     else if(it.kind==='pickem_champ'&&typeof pickemInbox==='function'){ pickemInbox(it); }
     else if(it.kind==='challenge_refund'){ S.bank=Math.round(S.bank+it.amount); save(); toast('Challenge stake returned · '+fmt$(it.amount),'gold'); }
