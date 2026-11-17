@@ -1,7 +1,7 @@
 // 🕹️ Pinball (casino tab). A real physics table: flippers, pop bumpers, slingshots, drop targets, top lanes, an
 // orbit, a lock saucer for MULTIBALL, skill shots, ball save and an end-of-ball bonus count-up.
 //  • Bet a stake, play 3 balls; your score pays out on a ladder (10K pays 0.5× … 800K pays 30×).
-//  • Your completed sets light up as glowing targets on the playfield — hit them all for a COLLECTION super jackpot.
+//  • Six targets above the flippers on every table: your completed sets (worth more) and plain ★ targets — light all six for a COLLECTION jackpot that grows with your sets.
 //  • The table is drawn in your chosen table theme (js/casino/themes.js), and you can buy new machines, each with
 //    its own layout and feature: Neon Nights (4 bumpers + Neon Frenzy), Gridiron (Touchdown gate), Royale (2-lock
 //    multiball, double set targets).
@@ -58,7 +58,8 @@ function pbTable(M){
     targets:[{x:252,y:150,up:1},{x:274,y:166,up:1},{x:296,y:182,up:1}],
     saucer:{x:62,y:300,r:11},
     flips:[{px:98,py:552,dir:1,a:.52,av:0,len:58,tip:null},{px:242,py:552,dir:-1,a:.52,av:0,len:58,tip:null}],
-    sets:(typeof setsDone==='function'?setsDone():[]).slice(0,6).map((s,i,arr)=>({icon:s.icon,x:170+(i-(arr.length-1)/2)*36,y:404,lit:0,hit:0})),
+    // Always six targets: your completed sets (their icon, worth more) first, then plain ★ targets, so every table plays the same.
+    sets:(()=>{ const done=(typeof setsDone==='function'?setsDone():[]).slice(0,6); return Array.from({length:6},(_,i)=>({icon:done[i]?done[i].icon:'★',done:!!done[i],x:170+(i-2.5)*36,y:404,lit:0,hit:0})); })(),
     balls:[],score:0,ballN:1,mult:1,locks:0,saveT:0,bonus:{lanes:0,targets:0,bumps:0},combo:0,comboT:0,frenzyT:0,tdT:0,mb:0,pops:[],shake:0,flash:null,phase:'ready',over:false,feed:[],tilt:0};
   return st; }
 function pbBallInLane(st){ st.balls.push({x:336,y:600,vx:0,vy:0,lane:1,lock:0}); st.saveT=st.M.save||8; st.mult=Math.max(st.mult,st.M.m0||1); }
@@ -95,8 +96,8 @@ function pbStep(st,h){ const M=st.M;
         if(st.mb){ pbScore(st,25000*st.mult,sc.x,sc.y-20,'#ff3ad0',1.6); pbBanner(st,'JACKPOT!','#ff3ad0'); st.shake=6; PB.sfx(1320); try{ fx.confetti(90); }catch(e){} }
         else { st.locks++; pbBanner(st,'BALL '+st.locks+' LOCKED','#bff6ff'); PB.sfx(600);
           if(st.locks>=M.locks){ st.locks=0; st.mb=1; pbBanner(st,'MULTIBALL!','#ff3ad0'); st.flash='#ff3ad0'; st.shake=8; for(let i=0;i<2;i++) setTimeout(()=>{ if(!st.over){ st.balls.push({x:336,y:400,vx:0,vy:-1300,lane:1,lock:0}); } },300+i*500); st.saveT=10; try{ fx.confetti(120); }catch(e){} } } }
-    for(const s of st.sets) if(Math.hypot(b.x-s.x,b.y-s.y)<PB_R+11&&s.hit<=0){ s.hit=.4; s.lit=1; const v=(M.royal?2:1)*1500; pbScore(st,v,s.x,s.y-18,'#ffd84a',1); PB.sfx(1100); const n=-((b.x-s.x)*b.vx+(b.y-s.y)*b.vy); b.vy=-Math.abs(b.vy)*.7-120;
-        if(st.sets.every(x=>x.lit)){ pbScore(st,(M.royal?100000:50000)*st.mult,170,380,'#ffd84a',2); pbBanner(st,'COLLECTION!','#ffd84a'); st.flash='#ffd84a'; st.shake=8; try{ fx.confetti(160); }catch(e){} setTimeout(()=>st.sets.forEach(x=>x.lit=0),1200); } }
+    for(const s of st.sets) if(Math.hypot(b.x-s.x,b.y-s.y)<PB_R+11&&s.hit<=0){ s.hit=.4; s.lit=1; const v=(M.royal?2:1)*(s.done?1500:500); pbScore(st,v,s.x,s.y-18,'#ffd84a',1); PB.sfx(1100); const n=-((b.x-s.x)*b.vx+(b.y-s.y)*b.vy); b.vy=-Math.abs(b.vy)*.7-120;
+        if(st.sets.every(x=>x.lit)){ pbScore(st,(M.royal?2:1)*(20000+5000*st.sets.filter(x=>x.done).length)*st.mult,170,380,'#ffd84a',2); pbBanner(st,'COLLECTION!','#ffd84a'); st.flash='#ffd84a'; st.shake=8; try{ fx.confetti(160); }catch(e){} setTimeout(()=>st.sets.forEach(x=>x.lit=0),1200); } }
     for(const f of st.flips) if(f.tip) pbSeg(b,f.px,f.py,f.tip[0],f.tip[1],6,.3,f.vs);
     const sp=Math.hypot(b.vx,b.vy); if(sp>1600){ b.vx*=1600/sp; b.vy*=1600/sp; }
     if(b.y>PB_H+20){ b.out=1; } } }
@@ -132,7 +133,7 @@ function pbDraw(st,t){ const x=PB.ctx, pal=pbPal(st), acc=pal[2], acc2=pal[3]||'
   for(const u of st.bumpers){ const h=u.hit>0; u.hit=Math.max(0,u.hit-1/60); const rg=x.createRadialGradient(u.x-5,u.y-5,2,u.x,u.y,u.r);
     rg.addColorStop(0,'#ffffff'); rg.addColorStop(.35,h?'#ffffff':acc); rg.addColorStop(1,h?acc:'#1a1006'); x.fillStyle=rg; x.shadowColor=acc; x.shadowBlur=h?30:12;
     x.beginPath(); x.arc(u.x,u.y,u.r+(h?3:0),0,7); x.fill(); x.shadowBlur=0; x.strokeStyle='#ffffff'; x.lineWidth=2; x.stroke(); }
-  for(const s of st.sets){ s.hit=Math.max(0,s.hit-1/60); x.fillStyle=s.lit?'rgba(255,216,74,.9)':'rgba(255,255,255,.12)'; x.shadowColor='#ffd84a'; x.shadowBlur=s.lit?16:0;
+  for(const s of st.sets){ s.hit=Math.max(0,s.hit-1/60); x.fillStyle=s.lit?(s.done?'rgba(255,216,74,.9)':'rgba(255,240,200,.7)'):(s.done?'rgba(255,216,74,.18)':'rgba(255,255,255,.12)'); x.shadowColor='#ffd84a'; x.shadowBlur=s.lit?16:0;
     x.beginPath(); x.arc(s.x,s.y,12+(s.hit>0?3:0),0,7); x.fill(); x.shadowBlur=0; x.font='14px serif'; x.fillText(s.icon,s.x,s.y+5); }
   for(const f of st.flips){ const tip=f.tip||pbFlipTip(f,f.a); x.strokeStyle='#ffffff'; x.lineWidth=13; x.beginPath(); x.moveTo(f.px,f.py); x.lineTo(tip[0],tip[1]); x.stroke(); x.strokeStyle=acc; x.lineWidth=7; x.stroke(); }
   for(const b of st.balls){ if(b.out) continue; const rg=x.createRadialGradient(b.x-2,b.y-3,1,b.x,b.y,PB_R); rg.addColorStop(0,'#ffffff'); rg.addColorStop(.5,'#cfd9e0'); rg.addColorStop(1,'#5a646c'); x.fillStyle=rg; x.beginPath(); x.arc(b.x,b.y,PB_R,0,7); x.fill(); }
