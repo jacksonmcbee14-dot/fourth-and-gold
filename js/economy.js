@@ -171,8 +171,8 @@ function vaultFull(){
     <div class="fgm-row"><button class="btn gold" data-a="prestigeGo">Prestige now</button><button class="btn" data-a="closeModal">Not yet</button></div></div>`);
 }
 ACT.prestigeGo=()=>{
-  // The safe is kept through a prestige, so neither what's in it nor what you've taken out of it since counts toward the next one.
-  const out=S.safeOut||0; if(S.bank-out<VAULT*.99&&scoreNow()-(S.safe||0)-out<VAULT*.99){ toast('Fill your bankroll to '+k$(VAULT)+' first'+(out?' (money taken out of your safe doesn’t count)':''),'loss'); return; }
+  // A $1T bankroll always lets you prestige, however you got there (your safe is kept through it).
+  if(S.bank<VAULT*.99){ toast('Fill your bankroll to '+k$(VAULT)+' first','loss'); return; }
   const before=typeof leagueScoreRaw==='function'?leagueScoreRaw()+(S.ladj||0):0;
   S.prestige=(S.prestige||0)+1; S.bank=START_BANK; S.peak=START_BANK; S.debt=0; S.bets=[]; S.slip=[]; S.vip='lodge'; S.lodge.drink=null; S.lodge.paid={}; S.paidReset=S.prestige; S.safeOut=0;   // your vault-room safe keeps its money
   if(typeof leagueScoreRaw==='function') S.ladj=before-leagueScoreRaw();
